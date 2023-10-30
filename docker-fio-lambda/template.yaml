@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  docker-fio-lambda
+
+  Sample SAM Template for docker-fio-lambda
+
+Resources:
+  FioFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Timeout: 600
+      MemorySize: 2000
+      EphemeralStorage:
+        Size: 2000
+      Architectures:
+        - x86_64
+      Events:
+        GetFio:
+          Type: Api
+          Properties:
+            Path: /fio
+            Method: get
+        PostFio:
+          Type: Api
+          Properties:
+            Path: /fio
+            Method: post
+    Metadata:
+      DockerTag: nodejs18.x-v1
+      DockerContext: ./fio-function
+      Dockerfile: Dockerfile
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  FioApi:
+    Description: "API Gateway endpoint URL for Prod stage for Fio function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/fio/"
+  FioFunction:
+    Description: "Fio Lambda Function ARN"
+    Value: !GetAtt FioFunction.Arn
+  FioFunctionIamRole:
+    Description: "Implicit IAM Role created for Fio function"
+    Value: !GetAtt FioFunctionRole.Arn
