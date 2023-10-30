@@ -1,0 +1,1 @@
+gcloud functions deploy docker-fio-gcf --gen2 --runtime=nodejs18 --source=. --entry-point=fio --trigger-http --memory=2G --max-instances=10 --allow-unauthenticated
