@@ -21,7 +21,9 @@ export const lambdaHandler = async (event, context) => {
     if (eventBody.command) {
       return {
         statusCode,
-        body: execSync("dd " + eventBody.command, { encoding: "utf-8" }),
+        body: execSync(`dd ${eventBody.command} 2>&1`, {
+          encoding: "utf-8",
+        }),
       };
     }
   }
