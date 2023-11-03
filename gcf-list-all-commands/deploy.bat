@@ -1,0 +1,1 @@
+gcloud functions deploy gcf-list-all-commands --gen2 --runtime=nodejs18 --source=. --entry-point=gcf-list-all-commands --trigger-http --memory=500M --max-instances=10 --allow-unauthenticated
