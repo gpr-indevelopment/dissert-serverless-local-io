@@ -4,7 +4,7 @@ const { execSync } = require("child_process");
 functions.http("gcf-dd", (req, res) => {
   console.info("Received request:", req);
   if (req.body && req.body.command) {
-    res.send(execSync("dd " + req.body.command, { encoding: "utf-8" }));
+    res.send(execSync(`dd ${req.body.command} 2>&1`, { encoding: "utf-8" }));
     return;
   }
   res.send(
