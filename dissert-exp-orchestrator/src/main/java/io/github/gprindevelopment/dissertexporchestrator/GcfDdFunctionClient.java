@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GcfDdFunctionService {
+public class GcfDdFunctionClient {
 
     private final RestTemplate restTemplate;
     private final GcfDdFunctionProps gcfDdFunctionProps;
