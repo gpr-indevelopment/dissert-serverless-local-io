@@ -15,7 +15,7 @@ public class DdExpRecordEntity {
     @GeneratedValue
     private Long id;
 
-    private String rawContent;
+    private String rawResponse;
 
     private Timestamp collectedAt;
 
@@ -29,4 +29,8 @@ public class DdExpRecordEntity {
     private Long ioSizeBytes;
 
     private Long fileSizeBytes;
+
+    private String rawThroughput;
+
+    private String rawLatency;
 }
