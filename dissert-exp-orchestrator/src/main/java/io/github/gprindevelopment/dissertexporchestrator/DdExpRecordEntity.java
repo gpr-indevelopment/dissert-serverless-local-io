@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @Builder
-public class ExpRecordEntity {
+public class DdExpRecordEntity {
 
     @Id
     @GeneratedValue
@@ -25,4 +25,8 @@ public class ExpRecordEntity {
 
     @Enumerated(EnumType.STRING)
     private OperationType operationType;
+
+    private Long ioSizeBytes;
+
+    private Long fileSizeBytes;
 }

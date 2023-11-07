@@ -12,23 +12,25 @@ import java.sql.Timestamp;
 public class GcfDdFunctionService {
 
     private final GcfDdFunctionClient gcfDdFunctionClient;
-    private final ExpRecordRepository expRecordRepository;
+    private final DdExpRecordRepository ddExpRecordRepository;
 
-    public ExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
+    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = gcfDdFunctionClient.callFunction(commandRequest);
-        ExpRecordEntity expRecordEntity = ExpRecordEntity
+        DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                 .builder()
                 .rawContent(rawResponse)
                 .collectedAt(new Timestamp(System.currentTimeMillis()))
                 .systemName("gcf-dd")
                 .command(command)
                 .operationType(OperationType.WRITE)
+                .ioSizeBytes(ioSizeBytes)
+                .fileSizeBytes(fileSizeBytes)
                 .build();
-        expRecordEntity = expRecordRepository.save(expRecordEntity);
-        log.info("Persisted write experimental record: {}", expRecordEntity);
-        return expRecordEntity;
+        ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
+        log.info("Persisted write experimental record: {}", ddExpRecordEntity);
+        return ddExpRecordEntity;
     }
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
