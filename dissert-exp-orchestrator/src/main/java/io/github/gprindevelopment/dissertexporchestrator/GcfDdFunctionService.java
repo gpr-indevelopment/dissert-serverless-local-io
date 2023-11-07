@@ -14,8 +14,8 @@ public class GcfDdFunctionService {
     private final GcfDdFunctionClient gcfDdFunctionClient;
     private final ExpRecordRepository expRecordRepository;
 
-    public ExpRecordEntity collectWriteExpRecord(Long ioSize, Long blockCount) {
-        String command = buildWriteCommand(ioSize, blockCount);
+    public ExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
+        String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = gcfDdFunctionClient.callFunction(commandRequest);
         ExpRecordEntity expRecordEntity = ExpRecordEntity
@@ -31,7 +31,7 @@ public class GcfDdFunctionService {
         return expRecordEntity;
     }
 
-    private String buildWriteCommand(Long ioSize, Long blockCount) {
-        return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSize, blockCount);
+    private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
+        return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
     }
 }
