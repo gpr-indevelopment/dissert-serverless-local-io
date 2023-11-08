@@ -1,4 +1,4 @@
-package io.github.gprindevelopment.dissertexporchestrator;
+package io.github.gprindevelopment.dissertexporchestrator.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package io.github.gprindevelopment.dissertexporchestrator;
+package io.github.gprindevelopment.dissertexporchestrator.gcf;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

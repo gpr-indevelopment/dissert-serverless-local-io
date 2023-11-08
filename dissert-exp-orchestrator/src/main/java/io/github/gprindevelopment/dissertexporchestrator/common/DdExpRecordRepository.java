@@ -1,4 +1,4 @@
-package io.github.gprindevelopment.dissertexporchestrator;
+package io.github.gprindevelopment.dissertexporchestrator.common;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
