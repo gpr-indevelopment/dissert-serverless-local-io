@@ -21,4 +21,14 @@ public class GcfDdFunctionService extends DdFunctionService {
     protected String callFunction(CommandRequest commandRequest) {
         return gcfDdFunctionClient.callFunction(commandRequest);
     }
+
+    @Override
+    protected String extractRawLatency(String rawResponse) {
+        return rawResponse.split(",")[2].trim();
+    }
+
+    @Override
+    protected String extractRawThroughput(String rawResponse) {
+        return rawResponse.split(",")[3].trim();
+    }
 }

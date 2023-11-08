@@ -33,13 +33,9 @@ public abstract class DdFunctionService {
         return ddExpRecordEntity;
     }
 
-    private String extractRawLatency(String rawResponse) {
-        return rawResponse.split(",")[2].trim();
-    }
+    protected abstract String extractRawLatency(String rawResponse);
 
-    private String extractRawThroughput(String rawResponse) {
-        return rawResponse.split(",")[3].trim();
-    }
+    protected abstract String extractRawThroughput(String rawResponse);
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
