@@ -1,5 +1,10 @@
-package io.github.gprindevelopment.dissertexporchestrator.common;
+package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,7 +17,7 @@ public abstract class DdFunctionService {
     private final DdExpRecordRepository ddExpRecordRepository;
     protected abstract String callFunction(CommandRequest commandRequest);
 
-    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) throws DdFunctionException{
+    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) throws DdFunctionException {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = callFunction(commandRequest);

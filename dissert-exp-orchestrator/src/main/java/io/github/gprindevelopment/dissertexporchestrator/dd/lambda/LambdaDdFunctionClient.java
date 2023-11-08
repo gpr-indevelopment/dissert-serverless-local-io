@@ -1,7 +1,7 @@
-package io.github.gprindevelopment.dissertexporchestrator.lambda;
+package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdFunctionClient;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

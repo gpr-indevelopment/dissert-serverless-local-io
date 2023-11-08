@@ -1,5 +1,6 @@
-package io.github.gprindevelopment.dissertexporchestrator.common;
+package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

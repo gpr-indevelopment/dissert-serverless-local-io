@@ -1,8 +1,8 @@
-package io.github.gprindevelopment.dissertexporchestrator.lambda;
+package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
 import org.springframework.stereotype.Service;
 
 @Service

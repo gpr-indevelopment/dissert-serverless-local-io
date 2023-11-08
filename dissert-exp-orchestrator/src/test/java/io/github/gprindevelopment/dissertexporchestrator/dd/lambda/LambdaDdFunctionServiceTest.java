@@ -1,6 +1,12 @@
-package io.github.gprindevelopment.dissertexporchestrator.lambda;
+package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.*;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.lambda.LambdaDdFunctionClient;
+import io.github.gprindevelopment.dissertexporchestrator.dd.lambda.LambdaDdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

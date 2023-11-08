@@ -1,8 +1,8 @@
-package io.github.gprindevelopment.dissertexporchestrator.gcf;
+package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

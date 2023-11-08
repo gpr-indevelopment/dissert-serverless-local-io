@@ -1,6 +1,6 @@
-package io.github.gprindevelopment.dissertexporchestrator.common;
+package io.github.gprindevelopment.dissertexporchestrator.dd.domain;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;

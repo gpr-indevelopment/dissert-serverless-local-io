@@ -1,4 +1,4 @@
-package io.github.gprindevelopment.dissertexporchestrator.lambda;
+package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

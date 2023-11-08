@@ -1,11 +1,10 @@
-package io.github.gprindevelopment.dissertexporchestrator.gcf;
+package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 
-import io.github.gprindevelopment.dissertexporchestrator.common.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.common.DdFunctionClient;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j

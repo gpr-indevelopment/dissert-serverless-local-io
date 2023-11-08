@@ -1,4 +1,4 @@
-package io.github.gprindevelopment.dissertexporchestrator.common;
+package io.github.gprindevelopment.dissertexporchestrator.dd.domain;
 
 public class DdFunctionException extends Exception {
 
