@@ -19,6 +19,7 @@ public class GcfDdFunctionService extends DdFunctionService {
 
     @Override
     protected String callFunction(CommandRequest commandRequest) {
+        log.info("Collecting gcf-dd exp record for command: {}", commandRequest);
         return gcfDdFunctionClient.callFunction(commandRequest);
     }
 

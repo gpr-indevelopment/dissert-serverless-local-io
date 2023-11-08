@@ -3,9 +3,11 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class LambdaDdFunctionService extends DdFunctionService {
 
     private final LambdaDdFunctionClient lambdaDdFunctionClient;
@@ -17,6 +19,7 @@ public class LambdaDdFunctionService extends DdFunctionService {
 
     @Override
     protected String callFunction(CommandRequest commandRequest) {
+        log.info("Collecting lambda-dd exp record for command: {}", commandRequest);
         return lambdaDdFunctionClient.callFunction(commandRequest);
     }
 
