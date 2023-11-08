@@ -34,4 +34,8 @@ public class DdExpRecordEntity {
     private String rawThroughput;
 
     private String rawLatency;
+
+    private Double latencySeconds;
+
+    private Double throughputKbPerSecond;
 }

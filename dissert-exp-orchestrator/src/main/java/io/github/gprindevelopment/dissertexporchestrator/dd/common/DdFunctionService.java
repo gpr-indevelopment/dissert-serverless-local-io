@@ -37,6 +37,8 @@ public abstract class DdFunctionService {
                     .fileSizeBytes(fileSizeBytes)
                     .rawLatency(extractRawLatency(rawResponse))
                     .rawThroughput(extractRawThroughput(rawResponse))
+                    .latencySeconds(extractLatency(rawResponse))
+                    .throughputKbPerSecond(extractThroughput(rawResponse))
                     .build();
             ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
             log.info("Persisted write experimental record: {}", ddExpRecordEntity);
@@ -49,6 +51,36 @@ public abstract class DdFunctionService {
                     rawResponse);
             throw new DdFunctionException(message, ex);
         }
+    }
+
+    private Double extractThroughput(String rawResponse) {
+        String rawThroughput = extractRawThroughput(rawResponse);
+        String[] splitRawThroughput = rawThroughput.split("\s");
+        Double value = Double.parseDouble(splitRawThroughput[0]);
+        String unit = splitRawThroughput[1];
+        return value * resolveMultiplierFromUnit(unit);
+    }
+
+    private Double resolveMultiplierFromUnit(String unit) {
+        double multiplier = 1.0;
+        switch (unit) {
+            case "GB/s":
+                multiplier = 1e9;
+                break;
+            case "MB/s":
+                multiplier = 1e6;
+                break;
+            default:
+                log.warn("Unknown throughput unit: {}. Multiplier is set to 0.", unit);
+                multiplier = 0;
+                break;
+        }
+        return multiplier;
+    }
+
+    private Double extractLatency(String rawResponse) {
+        String rawLatency = extractRawLatency(rawResponse);
+        return Double.parseDouble(rawLatency.split("\s")[0]);
     }
 
     protected abstract String extractRawLatency(String rawResponse);

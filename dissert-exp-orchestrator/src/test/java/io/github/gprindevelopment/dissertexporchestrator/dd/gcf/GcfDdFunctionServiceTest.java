@@ -46,6 +46,8 @@ class GcfDdFunctionServiceTest {
         assertEquals(savedEntity.getOperationType(), OperationType.WRITE);
         assertEquals(savedEntity.getFileSizeBytes(), fileSize);
         assertEquals(savedEntity.getIoSizeBytes(), ioSizeBytes);
+        assertEquals(savedEntity.getLatencySeconds(), 0.830883);
+        assertEquals(savedEntity.getThroughputKbPerSecond(), 1.2e9);
         assertNotNull(savedEntity.getCollectedAt());
         verify(ddExpRecordRepository).save(any());
     }
@@ -84,5 +86,22 @@ class GcfDdFunctionServiceTest {
         assertTrue(thrown.getMessage().contains(expectedCommand));
         assertTrue(thrown.getMessage().contains(expectedFunctionResponse));
         verify(ddExpRecordRepository, never()).save(any());
+    }
+
+    @Test
+    public void Should_set_zero_to_throughput_when_unit_not_resolvable() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 LB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getThroughputKbPerSecond(), 0);
+        verify(ddExpRecordRepository).save(any());
     }
 }
