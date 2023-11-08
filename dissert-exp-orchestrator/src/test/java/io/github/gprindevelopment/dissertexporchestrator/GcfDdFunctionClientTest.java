@@ -1,14 +1,15 @@
 package io.github.gprindevelopment.dissertexporchestrator;
 
 import io.github.gprindevelopment.dissertexporchestrator.common.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.common.DdFunctionClient;
 import io.github.gprindevelopment.dissertexporchestrator.gcf.GcfDdFunctionClient;
+import io.github.gprindevelopment.dissertexporchestrator.gcf.GcfDdFunctionProps;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -19,12 +20,12 @@ class GcfDdFunctionClientTest {
     @InjectMocks
     private GcfDdFunctionClient gcfDdFunctionClient;
     @Mock
-    private RestTemplate restTemplate;
+    private DdFunctionClient ddFunctionClient;
     @Mock
     private GcfDdFunctionProps gcfDdFunctionProps;
     private final EasyRandom generator = new EasyRandom();
     @Test
-    public void Should_successfully_call_external_function_api() {
+    public void Should_successfully_call_dd_function_client() {
         String expectedFunctionResponse = """
                     1024+0 records in
                     1024+0 records out
@@ -33,8 +34,7 @@ class GcfDdFunctionClientTest {
         CommandRequest commandRequest = new CommandRequest(generator.nextObject(String.class));
 
         when(gcfDdFunctionProps.url()).thenReturn(expectedUrl);
-        when(restTemplate.postForObject(expectedUrl, commandRequest, String.class))
-                .thenReturn(expectedFunctionResponse);
+        when(ddFunctionClient.callFunction(commandRequest, expectedUrl)).thenReturn(expectedFunctionResponse);
         String result = gcfDdFunctionClient.callFunction(commandRequest);
         assertEquals(expectedFunctionResponse, result);
     }
