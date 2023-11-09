@@ -114,4 +114,30 @@ class LambdaDdFunctionServiceTest {
         assertEquals(savedEntity.getThroughputKbPerSecond(), 0);
         verify(ddExpRecordRepository).save(any());
     }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_read_function_call() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                953+1 records in
+                953+1 records out
+                999424000 bytes (999 MB) copied,
+                0.130173 s,
+                7.7 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        String expectedCommand = "if=/tmp/file1 of=/dev/null bs=1024000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        DdExpRecordEntity savedEntity = lambdaDdFunctionService.collectReadExpRecord(ioSizeBytes);
+        assertEquals(savedEntity.getSystemName(), "gcf-dd");
+        assertEquals(savedEntity.getRawResponse(), expectedFunctionResponse);
+        assertEquals(savedEntity.getCommand(), expectedCommand);
+        assertEquals(savedEntity.getOperationType(), OperationType.READ);
+        assertNull(savedEntity.getFileSizeBytes());
+        assertEquals(savedEntity.getIoSizeBytes(), ioSizeBytes);
+        assertEquals(savedEntity.getLatencySeconds(), 0.130173);
+        assertEquals(savedEntity.getThroughputKbPerSecond(), 7.7e9);
+        assertNotNull(savedEntity.getCollectedAt());
+        verify(ddExpRecordRepository).save(any());
+    }
 }

@@ -36,7 +36,7 @@ class GcfDdFunctionServiceTest {
     private ClockService clockService;
 
     @Test
-    public void Should_successfully_save_exp_record_from_function_call() throws DdFunctionException {
+    public void Should_successfully_save_exp_record_from_write_function_call() throws DdFunctionException {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
@@ -110,6 +110,30 @@ class GcfDdFunctionServiceTest {
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
         assertEquals(savedEntity.getThroughputKbPerSecond(), 0);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_read_function_call() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                953+1 records in
+                953+1 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.296427 s, 3.4 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        String expectedCommand = "if=/tmp/file1 of=/dev/null bs=1024000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeBytes);
+        assertEquals(savedEntity.getSystemName(), "gcf-dd");
+        assertEquals(savedEntity.getRawResponse(), expectedFunctionResponse);
+        assertEquals(savedEntity.getCommand(), expectedCommand);
+        assertEquals(savedEntity.getOperationType(), OperationType.READ);
+        assertNull(savedEntity.getFileSizeBytes());
+        assertEquals(savedEntity.getIoSizeBytes(), ioSizeBytes);
+        assertEquals(savedEntity.getLatencySeconds(), 0.296427);
+        assertEquals(savedEntity.getThroughputKbPerSecond(), 3.4e9);
+        assertNotNull(savedEntity.getCollectedAt());
         verify(ddExpRecordRepository).save(any());
     }
 }

@@ -23,10 +23,17 @@ public abstract class DdFunctionService {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = callFunction(commandRequest);
-        return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command);
+        return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
     }
 
-    private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command) throws DdFunctionException {
+    public DdExpRecordEntity collectReadExpRecord(Long ioSizeBytes) throws DdFunctionException {
+        String command = buildReadCommand(ioSizeBytes);
+        CommandRequest commandRequest = new CommandRequest(command);
+        String rawResponse = callFunction(commandRequest);
+        return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
+    }
+
+    private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) throws DdFunctionException {
         try {
             DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                     .builder()
@@ -34,7 +41,7 @@ public abstract class DdFunctionService {
                     .collectedAt(clockService.getCurrentTimestamp())
                     .systemName("gcf-dd")
                     .command(command)
-                    .operationType(OperationType.WRITE)
+                    .operationType(operationType)
                     .ioSizeBytes(ioSizeBytes)
                     .fileSizeBytes(fileSizeBytes)
                     .rawLatency(extractRawLatency(rawResponse))
@@ -48,9 +55,10 @@ public abstract class DdFunctionService {
             log.info("Persisted write experimental record: {}", ddExpRecordEntity);
             return ddExpRecordEntity;
         } catch (Exception ex) {
-            String message = String.format("Unable to build and save record with ioSizeBytes: %d, fileSizeBytes: %d and command: %s for rawResponse: %s",
+            String message = String.format("Unable to build and save record with ioSizeBytes: %d, fileSizeBytes: %d, operationType: %s and command: %s for rawResponse: %s",
                     ioSizeBytes,
                     fileSizeBytes,
+                    operationType,
                     command,
                     rawResponse);
             throw new DdFunctionException(message, ex);
@@ -101,5 +109,9 @@ public abstract class DdFunctionService {
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
+    }
+
+    private String buildReadCommand(Long ioSizeBytes) {
+        return String.format("if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
     }
 }
