@@ -7,13 +7,17 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionExc
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionClient;
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.sql.Timestamp;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -106,6 +110,97 @@ class GcfDdFunctionServiceTest {
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
         assertEquals(savedEntity.getThroughputKbPerSecond(), 0);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_populate_time_of_day_as_off_hours() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.OFF_HOUR);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_populate_day_of_week_as_weekday() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKDAY);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_populate_time_of_day_as_business_hours() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.BUSINESS_HOUR);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_populate_day_of_week_as_weekend() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKEND);
+        verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_consider_business_hours_in_weekend_as_off_hours() throws DdFunctionException {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=1024000 count=976";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
+        DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.OFF_HOUR);
+        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKEND);
         verify(ddExpRecordRepository).save(any());
     }
 }

@@ -1,6 +1,8 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.domain;
 
+import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -38,4 +40,10 @@ public class DdExpRecordEntity {
     private Double latencySeconds;
 
     private Double throughputKbPerSecond;
+
+    @Enumerated(EnumType.STRING)
+    private TimeOfDay timeOfDay;
+
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek dayOfWeek;
 }

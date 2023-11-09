@@ -2,6 +2,8 @@ package io.github.gprindevelopment.dissertexporchestrator.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClockServiceTest {
@@ -10,8 +12,8 @@ class ClockServiceTest {
 
     @Test
     public void Should_return_current_timestamp() {
-        Long systemTime = clockService.getSystemTimeMillis();
+        Timestamp systemTime = clockService.getCurrentTimestamp();
         assertNotNull(systemTime);
-        assertNotEquals(0, systemTime);
+        assertNotEquals(0, systemTime.getTime());
     }
 }

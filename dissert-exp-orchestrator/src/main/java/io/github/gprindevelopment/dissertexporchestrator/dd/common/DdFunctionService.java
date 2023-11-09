@@ -2,14 +2,19 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
+import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +36,7 @@ public abstract class DdFunctionService {
             DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                     .builder()
                     .rawResponse(rawResponse)
-                    .collectedAt(new Timestamp(clockService.getSystemTimeMillis()))
+                    .collectedAt(clockService.getCurrentTimestamp())
                     .systemName("gcf-dd")
                     .command(command)
                     .operationType(OperationType.WRITE)
@@ -41,6 +46,8 @@ public abstract class DdFunctionService {
                     .rawThroughput(extractRawThroughput(rawResponse))
                     .latencySeconds(extractLatency(rawResponse))
                     .throughputKbPerSecond(extractThroughput(rawResponse))
+                    .timeOfDay(resolveTimeOfDay())
+                    .dayOfWeek(resolveDayOfWeek())
                     .build();
             ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
             log.info("Persisted write experimental record: {}", ddExpRecordEntity);
@@ -53,6 +60,14 @@ public abstract class DdFunctionService {
                     rawResponse);
             throw new DdFunctionException(message, ex);
         }
+    }
+
+    private DayOfWeek resolveDayOfWeek() {
+        return DayOfWeek.from(clockService.getCurrentTimestamp());
+    }
+
+    private TimeOfDay resolveTimeOfDay() {
+        return TimeOfDay.from(clockService.getCurrentTimestamp(), resolveDayOfWeek());
     }
 
     private Double extractThroughput(String rawResponse) {
