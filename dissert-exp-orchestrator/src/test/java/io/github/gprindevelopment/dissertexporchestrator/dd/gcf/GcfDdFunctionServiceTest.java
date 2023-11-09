@@ -1,9 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionClient;
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
@@ -48,7 +45,7 @@ class GcfDdFunctionServiceTest {
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         DdExpRecordEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getSystemName(), "gcf-dd");
+        assertEquals(savedEntity.getSystemName(), SystemName.GCF_DD);
         assertEquals(savedEntity.getRawResponse(), expectedFunctionResponse);
         assertEquals(savedEntity.getCommand(), expectedCommand);
         assertEquals(savedEntity.getOperationType(), OperationType.WRITE);
@@ -125,7 +122,7 @@ class GcfDdFunctionServiceTest {
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         DdExpRecordEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeBytes);
-        assertEquals(savedEntity.getSystemName(), "gcf-dd");
+        assertEquals(savedEntity.getSystemName(), SystemName.GCF_DD);
         assertEquals(savedEntity.getRawResponse(), expectedFunctionResponse);
         assertEquals(savedEntity.getCommand(), expectedCommand);
         assertEquals(savedEntity.getOperationType(), OperationType.READ);

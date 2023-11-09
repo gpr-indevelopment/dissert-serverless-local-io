@@ -22,7 +22,8 @@ public class DdExpRecordEntity {
 
     private Timestamp collectedAt;
 
-    private String systemName;
+    @Enumerated(EnumType.STRING)
+    private SystemName systemName;
 
     private String command;
 

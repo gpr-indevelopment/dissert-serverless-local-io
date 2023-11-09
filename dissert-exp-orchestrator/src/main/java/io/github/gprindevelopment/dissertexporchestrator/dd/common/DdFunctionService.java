@@ -1,9 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
@@ -33,13 +30,19 @@ public abstract class DdFunctionService {
         return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
     }
 
+    protected abstract String extractRawLatency(String rawResponse);
+
+    protected abstract String extractRawThroughput(String rawResponse);
+
+    protected abstract SystemName getSystemName();
+
     private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) throws DdFunctionException {
         try {
             DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                     .builder()
                     .rawResponse(rawResponse)
                     .collectedAt(clockService.getCurrentTimestamp())
-                    .systemName("gcf-dd")
+                    .systemName(getSystemName())
                     .command(command)
                     .operationType(operationType)
                     .ioSizeBytes(ioSizeBytes)
@@ -102,10 +105,6 @@ public abstract class DdFunctionService {
         String rawLatency = extractRawLatency(rawResponse);
         return Double.parseDouble(rawLatency.split("\s")[0]);
     }
-
-    protected abstract String extractRawLatency(String rawResponse);
-
-    protected abstract String extractRawThroughput(String rawResponse);
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);

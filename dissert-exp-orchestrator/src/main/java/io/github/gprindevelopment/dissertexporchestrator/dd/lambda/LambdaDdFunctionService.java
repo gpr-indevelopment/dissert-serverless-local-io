@@ -3,6 +3,7 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,10 @@ public class LambdaDdFunctionService extends DdFunctionService {
     @Override
     protected String extractRawThroughput(String rawResponse) {
         return rawResponse.split(",")[2].trim();
+    }
+
+    @Override
+    protected SystemName getSystemName() {
+        return SystemName.LAMBDA_DD;
     }
 }

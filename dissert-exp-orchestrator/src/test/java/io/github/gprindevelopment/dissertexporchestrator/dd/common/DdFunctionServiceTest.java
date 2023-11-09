@@ -1,9 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
@@ -108,6 +105,11 @@ class DdFunctionServiceTest {
         @Override
         protected String extractRawThroughput(String rawResponse) {
             return rawResponse.split(",")[3].trim();
+        }
+
+        @Override
+        protected SystemName getSystemName() {
+            return SystemName.GCF_DD;
         }
     }
 
