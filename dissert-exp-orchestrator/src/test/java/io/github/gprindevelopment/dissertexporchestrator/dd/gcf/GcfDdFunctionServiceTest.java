@@ -6,11 +6,13 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRe
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionClient;
 import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +28,8 @@ class GcfDdFunctionServiceTest {
     private GcfDdFunctionClient gcfDdFunctionClient;
     @Mock
     private DdExpRecordRepository ddExpRecordRepository;
+    @Spy
+    private ClockService clockService;
 
     @Test
     public void Should_successfully_save_exp_record_from_function_call() throws DdFunctionException {

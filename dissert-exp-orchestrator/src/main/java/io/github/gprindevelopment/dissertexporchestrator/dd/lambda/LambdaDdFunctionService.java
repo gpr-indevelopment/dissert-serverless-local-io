@@ -3,6 +3,7 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,10 @@ public class LambdaDdFunctionService extends DdFunctionService {
 
     private final LambdaDdFunctionClient lambdaDdFunctionClient;
 
-    public LambdaDdFunctionService(LambdaDdFunctionClient lambdaDdFunctionClient, DdExpRecordRepository ddExpRecordRepository) {
-        super(ddExpRecordRepository);
+    public LambdaDdFunctionService(LambdaDdFunctionClient lambdaDdFunctionClient,
+                                   DdExpRecordRepository ddExpRecordRepository,
+                                   ClockService clockService) {
+        super(ddExpRecordRepository, clockService);
         this.lambdaDdFunctionClient = lambdaDdFunctionClient;
     }
 

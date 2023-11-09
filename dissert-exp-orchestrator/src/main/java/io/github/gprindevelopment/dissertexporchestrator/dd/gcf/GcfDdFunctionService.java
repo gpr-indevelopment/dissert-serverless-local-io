@@ -3,6 +3,7 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,10 @@ public class GcfDdFunctionService extends DdFunctionService {
 
     private final GcfDdFunctionClient gcfDdFunctionClient;
 
-    public GcfDdFunctionService(GcfDdFunctionClient gcfDdFunctionClient, DdExpRecordRepository ddExpRecordRepository) {
-        super(ddExpRecordRepository);
+    public GcfDdFunctionService(GcfDdFunctionClient gcfDdFunctionClient,
+                                DdExpRecordRepository ddExpRecordRepository,
+                                ClockService clockService) {
+        super(ddExpRecordRepository, clockService);
         this.gcfDdFunctionClient = gcfDdFunctionClient;
     }
 

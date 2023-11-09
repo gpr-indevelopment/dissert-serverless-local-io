@@ -1,6 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 public abstract class DdFunctionService {
 
     private final DdExpRecordRepository ddExpRecordRepository;
+    private final ClockService clockService;
     protected abstract String callFunction(CommandRequest commandRequest);
 
     public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) throws DdFunctionException {
@@ -29,7 +31,7 @@ public abstract class DdFunctionService {
             DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                     .builder()
                     .rawResponse(rawResponse)
-                    .collectedAt(new Timestamp(System.currentTimeMillis()))
+                    .collectedAt(new Timestamp(clockService.getSystemTimeMillis()))
                     .systemName("gcf-dd")
                     .command(command)
                     .operationType(OperationType.WRITE)
