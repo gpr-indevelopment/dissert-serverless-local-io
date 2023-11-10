@@ -1,6 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator.domain;
 
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public enum TimeOfDay {
@@ -11,7 +12,8 @@ public enum TimeOfDay {
     }
 
     public static TimeOfDay from(LocalTime localTime, DayOfWeek dayOfWeek) {
-        if (dayOfWeek.equals(DayOfWeek.WEEKEND)) {
+        WeekPeriod weekPeriod = WeekPeriod.from(dayOfWeek);
+        if (weekPeriod.equals(WeekPeriod.WEEKEND)) {
             return OFF_HOUR;
         }
         LocalTime nineAm = LocalTime.of(9, 0);

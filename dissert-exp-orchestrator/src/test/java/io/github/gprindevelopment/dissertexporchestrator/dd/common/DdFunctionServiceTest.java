@@ -2,8 +2,8 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
+import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,8 +35,8 @@ class DdFunctionServiceTest {
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
         DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.OFF_HOUR);
-        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKEND);
+        assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
+        assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
         verify(ddExpRecordRepository).save(any());
     }
 
@@ -46,18 +47,19 @@ class DdFunctionServiceTest {
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
         DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.OFF_HOUR);
+        assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
         verify(ddExpRecordRepository).save(any());
     }
 
     @Test
-    public void Should_successfully_populate_day_of_week_as_weekday() throws DdFunctionException {
+    public void Should_successfully_populate_week_period_as_weekday() throws DdFunctionException {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
         DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKDAY);
+        assertEquals(WeekPeriod.WEEKDAY, savedEntity.getWeekPeriod());
+        assertEquals(DayOfWeek.WEDNESDAY, savedEntity.getDayOfWeek());
         verify(ddExpRecordRepository).save(any());
     }
 
@@ -68,18 +70,19 @@ class DdFunctionServiceTest {
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
         DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getTimeOfDay(), TimeOfDay.BUSINESS_HOUR);
+        assertEquals(TimeOfDay.BUSINESS_HOUR, savedEntity.getTimeOfDay());
         verify(ddExpRecordRepository).save(any());
     }
 
     @Test
-    public void Should_successfully_populate_day_of_week_as_weekend() throws DdFunctionException {
+    public void Should_successfully_populate_week_period_as_weekend() throws DdFunctionException {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
         DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        assertEquals(savedEntity.getDayOfWeek(), DayOfWeek.WEEKEND);
+        assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
+        assertEquals(DayOfWeek.SUNDAY, savedEntity.getDayOfWeek());
         verify(ddExpRecordRepository).save(any());
     }
 

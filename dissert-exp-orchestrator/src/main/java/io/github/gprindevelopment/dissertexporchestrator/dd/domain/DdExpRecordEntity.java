@@ -1,13 +1,14 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.domain;
 
-import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
+import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 
 @Entity
 @Data
@@ -47,4 +48,7 @@ public class DdExpRecordEntity {
 
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
+
+    @Enumerated(EnumType.STRING)
+    private WeekPeriod weekPeriod;
 }

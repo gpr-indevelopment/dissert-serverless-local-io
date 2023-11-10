@@ -2,11 +2,13 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.DayOfWeek;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
+import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.DayOfWeek;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,6 +55,7 @@ public abstract class DdFunctionService {
                     .throughputKbPerSecond(extractThroughput(rawResponse))
                     .timeOfDay(resolveTimeOfDay())
                     .dayOfWeek(resolveDayOfWeek())
+                    .weekPeriod(resolveWeekPeriod())
                     .build();
             ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
             log.info("Persisted write experimental record: {}", ddExpRecordEntity);
@@ -68,8 +71,12 @@ public abstract class DdFunctionService {
         }
     }
 
+    private WeekPeriod resolveWeekPeriod() {
+        return WeekPeriod.from(resolveDayOfWeek());
+    }
+
     private DayOfWeek resolveDayOfWeek() {
-        return DayOfWeek.from(clockService.getCurrentTimestamp());
+        return clockService.getCurrentTimestamp().toLocalDateTime().getDayOfWeek();
     }
 
     private TimeOfDay resolveTimeOfDay() {
