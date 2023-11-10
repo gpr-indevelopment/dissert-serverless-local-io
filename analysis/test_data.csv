@@ -1,0 +1,321 @@
+ID,COLLECTED_AT,COMMAND,DAY_OF_WEEK,FILE_SIZE_BYTES,IO_SIZE_BYTES,LATENCY_SECONDS,OPERATION_TYPE,RAW_LATENCY,RAW_RESPONSE,RAW_THROUGHPUT,SYSTEM_NAME,THROUGHPUT_KB_PER_SECOND,TIME_OF_DAY
+1,07:01.8,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.00799,WRITE,1.00799 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.00799 s, 992 MB/s
+",992 MB/s,GCF_DD,9.92E+08,BUSINESS_HOUR
+2,07:02.0,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.122035,READ,0.122035 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122035 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,BUSINESS_HOUR
+3,09-11-23 0:07,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.22029,WRITE,1.22029 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 1.22029 s, 819 MB/s
+",819 MB/s,LAMBDA_DD,8.19E+08,BUSINESS_HOUR
+4,09-11-23 0:07,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.133734,READ,0.133734 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.133734 s, 7.5 GB/s
+",7.5 GB/s,LAMBDA_DD,7.50E+09,BUSINESS_HOUR
+5,09-11-23 0:08,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.14524,WRITE,1.14524 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.14524 s, 873 MB/s
+",873 MB/s,GCF_DD,8.73E+08,BUSINESS_HOUR
+6,08:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.119144,READ,0.119144 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.119144 s, 8.4 GB/s
+",8.4 GB/s,GCF_DD,8.40E+09,BUSINESS_HOUR
+7,08:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.661768,WRITE,0.661768 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.661768 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,BUSINESS_HOUR
+8,08:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.14557,READ,0.14557 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.14557 s, 6.9 GB/s
+",6.9 GB/s,LAMBDA_DD,6.90E+09,BUSINESS_HOUR
+9,09:01.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.19617,WRITE,1.19617 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.19617 s, 836 MB/s
+",836 MB/s,GCF_DD,8.36E+08,BUSINESS_HOUR
+10,09:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.122332,READ,0.122332 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122332 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,BUSINESS_HOUR
+11,09:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.647391,WRITE,0.647391 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.647391 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,BUSINESS_HOUR
+12,09:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.129243,READ,0.129243 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.129243 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,BUSINESS_HOUR
+13,10:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.1638,WRITE,1.1638 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.1638 s, 859 MB/s
+",859 MB/s,GCF_DD,8.59E+08,BUSINESS_HOUR
+14,10:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.125097,READ,0.125097 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.125097 s, 8.0 GB/s
+",8.0 GB/s,GCF_DD,8.00E+09,BUSINESS_HOUR
+15,10:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.680958,WRITE,0.680958 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.680958 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,BUSINESS_HOUR
+16,10:02.7,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.153433,READ,0.153433 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.153433 s, 6.5 GB/s
+",6.5 GB/s,LAMBDA_DD,6.50E+09,BUSINESS_HOUR
+17,11:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.13672,WRITE,1.13672 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.13672 s, 879 MB/s
+",879 MB/s,GCF_DD,8.79E+08,BUSINESS_HOUR
+18,11:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.132243,READ,0.132243 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.132243 s, 7.6 GB/s
+",7.6 GB/s,GCF_DD,7.60E+09,BUSINESS_HOUR
+19,11:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.653712,WRITE,0.653712 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.653712 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,BUSINESS_HOUR
+20,11:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.129313,READ,0.129313 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.129313 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,BUSINESS_HOUR
+21,12:01.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.13019,WRITE,1.13019 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.13019 s, 884 MB/s
+",884 MB/s,GCF_DD,8.84E+08,BUSINESS_HOUR
+22,12:01.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.120138,READ,0.120138 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.120138 s, 8.3 GB/s
+",8.3 GB/s,GCF_DD,8.30E+09,OFF_HOUR
+23,12:02.6,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.638126,WRITE,0.638126 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.638126 s, 1.6 GB/s
+",1.6 GB/s,LAMBDA_DD,1.60E+09,OFF_HOUR
+24,12:02.7,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.124028,READ,0.124028 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.124028 s, 8.1 GB/s
+",8.1 GB/s,LAMBDA_DD,8.10E+09,OFF_HOUR
+25,13:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.12543,WRITE,1.12543 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.12543 s, 888 MB/s
+",888 MB/s,GCF_DD,8.88E+08,OFF_HOUR
+26,13:01.4,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.122859,READ,0.122859 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122859 s, 8.1 GB/s
+",8.1 GB/s,GCF_DD,8.10E+09,OFF_HOUR
+27,13:02.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,0.684177,WRITE,0.684177 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.684177 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+28,13:02.7,if=/tmp/file1 of=/dev/null bs=1024000,WEEKDAY,,1024000,0.12509,READ,0.12509 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.12509 s, 8.0 GB/s
+",8.0 GB/s,LAMBDA_DD,8.00E+09,OFF_HOUR
+29,14:01.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKDAY,1000000000,1024000,1.18412,WRITE,1.18412 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.18412 s, 844 MB/s
+",844 MB/s,GCF_DD,8.44E+08,OFF_HOUR
+30,14:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.12513,READ,0.12513 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.12513 s, 8.0 GB/s
+",8.0 GB/s,GCF_DD,8.00E+09,OFF_HOUR
+31,14:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.666761,WRITE,0.666761 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.666761 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+32,14:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.124064,READ,0.124064 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.124064 s, 8.1 GB/s
+",8.1 GB/s,LAMBDA_DD,8.10E+09,OFF_HOUR
+33,15:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.16881,WRITE,1.16881 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.16881 s, 855 MB/s
+",855 MB/s,GCF_DD,8.55E+08,OFF_HOUR
+34,15:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.122061,READ,0.122061 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122061 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,OFF_HOUR
+35,15:02.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.677444,WRITE,0.677444 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.677444 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+36,15:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.127627,READ,0.127627 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.127627 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
+37,16:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.13028,WRITE,1.13028 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.13028 s, 884 MB/s
+",884 MB/s,GCF_DD,8.84E+08,OFF_HOUR
+38,16:01.4,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.121623,READ,0.121623 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.121623 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,OFF_HOUR
+39,16:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.685798,WRITE,0.685798 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.685798 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+40,16:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.128847,READ,0.128847 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.128847 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
+41,17:01.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.09552,WRITE,1.09552 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.09552 s, 912 MB/s
+",912 MB/s,GCF_DD,9.12E+08,OFF_HOUR
+42,17:01.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.12289,READ,0.12289 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.12289 s, 8.1 GB/s
+",8.1 GB/s,GCF_DD,8.10E+09,OFF_HOUR
+43,17:02.7,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.676189,WRITE,0.676189 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.676189 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+44,17:02.9,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.129576,READ,0.129576 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.129576 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,OFF_HOUR
+45,18:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.1467,WRITE,1.1467 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.1467 s, 872 MB/s
+",872 MB/s,GCF_DD,8.72E+08,OFF_HOUR
+46,18:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.12442,READ,0.12442 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.12442 s, 8.0 GB/s
+",8.0 GB/s,GCF_DD,8.00E+09,OFF_HOUR
+47,18:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.684548,WRITE,0.684548 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.684548 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+48,18:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.129352,READ,0.129352 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.129352 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,OFF_HOUR
+49,19:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.13271,WRITE,1.13271 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.13271 s, 882 MB/s
+",882 MB/s,GCF_DD,8.82E+08,OFF_HOUR
+50,19:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.1235,READ,0.1235 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.1235 s, 8.1 GB/s
+",8.1 GB/s,GCF_DD,8.10E+09,OFF_HOUR
+51,19:02.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.660423,WRITE,0.660423 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.660423 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+52,19:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.128607,READ,0.128607 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.128607 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
+53,20:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.17433,WRITE,1.17433 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.17433 s, 851 MB/s
+",851 MB/s,GCF_DD,8.51E+08,OFF_HOUR
+54,20:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.127767,READ,0.127767 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.127767 s, 7.8 GB/s
+",7.8 GB/s,GCF_DD,7.80E+09,OFF_HOUR
+55,20:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.654758,WRITE,0.654758 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.654758 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+56,20:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.125809,READ,0.125809 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.125809 s, 7.9 GB/s
+",7.9 GB/s,LAMBDA_DD,7.90E+09,OFF_HOUR
+57,21:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.11054,WRITE,1.11054 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.11054 s, 900 MB/s
+",900 MB/s,GCF_DD,9.00E+08,OFF_HOUR
+58,21:01.4,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.122617,READ,0.122617 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122617 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,OFF_HOUR
+59,21:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.655614,WRITE,0.655614 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.655614 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+60,21:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.125011,READ,0.125011 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.125011 s, 8.0 GB/s
+",8.0 GB/s,LAMBDA_DD,8.00E+09,OFF_HOUR
+61,22:01.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.12827,WRITE,1.12827 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.12827 s, 886 MB/s
+",886 MB/s,GCF_DD,8.86E+08,OFF_HOUR
+62,22:01.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.122487,READ,0.122487 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122487 s, 8.2 GB/s
+",8.2 GB/s,GCF_DD,8.20E+09,OFF_HOUR
+63,22:02.6,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.676486,WRITE,0.676486 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.676486 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+64,22:02.8,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.130183,READ,0.130183 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.130183 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,OFF_HOUR
+65,23:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.12208,WRITE,1.12208 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.12208 s, 891 MB/s
+",891 MB/s,GCF_DD,8.91E+08,OFF_HOUR
+66,23:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.124353,READ,0.124353 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.124353 s, 8.0 GB/s
+",8.0 GB/s,GCF_DD,8.00E+09,OFF_HOUR
+67,23:02.5,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.661694,WRITE,0.661694 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.661694 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+68,23:02.7,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.128945,READ,0.128945 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.128945 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
+69,24:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.12759,WRITE,1.12759 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.12759 s, 886 MB/s
+",886 MB/s,GCF_DD,8.86E+08,OFF_HOUR
+70,24:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.120957,READ,0.120957 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.120957 s, 8.3 GB/s
+",8.3 GB/s,GCF_DD,8.30E+09,OFF_HOUR
+71,24:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.682262,WRITE,0.682262 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.682262 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+72,24:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.13027,READ,0.13027 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.13027 s, 7.7 GB/s
+",7.7 GB/s,LAMBDA_DD,7.70E+09,OFF_HOUR
+73,25:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.13964,WRITE,1.13964 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.13964 s, 877 MB/s
+",877 MB/s,GCF_DD,8.77E+08,OFF_HOUR
+74,25:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.123105,READ,0.123105 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.123105 s, 8.1 GB/s
+",8.1 GB/s,GCF_DD,8.10E+09,OFF_HOUR
+75,25:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.685606,WRITE,0.685606 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.685606 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+76,25:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.128929,READ,0.128929 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.128929 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
+77,26:01.3,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,1.1284,WRITE,1.1284 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 1.1284 s, 886 MB/s
+",886 MB/s,GCF_DD,8.86E+08,OFF_HOUR
+78,26:01.5,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.122894,READ,0.122894 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB, 953 MiB) copied, 0.122894 s, 8.1 GB/s
+",8.1 GB/s,GCF_DD,8.10E+09,OFF_HOUR
+79,26:02.4,if=/dev/zero of=/tmp/file1 bs=1024000 count=976,WEEKEND,1000000000,1024000,0.688746,WRITE,0.688746 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.688746 s, 1.5 GB/s
+",1.5 GB/s,LAMBDA_DD,1.50E+09,OFF_HOUR
+80,26:02.6,if=/tmp/file1 of=/dev/null bs=1024000,WEEKEND,,1024000,0.128846,READ,0.128846 s,"976+0 records in
+976+0 records out
+999424000 bytes (999 MB) copied, 0.128846 s, 7.8 GB/s
+",7.8 GB/s,LAMBDA_DD,7.80E+09,OFF_HOUR
