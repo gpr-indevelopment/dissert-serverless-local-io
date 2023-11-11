@@ -13,11 +13,11 @@ data = read.csv("./test_data.csv")
 
 Load the CSV data in the AOV to test 3 factors with 2 levels each: 
 * Time of day: BUSINESS_HOUR and OFF_HOUR
-* Day of week: WEEKDAY and WEEKEND
+* Week Period: WEEKDAY and WEEKEND
 * Serverless provider: Lambda and GCF
 
 ```{r data-aov}
-data.aov = aov(LATENCY_SECONDS ~ SYSTEM_NAME * TIME_OF_DAY * DAY_OF_WEEK * OPERATION_TYPE, 
+data.aov = aov(LATENCY_SECONDS ~ SYSTEM_NAME * TIME_OF_DAY * WEEK_PERIOD * OPERATION_TYPE, 
                data=data)
 summary(data.aov)
 ```
@@ -46,6 +46,6 @@ plot(tukey,las=1,tcl = -.6)
 2. Confidence interval for `OPERATION_TYPE` is positive for `WRITE - READ`. This means that write is higher, hence reads are faster as expected.
 3. Lambda reads and GCF reads have no significant differences, so they are the same.
 4. Confidence interval for `LAMBDA_DD:WRITE - GCF_DD:WRITE` is negative. This means that writes in GCF are slower than Lambda.
-5. Day of the week is not significant.
+5. Week period is not significant.
 6. Time of day is significant for 95% confidence level. Its confidence interval is negative for `OFF-HOUR - BUSINESS_HOUR`. This means that business hours are slower.
 
