@@ -10,12 +10,11 @@ library(ggplot2)
 data = read.csv("./day-time-dataset.csv")
 data_write = data[data$OPERATION_TYPE == 'WRITE',]
 
-data_write_weekend <- data[data$OPERATION_TYPE == 'WRITE' & data$WEEK_PERIOD == 'WEEKEND',]
-data_write_weekday <- data[data$OPERATION_TYPE == 'WRITE' & data$WEEK_PERIOD == 'WEEKDAY',]
+data_write_lambda = data[data$OPERATION_TYPE == 'WRITE' & data$SYSTEM_NAME == 'LAMBDA_DD',]
+data_write_gcf = data[data$OPERATION_TYPE == 'WRITE' & data$SYSTEM_NAME == 'GCF_DD',]
 
-data_write_business <- data[data$OPERATION_TYPE == 'WRITE' & data$TIME_OF_DAY == 'BUSINESS_HOUR',]
-data_write_off <- data[data$OPERATION_TYPE == 'WRITE' & data$TIME_OF_DAY == 'OFF_HOUR',]
 hist_seq = seq(600, 1800, 100)
+boxplot_limits = c(600, 1800)
 conf_level = 0.95
 ```
 
@@ -29,76 +28,257 @@ All data in weekends are considered to be in off hours.
 
 The first histogram was based on the latency of all data for write operations. We can see two modes: The one in the left is the interval (700,800] and is asymmetric. The right mode is symmetrical and is located in the interval (1000,1200]. For this reason, this is an asymmetric bimodal data distribution.
 
-```{r write-histogram,ech=FALSE}
+```{r write-histogram,echo=FALSE}
 layout(matrix(1:2, nrow = 1))
 hist(data_write$LATENCY_SECONDS * 1000, main = "Histogram of Write Latency", xlab = "Latency (ms)", breaks = hist_seq)
 
 boxplot(data_write$LATENCY_SECONDS * 1000)
 layout(matrix(1:1, nrow = 1))
 ```
-Let's look for the source of both modes.
+Let's look for the source of both modes. Maybe its from the provider.
 
-### Modes in weekdays and weekends
+## Write operations analysis per provider
+
+When we plot the latency distribution per provider, we can find the source of the two modes. The left mode belongs to Lambda, while the other one belongs to GCF. The distributions for the providers are asymmetric. At first glance, it seems GCF is slower than Lambda for write operations. Lets divide the analysis into two providers so we can check the relevance of day of the week and time of day.
+
+```{r write-histogram-provider,echo=FALSE,fig.height=9}
+layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
+hist(data_write_lambda$LATENCY_SECONDS * 1000, main = "Lambda", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_gcf$LATENCY_SECONDS * 1000, main = "GCF", xlab = "Latency (ms)", breaks = hist_seq)
+boxplot(data_write_lambda$LATENCY_SECONDS * 1000, ylim = boxplot_limits)
+boxplot(data_write_gcf$LATENCY_SECONDS * 1000, ylim = boxplot_limits)
+layout(matrix(1:1, nrow = 1))
+```
+
+## Lambda analysis
+
+### Weekdays and weekends in Lambda
+
+```{r setup-lambda-weekday-weekend, include=FALSE}
+data_write_weekday_lambda <- data_write_lambda[data_write_lambda$WEEK_PERIOD == 'WEEKDAY',]
+data_write_weekend_lambda <- data_write_lambda[data_write_lambda$WEEK_PERIOD == 'WEEKEND',]
+```
 
 First, lets plot histograms for both weekdays and weekends and see if they have a similar distribution.
 
-```{r write-histogram-weekends-weekdays,echo=FALSE,fig.height=9}
+No visible difference other than weekends aparently having more stable performance with less outliers.
+
+```{r write-histogram-lambda-weekends-weekdays,echo=FALSE,fig.height=9}
 layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
-hist(data_write_weekday$LATENCY_SECONDS * 1000, main = "Weekdays", xlab = "Latency (ms)", breaks = hist_seq)
-hist(data_write_weekend$LATENCY_SECONDS * 1000, main = "Weekends", xlab = "Latency (ms)", breaks = hist_seq)
-boxplot(data_write_weekday$LATENCY_SECONDS * 1000)
-boxplot(data_write_weekend$LATENCY_SECONDS * 1000)
+hist(data_write_weekday_lambda$LATENCY_SECONDS * 1000, main = "Weekdays in Lambda", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_weekend_lambda$LATENCY_SECONDS * 1000, main = "Weekends in Lambda", xlab = "Latency (ms)", breaks = hist_seq)
+boxplot(data_write_weekday_lambda$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+boxplot(data_write_weekend_lambda$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
 layout(matrix(1:1, nrow = 1))
 ```
 
-In both cases we have modes in the same intervals. While for weekdays the mode on the right is symmetrical, and for weekends its asymmetrical, in both cases we have asymmetric bimodal data distributions.
+### Business and off hours in Lambda
 
-### Modes business and off hours
+```{r setup-lambda-business-off-hours, include=FALSE}
+data_write_business_lambda <- data_write_lambda[data_write_lambda$TIME_OF_DAY == 'BUSINESS_HOUR',]
+data_write_off_lambda <- data_write_lambda[data_write_lambda$TIME_OF_DAY == 'OFF_HOUR',]
+```
 
-Second, lets plot histograms for both business hours and weekends and see if they have a similar distribution.
+Second, lets plot histograms for both business hours and off hours and see if they have a similar distribution in Lambda. Also no noticeable performance difference here besides business hours apparently having more stable performance.
 
-```{r write-histogram-business-off-hours,echo=FALSE,fig.height=9}
+```{r write-histogram-lambda-business-off-hours,echo=FALSE,fig.height=9}
 layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
-hist(data_write_business$LATENCY_SECONDS * 1000, main = "Business hours", xlab = "Latency (ms)", breaks = hist_seq)
-hist(data_write_off$LATENCY_SECONDS * 1000, main = "Off hours", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_business_lambda$LATENCY_SECONDS * 1000, main = "Business hours in Lambda", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_off_lambda$LATENCY_SECONDS * 1000, main = "Off hours in Lambda", xlab = "Latency (ms)", breaks = hist_seq)
 
-boxplot(data_write_business$LATENCY_SECONDS * 1000)
-boxplot(data_write_off$LATENCY_SECONDS * 1000)
+boxplot(data_write_business_lambda$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+boxplot(data_write_off_lambda$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
 layout(matrix(1:1, nrow = 1))
 ```
 
-### Confidence intervals
+### Confidence intervals in Lambda
 
-```{r write-conf-intervals-setup, echo=FALSE}
-t_test_weekday = t.test(data_write_weekday$LATENCY_SECONDS, conf.level=conf_level)
-t_test_weekend = t.test(data_write_weekend$LATENCY_SECONDS, conf.level=conf_level)
-ic_results_day = data.frame(
+```{r write-conf-intervals-setup-lambda, echo=FALSE}
+t_test_weekday_lambda = t.test(data_write_weekday_lambda$LATENCY_SECONDS, conf.level=conf_level)
+t_test_weekend_lambda = t.test(data_write_weekend_lambda$LATENCY_SECONDS, conf.level=conf_level)
+ic_results_day_lambda = data.frame(
 x = 1:2,
-y = c(mean(data_write_weekday$LATENCY_SECONDS), mean(data_write_weekend$LATENCY_SECONDS)) * 1000,
-lower = c(t_test_weekday$conf.int[1], t_test_weekend$conf.int[1]) * 1000,
-upper = c(t_test_weekday$conf.int[2], t_test_weekend$conf.int[2]) * 1000)
+y = c(mean(data_write_weekday_lambda$LATENCY_SECONDS), mean(data_write_weekend_lambda$LATENCY_SECONDS)) * 1000,
+lower = c(t_test_weekday_lambda$conf.int[1], t_test_weekend_lambda$conf.int[1]) * 1000,
+upper = c(t_test_weekday_lambda$conf.int[2], t_test_weekend_lambda$conf.int[2]) * 1000)
 
-t_test_business = t.test(data_write_business$LATENCY_SECONDS, conf.level=conf_level)
-t_test_off = t.test(data_write_off$LATENCY_SECONDS, conf.level=conf_level)
-ic_results_time = data.frame(
+t_test_business_lambda = t.test(data_write_business_lambda$LATENCY_SECONDS, conf.level=conf_level)
+t_test_off_lambda = t.test(data_write_off_lambda$LATENCY_SECONDS, conf.level=conf_level)
+ic_results_time_lambda = data.frame(
 x = 1:2,
-y = c(mean(data_write_business$LATENCY_SECONDS), mean(data_write_off$LATENCY_SECONDS)) * 1000,
-lower = c(t_test_business$conf.int[1], t_test_off$conf.int[1]) * 1000,
-upper = c(t_test_business$conf.int[2], t_test_off$conf.int[2]) * 1000)
+y = c(mean(data_write_business_lambda$LATENCY_SECONDS), mean(data_write_off_lambda$LATENCY_SECONDS)) * 1000,
+lower = c(t_test_business_lambda$conf.int[1], t_test_off_lambda$conf.int[1]) * 1000,
+upper = c(t_test_business_lambda$conf.int[2], t_test_off_lambda$conf.int[2]) * 1000)
 ```
 
-As we can see from the confidence intervals for the means on week periods, we cannot afirm there is no statistically significant difference between latencies measured during weekdays and weekends, since the confidence intervals have no overlap.
+As we can see from the confidence intervals for the means on week periods, we can confirm there is statistically significant difference between latencies measured during weekdays and weekends, since the confidence intervals have no overlap.
 
-```{r write-day-conf-intervals, echo=FALSE}
-ggplot(ic_results_day, aes(x, y)) + geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Week Period Confidence intervals for the means (95% conf. level)") +
+```{r write-day-conf-intervals-lambda, echo=FALSE}
+ggplot(ic_results_day_lambda, aes(x, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Week Period in Lambda Confidence intervals for the means (conf. = 95%)") +
   scale_x_continuous(breaks = c(1, 2), labels = c("Weekday", "Weekend"))
 ```
 
-Alternatively, the mean latency measured for off hours is included in the confidence interval for business hours, which means there is no statistically significant difference between latencies measured during business hours and off hours.
+Even though the confidence intervals for business and off hours have some overlap, we cannot confirm there are no statistically significant difference between them since this overlap does not include either mean values of any interval. This means we need further testing to see if the performance between business hours and off hours is different, even though we already know it is for weekends and weekdays. 
 
-```{r time-of-day-conf-intervals, echo=FALSE}
-ggplot(ic_results_time, aes(x, y)) + geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Time of Day Confidence intervals for the means (95% conf. level)") +
+```{r time-of-day-conf-intervals-lambda, echo=FALSE}
+ggplot(ic_results_time_lambda, aes(x, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Time of Day in Lambda Confidence intervals for the means (conf. = 95%)") +
   scale_x_continuous(breaks = c(1, 2), labels = c("Business hours", "Off hours"))
+```
+
+### ANOVA in Lambda
+
+By looking at the ANOVA results, both time of day and week period factors are statistically significant for a confidence level of 95%.
+
+```{r anova-lambda,echo=FALSE}
+data_aov_lambda = aov(LATENCY_SECONDS*1000 ~ TIME_OF_DAY * WEEK_PERIOD,
+                      data=data_write_lambda)
+summary(data_aov_lambda)
+```
+
+The allocation of variation shows most of the variation is due to random error. Even though time of day is a relevant factor it participates very little in the total variation.
+
+```{r anova-sst-lambda,echo=FALSE}
+SS_lambda = anova(data_aov_lambda)["Sum Sq"]
+SST_lambda = sum(SS_lambda)
+round(100*SS_lambda/SST_lambda, 2)
+```
+
+From the Tukey test we can see the confidence intervals for the difference between business hours and off hours does not include 0, but it is very close to it. We can also see that the difference between weekend and weekday is negative, meaning that weekdays are less performant.
+
+```{r lambda-tukey, echo=FALSE}
+layout(matrix(1:2, nrow = 1))
+tukey_lambda = TukeyHSD(data_aov_lambda, conf.level = 0.95)
+plot(tukey_lambda)
+layout(matrix(1:1, nrow = 1))
+```
+
+## GCF analysis
+
+### Weekdays and weekends in GCF
+
+```{r setup-gcf-weekday-weekend, include=FALSE}
+data_write_weekday_gcf <- data_write_gcf[data_write_gcf$WEEK_PERIOD == 'WEEKDAY',]
+data_write_weekend_gcf <- data_write_gcf[data_write_gcf$WEEK_PERIOD == 'WEEKEND',]
+```
+
+First, lets plot histograms for both weekdays and weekends and see if they have a similar distribution.
+
+No visible difference other than weekends aparently having more stable performance with less outliers. This difference is very small though.
+
+```{r write-histogram-gcf-weekends-weekdays,echo=FALSE,fig.height=9}
+layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
+hist(data_write_weekday_gcf$LATENCY_SECONDS * 1000, main = "Weekdays in GCF", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_weekend_gcf$LATENCY_SECONDS * 1000, main = "Weekends in GCF", xlab = "Latency (ms)", breaks = hist_seq)
+boxplot(data_write_weekday_gcf$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+boxplot(data_write_weekend_gcf$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+layout(matrix(1:1, nrow = 1))
+```
+
+### Business and off hours in GCF
+
+```{r setup-gcf-business-off-hours, include=FALSE}
+data_write_business_gcf <- data_write_gcf[data_write_gcf$TIME_OF_DAY == 'BUSINESS_HOUR',]
+data_write_off_gcf <- data_write_gcf[data_write_gcf$TIME_OF_DAY == 'OFF_HOUR',]
+```
+
+Second, lets plot histograms for both business hours and off hours and see if they have a similar distribution in GCF. Also no noticeable performance difference here besides off hours apparently having more stable performance.
+
+```{r write-histogram-gcf-business-off-hours,echo=FALSE,fig.height=9}
+layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
+hist(data_write_business_gcf$LATENCY_SECONDS * 1000, main = "Business hours in GCF", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_off_gcf$LATENCY_SECONDS * 1000, main = "Off hours in GCF", xlab = "Latency (ms)", breaks = hist_seq)
+
+boxplot(data_write_business_gcf$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+boxplot(data_write_off_gcf$LATENCY_SECONDS * 1000, ylim=boxplot_limits)
+layout(matrix(1:1, nrow = 1))
+```
+
+### Confidence intervals in GCF
+
+```{r write-conf-intervals-setup-gcf, echo=FALSE}
+t_test_weekday_gcf = t.test(data_write_weekday_gcf$LATENCY_SECONDS, conf.level=conf_level)
+t_test_weekend_gcf = t.test(data_write_weekend_gcf$LATENCY_SECONDS, conf.level=conf_level)
+ic_results_day_gcf = data.frame(
+x = 1:2,
+y = c(mean(data_write_weekday_gcf$LATENCY_SECONDS), mean(data_write_weekend_gcf$LATENCY_SECONDS)) * 1000,
+lower = c(t_test_weekday_gcf$conf.int[1], t_test_weekend_gcf$conf.int[1]) * 1000,
+upper = c(t_test_weekday_gcf$conf.int[2], t_test_weekend_gcf$conf.int[2]) * 1000)
+
+t_test_business_gcf = t.test(data_write_business_gcf$LATENCY_SECONDS, conf.level=conf_level)
+t_test_off_gcf = t.test(data_write_off_gcf$LATENCY_SECONDS, conf.level=conf_level)
+ic_results_time_gcf = data.frame(
+x = 1:2,
+y = c(mean(data_write_business_gcf$LATENCY_SECONDS), mean(data_write_off_gcf$LATENCY_SECONDS)) * 1000,
+lower = c(t_test_business_gcf$conf.int[1], t_test_off_gcf$conf.int[1]) * 1000,
+upper = c(t_test_business_gcf$conf.int[2], t_test_off_gcf$conf.int[2]) * 1000)
+```
+
+As we can see from the confidence intervals for the means on week periods, we can confirm there is statistically significant difference between latencies measured during weekdays and weekends, since the confidence intervals have no overlap.
+
+```{r write-day-conf-intervals-gcf, echo=FALSE}
+ggplot(ic_results_day_gcf, aes(x, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Week Period in GCF Confidence intervals for the means (conf. = 95%)") +
+  scale_x_continuous(breaks = c(1, 2), labels = c("Weekday", "Weekend"))
+```
+
+Similarly, the confidence intervals for business and off hours have no overlap, meaning we can confirm there are statistically significant differences between latencies measured during business hours and off hours in GCF
+
+```{r time-of-day-conf-intervals-gcf, echo=FALSE}
+ggplot(ic_results_time_gcf, aes(x, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle("Time of Day in GCF Confidence intervals for the means (conf. = 95%)") +
+  scale_x_continuous(breaks = c(1, 2), labels = c("Business hours", "Off hours"))
+```
+
+### ANOVA in GCF
+
+By looking at the ANOVA results, both time of day is statistically significant for a confidence level of 95%. On the other hand, the period of the week is not statistically significant, even though latencies measured during the week are different from those in weekends.
+
+```{r anova-gcf,echo=FALSE}
+data_aov_gcf = aov(LATENCY_SECONDS*1000 ~ TIME_OF_DAY * WEEK_PERIOD,
+                      data=data_write_gcf)
+summary(data_aov_gcf)
+```
+
+The allocation of variation shows most of the variation is due to random error with small participation from the time of day.
+
+```{r anova-sst-gcf,echo=FALSE}
+SS_gcf = anova(data_aov_gcf)["Sum Sq"]
+SST_gcf = sum(SS_gcf)
+round(100*SS_gcf/SST_gcf, 2)
+```
+
+From the Tukey test we can see the confidence intervals for the difference between business hours and off hours is negative, meaning that off hours have more performance. Conversely, the confidence interval for the difference between weekends and weekdays includes 0, confirming that week period is not significant to overall latency.
+
+```{r gcf-tukey, echo=FALSE}
+layout(matrix(1:2, nrow = 1))
+tukey_gcf = TukeyHSD(data_aov_gcf, conf.level = 0.95)
+plot(tukey_gcf)
+layout(matrix(1:1, nrow = 1))
+```
+
+## Key takeaways
+
+For Lambda,
+1. Latency for weekdays and weekends is different.
+2. Latency for business hours and off hours is different, but not a lot. Small advantage to business hours for performance.
+3. Both time of day and week periods are significant for overall performance.
+4. Performance over the weekends is better.
+
+For GCF,
+1. Latency for weekdays and weekends is different.
+2. Latency for business hours and off hours is different.
+3. Time of day is significant for overall latency. Day of the week is not.
+4. Performance during off hours is better.
+
+## Figure playground
+
+```{r playground, echo=FALSE,fig.height=9}
+layout(matrix(c(1,3,2,4), nrow = 2, ncol=2))
+hist(data_write_lambda$LATENCY_SECONDS * 1000, main = "Lambda", xlab = "Latency (ms)", breaks = hist_seq)
+hist(data_write_gcf$LATENCY_SECONDS * 1000, main = "GCF", xlab = "Latency (ms)", breaks = hist_seq)
+boxplot(data_write_lambda$LATENCY_SECONDS * 1000, ylim = c(700, 1200))
+boxplot(data_write_gcf$LATENCY_SECONDS * 1000, ylim = c(700,1200))
+layout(matrix(1:1, nrow = 1))
 ```
