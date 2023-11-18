@@ -7,6 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 library(ggplot2)
+library(gridExtra)
 data = read.csv("./day-time-dataset.csv")
 data_write = data[data$OPERATION_TYPE == 'WRITE',]
 
@@ -16,6 +17,7 @@ data_write_gcf = data[data$OPERATION_TYPE == 'WRITE' & data$SYSTEM_NAME == 'GCF_
 hist_seq = seq(600, 1800, 100)
 boxplot_limits = c(600, 1800)
 conf_level = 0.95
+CV <- function(x) { sd(x) / mean(x) }
 ```
 
 # Day and time experiment
@@ -100,7 +102,10 @@ ic_results_day_lambda = data.frame(
 x = 1:2,
 y = c(mean(data_write_weekday_lambda$LATENCY_SECONDS), mean(data_write_weekend_lambda$LATENCY_SECONDS)) * 1000,
 lower = c(t_test_weekday_lambda$conf.int[1], t_test_weekend_lambda$conf.int[1]) * 1000,
-upper = c(t_test_weekday_lambda$conf.int[2], t_test_weekend_lambda$conf.int[2]) * 1000)
+upper = c(t_test_weekday_lambda$conf.int[2], t_test_weekend_lambda$conf.int[2]) * 1000,
+when = c("Weekday", "Weekend"))
+ic_results_day_lambda$provider = "Lambda"
+ic_results_day_lambda$type = "Day of week"
 
 t_test_business_lambda = t.test(data_write_business_lambda$LATENCY_SECONDS, conf.level=conf_level)
 t_test_off_lambda = t.test(data_write_off_lambda$LATENCY_SECONDS, conf.level=conf_level)
@@ -108,7 +113,10 @@ ic_results_time_lambda = data.frame(
 x = 1:2,
 y = c(mean(data_write_business_lambda$LATENCY_SECONDS), mean(data_write_off_lambda$LATENCY_SECONDS)) * 1000,
 lower = c(t_test_business_lambda$conf.int[1], t_test_off_lambda$conf.int[1]) * 1000,
-upper = c(t_test_business_lambda$conf.int[2], t_test_off_lambda$conf.int[2]) * 1000)
+upper = c(t_test_business_lambda$conf.int[2], t_test_off_lambda$conf.int[2]) * 1000,
+when = c("Business hours", "Off-hours"))
+ic_results_time_lambda$provider = "Lambda"
+ic_results_time_lambda$type = "Time of day"
 ```
 
 As we can see from the confidence intervals for the means on week periods, we can confirm there is statistically significant difference between latencies measured during weekdays and weekends, since the confidence intervals have no overlap.
@@ -143,6 +151,7 @@ The allocation of variation shows most of the variation is due to random error. 
 SS_lambda = anova(data_aov_lambda)["Sum Sq"]
 SST_lambda = sum(SS_lambda)
 round(100*SS_lambda/SST_lambda, 2)
+qf(0.95, 1, 2847);
 ```
 
 From the Tukey test we can see the confidence intervals for the difference between business hours and off hours does not include 0, but it is very close to it. We can also see that the difference between weekend and weekday is negative, meaning that weekdays are less performant.
@@ -158,7 +167,7 @@ layout(matrix(1:1, nrow = 1))
 
 ### Weekdays and weekends in GCF
 
-```{r setup-gcf-weekday-weekend, include=FALSE}
+```{r setup-gcf-weekday-weekend}
 data_write_weekday_gcf <- data_write_gcf[data_write_gcf$WEEK_PERIOD == 'WEEKDAY',]
 data_write_weekend_gcf <- data_write_gcf[data_write_gcf$WEEK_PERIOD == 'WEEKEND',]
 ```
@@ -204,7 +213,10 @@ ic_results_day_gcf = data.frame(
 x = 1:2,
 y = c(mean(data_write_weekday_gcf$LATENCY_SECONDS), mean(data_write_weekend_gcf$LATENCY_SECONDS)) * 1000,
 lower = c(t_test_weekday_gcf$conf.int[1], t_test_weekend_gcf$conf.int[1]) * 1000,
-upper = c(t_test_weekday_gcf$conf.int[2], t_test_weekend_gcf$conf.int[2]) * 1000)
+upper = c(t_test_weekday_gcf$conf.int[2], t_test_weekend_gcf$conf.int[2]) * 1000,
+when = c("Weekday", "Weekend"))
+ic_results_day_gcf$provider = "GCF"
+ic_results_day_gcf$type = "Day of week"
 
 t_test_business_gcf = t.test(data_write_business_gcf$LATENCY_SECONDS, conf.level=conf_level)
 t_test_off_gcf = t.test(data_write_off_gcf$LATENCY_SECONDS, conf.level=conf_level)
@@ -212,7 +224,10 @@ ic_results_time_gcf = data.frame(
 x = 1:2,
 y = c(mean(data_write_business_gcf$LATENCY_SECONDS), mean(data_write_off_gcf$LATENCY_SECONDS)) * 1000,
 lower = c(t_test_business_gcf$conf.int[1], t_test_off_gcf$conf.int[1]) * 1000,
-upper = c(t_test_business_gcf$conf.int[2], t_test_off_gcf$conf.int[2]) * 1000)
+upper = c(t_test_business_gcf$conf.int[2], t_test_off_gcf$conf.int[2]) * 1000,
+when = c("Business hours", "Off-hours"))
+ic_results_time_gcf$provider = "GCF"
+ic_results_time_gcf$type = "Time of day"
 ```
 
 As we can see from the confidence intervals for the means on week periods, we can confirm there is statistically significant difference between latencies measured during weekdays and weekends, since the confidence intervals have no overlap.
@@ -247,6 +262,7 @@ The allocation of variation shows most of the variation is due to random error w
 SS_gcf = anova(data_aov_gcf)["Sum Sq"]
 SST_gcf = sum(SS_gcf)
 round(100*SS_gcf/SST_gcf, 2)
+qf(0.95, 1, 2849);
 ```
 
 From the Tukey test we can see the confidence intervals for the difference between business hours and off hours is negative, meaning that off hours have more performance. Conversely, the confidence interval for the difference between weekends and weekdays includes 0, confirming that week period is not significant to overall latency.
@@ -279,4 +295,21 @@ layout(matrix(1:2, nrow =1))
 hist(data_write_lambda$LATENCY_SECONDS * 1000, main = "Lambda", xlab = "Latency (ms)", breaks = hist_seq)
 hist(data_write_gcf$LATENCY_SECONDS * 1000, main = "GCF", xlab = "Latency (ms)", breaks = hist_seq)
 layout(matrix(1:1, nrow = 1))
+ic_results_full = rbind(ic_results_day_gcf, ic_results_time_gcf)
+ic_results_full = rbind(ic_results_full, ic_results_day_lambda)
+ic_results_full = rbind(ic_results_full, ic_results_time_lambda)
+
+ggplot1 = ggplot(ic_results_full[ic_results_full$type == 'Day of week',], aes(x = when, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle(NULL) + facet_grid(provider ~ type, scales = "free_y") + theme_bw()
+
+ggplo2 = ggplot(ic_results_full[ic_results_full$type == 'Time of day',], aes(x = when, y)) + geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper)) + labs(y="Latency (ms)", x = NULL) + ggtitle(NULL) + facet_grid(provider ~ type, scales = "free_y") + theme_bw()
+
+grid.arrange(ggplot1, ggplo2, ncol = 2)
+```
+
+```{r medians}
+medians = data.frame(name = c("Time of day", "Day of week","Time of day", "Day of week"), provider = c("Lambda", "Lambda", "GCF", "GCF"),
+                     diff_median = c(median(data_write_business_lambda$LATENCY_SECONDS) * 100 / median(data_write_off_lambda$LATENCY_SECONDS), median(data_write_weekday_lambda$LATENCY_SECONDS) * 100 / median(data_write_weekend_lambda$LATENCY_SECONDS), median(data_write_business_gcf$LATENCY_SECONDS) * 100 / median(data_write_off_gcf$LATENCY_SECONDS), median(data_write_weekday_gcf$LATENCY_SECONDS) * 100 / median(data_write_weekend_gcf$LATENCY_SECONDS)))
+medians
 ```
