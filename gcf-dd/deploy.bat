@@ -1,1 +1,1 @@
-gcloud functions deploy gcf-dd --gen2 --runtime=nodejs18 --source=. --entry-point=gcf-dd --trigger-http --memory=2G --max-instances=10 --allow-unauthenticated
+gcloud functions deploy gcf-dd --gen2 --runtime=nodejs18 --source=. --entry-point=gcf-dd --trigger-http --memory=2G --max-instances=1 --allow-unauthenticated
