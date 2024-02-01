@@ -18,6 +18,7 @@ public class AwsService {
     private final AwsProps awsProps;
 
     public void setFunctionMemory(String functionArn, int memorySizeMb) throws AwsOperationException {
+        log.info("Setting function with ARN: {} to memory: {} MB", functionArn, memorySizeMb);
         validateAllowedMemorySize(memorySizeMb);
         try {
             UpdateFunctionConfigurationRequest configUpdateRequest = UpdateFunctionConfigurationRequest
@@ -47,6 +48,7 @@ public class AwsService {
                 status,
                 tryCount);
         if (status.equals(LastUpdateStatus.SUCCESSFUL)) {
+            log.info("Successfully set function with ARN: {} to memory: {} MB", functionArn, memorySizeMb);
             return;
         }
         if (status.equals(LastUpdateStatus.FAILED)) {
