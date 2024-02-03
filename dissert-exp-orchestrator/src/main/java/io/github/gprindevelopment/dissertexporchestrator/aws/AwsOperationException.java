@@ -1,6 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.aws;
 
-public class AwsOperationException extends Exception {
+public class AwsOperationException extends RuntimeException {
 
     public AwsOperationException(String message) {
         super(message);

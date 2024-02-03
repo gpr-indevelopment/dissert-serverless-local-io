@@ -12,12 +12,12 @@ import java.time.Duration;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AwsService {
+public class LambdaService {
 
     private final LambdaClient lambdaClient;
     private final AwsProps awsProps;
 
-    public void setFunctionMemory(String functionArn, int memorySizeMb) throws AwsOperationException {
+    public void setFunctionMemory(String functionArn, int memorySizeMb) throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
         log.info("Setting function with ARN: {} to memory: {} MB", functionArn, memorySizeMb);
         validateAllowedMemorySize(memorySizeMb);
         try {
@@ -28,11 +28,15 @@ public class AwsService {
                     .build();
             UpdateFunctionConfigurationResponse configUpdateResponse = lambdaClient.updateFunctionConfiguration(configUpdateRequest);
             verifyUpdateSuccessful(functionArn, memorySizeMb, configUpdateResponse.lastUpdateStatus(), 0);
+        } catch (ResourceNotFoundException resourceNotFoundException) {
+            String message = String.format("Lambda not found while setting functionArn: %s to memory: %d",
+                    functionArn,
+                    memorySizeMb);
+            throw new LambdaNotFoundException(message, resourceNotFoundException);
         } catch (SdkException ex) {
             String message = String.format("An SDK failure happened while updating Lambda function config with functionArn: %s and memorySize: %d MB",
                     functionArn,
                     memorySizeMb);
-            log.error(message, ex);
             throw new AwsOperationException(message, ex);
         }
     }
@@ -41,7 +45,7 @@ public class AwsService {
             String functionArn,
             int memorySizeMb,
             LastUpdateStatus status,
-            int tryCount) throws AwsOperationException {
+            int tryCount) throws AwsOperationException, LambdaUpdateMaxTriesException {
         log.debug("Verifying update for functionArn: {} and memorySize: {} MB for status: {} and tryCount for GetConfiguration: {}",
                 functionArn,
                 memorySizeMb,
@@ -60,7 +64,7 @@ public class AwsService {
                     tryCount,
                     functionArn,
                     memorySizeMb);
-            throw new AwsOperationException(message);
+            throw new LambdaUpdateMaxTriesException(message);
         }
         waitForUpdate(functionArn, memorySizeMb, Duration.ofSeconds(awsProps.lambdaUpdateWaitSeconds()));
         GetFunctionConfigurationRequest getConfigRequest = GetFunctionConfigurationRequest

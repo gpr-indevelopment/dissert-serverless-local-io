@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AwsServiceTest {
+class LambdaServiceTest {
 
     @InjectMocks
-    private AwsService awsService;
+    private LambdaService lambdaService;
     @Mock
     private LambdaClient lambdaClient;
     @Mock
@@ -26,7 +26,7 @@ class AwsServiceTest {
     private final EasyRandom generator = new EasyRandom();
 
     @Test
-    public void Should_successfully_set_function_memory() throws AwsOperationException {
+    public void Should_successfully_set_function_memory() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 128;
         UpdateFunctionConfigurationRequest expectedRequest = updateRequestWith(functionArn, memorySizeMb);
@@ -34,7 +34,7 @@ class AwsServiceTest {
 
         when(lambdaClient.updateFunctionConfiguration(expectedRequest)).thenReturn(response);
 
-        awsService.setFunctionMemory(functionArn, memorySizeMb);
+        lambdaService.setFunctionMemory(functionArn, memorySizeMb);
         verify(lambdaClient).updateFunctionConfiguration(expectedRequest);
         verify(lambdaClient, never()).getFunctionConfiguration(any(GetFunctionConfigurationRequest.class));
     }
@@ -48,14 +48,14 @@ class AwsServiceTest {
 
         when(lambdaClient.updateFunctionConfiguration(expectedRequest)).thenReturn(response);
 
-        Throwable thrown = assertThrows(AwsOperationException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(AwsOperationException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         assertTrue(thrown.getMessage().contains(String.valueOf(functionArn)));
         verify(lambdaClient).updateFunctionConfiguration(expectedRequest);
     }
 
     @Test
-    public void Should_try_get_config_for_success_when_function_update_in_progress() throws AwsOperationException {
+    public void Should_try_get_config_for_success_when_function_update_in_progress() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 128;
         UpdateFunctionConfigurationRequest expectedUpdateRequest = updateRequestWith(functionArn, memorySizeMb);
@@ -66,13 +66,13 @@ class AwsServiceTest {
         when(lambdaClient.updateFunctionConfiguration(expectedUpdateRequest)).thenReturn(firstStatusResponse);
         when(lambdaClient.getFunctionConfiguration(getConfigRequest)).thenReturn(secondStatusResponse);
 
-        awsService.setFunctionMemory(functionArn, memorySizeMb);
+        lambdaService.setFunctionMemory(functionArn, memorySizeMb);
         verify(lambdaClient).updateFunctionConfiguration(expectedUpdateRequest);
         verify(lambdaClient).getFunctionConfiguration(getConfigRequest);
     }
 
     @Test
-    public void Should_succeed_if_retried_get_config_for_success_when_function_update_in_progress() throws AwsOperationException {
+    public void Should_succeed_if_retried_get_config_for_success_when_function_update_in_progress() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 128;
         UpdateFunctionConfigurationRequest expectedUpdateRequest = updateRequestWith(functionArn, memorySizeMb);
@@ -88,13 +88,13 @@ class AwsServiceTest {
                 .thenReturn(inProgressStatusResponse)
                 .thenReturn(successfulStatusResponse);
 
-        awsService.setFunctionMemory(functionArn, memorySizeMb);
+        lambdaService.setFunctionMemory(functionArn, memorySizeMb);
         verify(lambdaClient).updateFunctionConfiguration(expectedUpdateRequest);
         verify(lambdaClient, times(3)).getFunctionConfiguration(getConfigRequest);
     }
 
     @Test
-    public void Should_fail_if_reached_max_tries_for_get_config_when_function_update_in_progress() throws AwsOperationException {
+    public void Should_fail_if_reached_max_tries_for_get_config_when_function_update_in_progress() {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 128;
         UpdateFunctionConfigurationRequest expectedUpdateRequest = updateRequestWith(functionArn, memorySizeMb);
@@ -111,7 +111,7 @@ class AwsServiceTest {
                 .thenReturn(inProgressStatusResponse)
                 .thenReturn(successfulStatusResponse);
 
-        Throwable thrown = assertThrows(AwsOperationException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(LambdaUpdateMaxTriesException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         assertTrue(thrown.getMessage().contains(String.valueOf(functionArn)));
         verify(lambdaClient).updateFunctionConfiguration(expectedUpdateRequest);
@@ -122,7 +122,7 @@ class AwsServiceTest {
     public void Should_fail_set_function_memory_if_less_than_128MB() {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 1;
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         verifyNoInteractions(lambdaClient);
     }
@@ -131,7 +131,7 @@ class AwsServiceTest {
     public void Should_fail_set_function_memory_if_higher_than_10240MB() {
         String functionArn = generator.nextObject(String.class);
         int memorySizeMb = 10241;
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         verifyNoInteractions(lambdaClient);
     }
@@ -144,10 +144,23 @@ class AwsServiceTest {
 
         when(lambdaClient.updateFunctionConfiguration(expectedUpdateRequest)).thenThrow(SdkException.class);
 
-        Throwable thrown = assertThrows(AwsOperationException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(AwsOperationException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getCause() instanceof SdkException);
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         assertTrue(thrown.getMessage().contains(String.valueOf(functionArn)));
+        verify(lambdaClient).updateFunctionConfiguration(expectedUpdateRequest);
+        verify(lambdaClient, never()).getFunctionConfiguration(any(GetFunctionConfigurationRequest.class));
+    }
+
+    @Test
+    public void Should_throw_lambda_not_found_when_not_found_in_update() {
+        String functionArn = generator.nextObject(String.class);
+        int memorySizeMb = 10240;
+        UpdateFunctionConfigurationRequest expectedUpdateRequest = updateRequestWith(functionArn, memorySizeMb);
+
+        when(lambdaClient.updateFunctionConfiguration(expectedUpdateRequest)).thenThrow(ResourceNotFoundException.class);
+
+        Throwable thrown = assertThrows(LambdaNotFoundException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         verify(lambdaClient).updateFunctionConfiguration(expectedUpdateRequest);
         verify(lambdaClient, never()).getFunctionConfiguration(any(GetFunctionConfigurationRequest.class));
     }
@@ -163,7 +176,7 @@ class AwsServiceTest {
         when(lambdaClient.updateFunctionConfiguration(expectedUpdateRequest)).thenReturn(firstStatusResponse);
         when(lambdaClient.getFunctionConfiguration(expectedGetConfiRequest)).thenThrow(SdkException.class);
 
-        Throwable thrown = assertThrows(AwsOperationException.class, () -> awsService.setFunctionMemory(functionArn, memorySizeMb));
+        Throwable thrown = assertThrows(AwsOperationException.class, () -> lambdaService.setFunctionMemory(functionArn, memorySizeMb));
         assertTrue(thrown.getCause() instanceof SdkException);
         assertTrue(thrown.getMessage().contains(String.valueOf(memorySizeMb)));
         assertTrue(thrown.getMessage().contains(String.valueOf(functionArn)));
