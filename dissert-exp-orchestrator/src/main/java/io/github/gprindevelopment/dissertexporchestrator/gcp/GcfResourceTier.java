@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @ToString
 public enum GcfResourceTier {
-    TIER_1("128M", "0.08"),
+    TIER_1("128Mi", "0.08"),
     TIER_2("256M", "0.145"),
     TIER_3("512M", "0.289"),
     TIER_4("1024M", "0.579"),

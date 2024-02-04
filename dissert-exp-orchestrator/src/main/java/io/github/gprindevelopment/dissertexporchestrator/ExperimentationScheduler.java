@@ -1,29 +1,41 @@
 package io.github.gprindevelopment.dissertexporchestrator;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
-import io.github.gprindevelopment.dissertexporchestrator.dd.gcf.GcfDdFunctionService;
-import io.github.gprindevelopment.dissertexporchestrator.dd.lambda.LambdaDdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ExperimentationScheduler {
 
-    private final GcfDdFunctionService gcfDdFunctionService;
-    private final LambdaDdFunctionService lambdaDdFunctionService;
+    private final List<DdFunctionService> ddFunctionServices;
 
     @Scheduled(cron = "${dissert-exp-orchestrator.experimentation-scheduler.cron}")
-    private void run() throws DdFunctionException {
+    private void run() {
         log.info("Scheduler triggered");
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
-        gcfDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        gcfDdFunctionService.collectReadExpRecord(ioSizeBytes);
-        lambdaDdFunctionService.collectWriteExpRecord(ioSizeBytes, fileSize);
-        lambdaDdFunctionService.collectReadExpRecord(ioSizeBytes);
+        for (ResourceTier resourceTier : ResourceTier.values()) {
+            log.info("Setting resource tier to: {}", resourceTier);
+            for (DdFunctionService ddFunctionService : ddFunctionServices) {
+                ddFunctionService.setFunctionResources(resourceTier);
+            }
+
+            for (IoSizeTier ioSizeTier : IoSizeTier.values()) {
+                log.info("Setting IO size bytes to: {}", ioSizeTier.getIoSizeBytes());
+                for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
+                    log.info("Setting file size bytes to: {}", fileSizeTier.getFileSizeBytes());
+                    for (DdFunctionService ddFunctionService : ddFunctionServices) {
+                        ddFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+                    }
+                }
+            }
+        }
     }
 }
