@@ -66,6 +66,7 @@ public abstract class DdFunctionService {
                     .timeOfDay(resolveTimeOfDay())
                     .dayOfWeek(resolveDayOfWeek())
                     .weekPeriod(resolveWeekPeriod())
+                    .resourceTier(currentResourceTier)
                     .build();
             ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
             log.info("Persisted write experimental record: {}", ddExpRecordEntity);

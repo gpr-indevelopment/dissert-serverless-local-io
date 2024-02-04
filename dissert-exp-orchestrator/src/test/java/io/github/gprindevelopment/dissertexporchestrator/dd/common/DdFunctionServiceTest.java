@@ -124,6 +124,18 @@ class DdFunctionServiceTest {
         assertEquals(resourceTier, ddFunctionStubService.currentResourceTier);
     }
 
+    @Test
+    public void Should_successfully_populate_resource_tier_when_saving_record() {
+        ddFunctionStubService.currentResourceTier = ResourceTier.TIER_1;
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        assertEquals(ResourceTier.TIER_1, savedEntity.getResourceTier());
+        verify(ddExpRecordRepository).save(any());
+    }
+
     private static class DdFunctionStubService extends DdFunctionService {
 
         public DdFunctionStubService(DdExpRecordRepository ddExpRecordRepository, ClockService clockService) {

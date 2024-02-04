@@ -1,6 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.domain;
 
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import jakarta.persistence.*;
@@ -51,4 +52,7 @@ public class DdExpRecordEntity {
 
     @Enumerated(EnumType.STRING)
     private WeekPeriod weekPeriod;
+
+    @Enumerated(EnumType.STRING)
+    private ResourceTier resourceTier;
 }
