@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.DayOfWeek;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +29,10 @@ public abstract class DdFunctionService {
     public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
+        if (Objects.isNull(currentResourceTier)) {
+            log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
+            setFunctionResources(ResourceTier.TIER_1);
+        }
         String rawResponse = callFunction(commandRequest);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
     }
@@ -35,6 +40,10 @@ public abstract class DdFunctionService {
     public DdExpRecordEntity collectReadExpRecord(Long ioSizeBytes) {
         String command = buildReadCommand(ioSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
+        if (Objects.isNull(currentResourceTier)) {
+            log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
+            setFunctionResources(ResourceTier.TIER_1);
+        }
         String rawResponse = callFunction(commandRequest);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
     }

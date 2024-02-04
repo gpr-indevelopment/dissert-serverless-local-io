@@ -92,7 +92,31 @@ class DdFunctionServiceTest {
     }
 
     @Test
+    public void Should_set_current_resource_tier_as_one_when_null_during_collect_write_record() {
+        ddFunctionStubService.currentResourceTier = null;
+        Long ioSizeBytes = 1_024_000L;
+        Long fileSize = 1_000_000_000L;
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
+        ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        verify(ddExpRecordRepository).save(any());
+        assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
+    }
+
+    @Test
+    public void Should_set_current_resource_tier_as_one_when_null_during_collect_read_record() {
+        ddFunctionStubService.currentResourceTier = null;
+        Long ioSizeBytes = 1_024_000L;
+        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
+        ddFunctionStubService.collectReadExpRecord(ioSizeBytes);
+        verify(ddExpRecordRepository).save(any());
+        assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
+    }
+
+    @Test
     public void Should_set_current_resource_tier_when_setting_resource_tier() {
+        ddFunctionStubService.currentResourceTier = null;
         ResourceTier resourceTier = ResourceTier.TIER_1;
 
         assertNull(ddFunctionStubService.currentResourceTier);
