@@ -3,6 +3,7 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfNotFoundException;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfService;
 import org.jeasy.random.EasyRandom;
@@ -139,25 +140,27 @@ class GcfDdFunctionServiceTest {
     @Test
     public void Should_successfully_set_function_resources() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        String memory = "1G";
-        String cpu = "1";
+        ResourceTier resourceTier = ResourceTier.TIER_4;
+        String memory = "1024M";
+        String cpu = "0.579";
 
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        gcfDdFunctionService.setFunctionResources(memory, cpu);
+        gcfDdFunctionService.setFunctionResources(resourceTier);
         verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 
     @Test
     public void Should_map_to_runtime_exception_if_function_cannot_be_found() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        String memory = "1G";
-        String cpu = "1";
+        ResourceTier resourceTier = ResourceTier.TIER_4;
+        String memory = "1024M";
+        String cpu = "0.579";
 
         when(gcfService.setFunctionResources(functionName, memory, cpu)).thenThrow(GcfNotFoundException.class);
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(memory, cpu));
+        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(resourceTier));
         verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 }

@@ -6,7 +6,9 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRe
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfNotFoundException;
+import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -51,10 +53,11 @@ public class GcfDdFunctionService extends DdFunctionService {
         return SystemName.GCF_DD;
     }
 
-    public void setFunctionResources(String memory, String cpu) {
+    public void setFunctionResources(ResourceTier resourceTier) {
         String functionName = gcfDdFunctionProps.name();
+        GcfResourceTier gcfResourceTier = GcfResourceTier.from(resourceTier);
         try {
-            gcfService.setFunctionResources(functionName, memory, cpu);
+            gcfService.setFunctionResources(functionName, gcfResourceTier.getMemory(), gcfResourceTier.getCpu());
         } catch (GcfNotFoundException e) {
             throw new DdFunctionException("Unable to find GCF DD function with name: " + functionName, e);
         }
