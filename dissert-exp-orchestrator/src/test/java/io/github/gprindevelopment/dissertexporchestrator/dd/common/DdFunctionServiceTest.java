@@ -1,6 +1,9 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
@@ -29,7 +32,7 @@ class DdFunctionServiceTest {
     private ClockService clockService;
 
     @Test
-    public void Should_consider_business_hours_in_weekend_as_off_hours() throws DdFunctionException {
+    public void Should_consider_business_hours_in_weekend_as_off_hours() {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
@@ -41,7 +44,7 @@ class DdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_populate_time_of_day_as_off_hours() throws DdFunctionException {
+    public void Should_successfully_populate_time_of_day_as_off_hours() {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
@@ -52,7 +55,7 @@ class DdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_populate_week_period_as_weekday() throws DdFunctionException {
+    public void Should_successfully_populate_week_period_as_weekday() {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
@@ -64,7 +67,7 @@ class DdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_populate_time_of_day_as_business_hours() throws DdFunctionException {
+    public void Should_successfully_populate_time_of_day_as_business_hours() {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
@@ -75,7 +78,7 @@ class DdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_populate_week_period_as_weekend() throws DdFunctionException {
+    public void Should_successfully_populate_week_period_as_weekend() {
         Long ioSizeBytes = 1_024_000L;
         Long fileSize = 1_000_000_000L;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);

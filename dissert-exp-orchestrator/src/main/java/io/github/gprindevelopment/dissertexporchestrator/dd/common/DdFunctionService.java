@@ -18,14 +18,14 @@ public abstract class DdFunctionService {
     private final ClockService clockService;
     protected abstract String callFunction(CommandRequest commandRequest);
 
-    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) throws DdFunctionException {
+    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = callFunction(commandRequest);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
     }
 
-    public DdExpRecordEntity collectReadExpRecord(Long ioSizeBytes) throws DdFunctionException {
+    public DdExpRecordEntity collectReadExpRecord(Long ioSizeBytes) {
         String command = buildReadCommand(ioSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         String rawResponse = callFunction(commandRequest);
@@ -38,7 +38,7 @@ public abstract class DdFunctionService {
 
     protected abstract SystemName getSystemName();
 
-    private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) throws DdFunctionException {
+    private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) {
         try {
             DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
                     .builder()

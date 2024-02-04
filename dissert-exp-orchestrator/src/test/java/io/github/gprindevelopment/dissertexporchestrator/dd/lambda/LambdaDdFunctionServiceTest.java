@@ -27,7 +27,7 @@ class LambdaDdFunctionServiceTest {
     private ClockService clockService;
 
     @Test
-    public void Should_successfully_save_exp_record_from_function_call() throws DdFunctionException {
+    public void Should_successfully_save_exp_record_from_function_call() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
@@ -55,7 +55,7 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_post_process_function_response_to_extract_latency_and_throughput() throws DdFunctionException {
+    public void Should_successfully_post_process_function_response_to_extract_latency_and_throughput() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
@@ -94,7 +94,7 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_set_zero_to_throughput_when_unit_not_resolvable() throws DdFunctionException {
+    public void Should_set_zero_to_throughput_when_unit_not_resolvable() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
@@ -111,7 +111,7 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_save_exp_record_from_read_function_call() throws DdFunctionException {
+    public void Should_successfully_save_exp_record_from_read_function_call() {
         String expectedFunctionResponse = """
                 953+1 records in
                 953+1 records out
