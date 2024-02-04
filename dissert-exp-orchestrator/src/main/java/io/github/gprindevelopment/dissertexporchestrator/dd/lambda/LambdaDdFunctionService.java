@@ -1,10 +1,16 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaNotFoundException;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaResourceTier;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaService;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaUpdateMaxTriesException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +19,18 @@ import org.springframework.stereotype.Service;
 public class LambdaDdFunctionService extends DdFunctionService {
 
     private final LambdaDdFunctionClient lambdaDdFunctionClient;
+    private final LambdaDdFunctionProps lambdaDdFunctionProps;
+    private final LambdaService lambdaService;
 
     public LambdaDdFunctionService(LambdaDdFunctionClient lambdaDdFunctionClient,
                                    DdExpRecordRepository ddExpRecordRepository,
+                                   LambdaDdFunctionProps lambdaDdFunctionProps,
+                                   LambdaService lambdaService,
                                    ClockService clockService) {
         super(ddExpRecordRepository, clockService);
         this.lambdaDdFunctionClient = lambdaDdFunctionClient;
+        this.lambdaDdFunctionProps = lambdaDdFunctionProps;
+        this.lambdaService = lambdaService;
     }
 
     @Override
@@ -40,5 +52,23 @@ public class LambdaDdFunctionService extends DdFunctionService {
     @Override
     protected SystemName getSystemName() {
         return SystemName.LAMBDA_DD;
+    }
+
+    public void setFunctionResources(ResourceTier resourceTier) {
+        LambdaResourceTier lambdaResourceTier = LambdaResourceTier.from(resourceTier);
+        String lambdaArn = lambdaDdFunctionProps.arn();
+        try {
+            lambdaService.setFunctionMemory(lambdaArn, lambdaResourceTier.getMemory());
+        } catch (LambdaNotFoundException e) {
+            String message = String.format("Unable to find Lambda DD function with ARN: %s when updating to resource tier: %s",
+                    lambdaArn,
+                    resourceTier);
+            throw new DdFunctionException(message, e);
+        } catch (LambdaUpdateMaxTriesException e) {
+            String message = String.format("Failed due to max tries for Lambda DD function with ARN: %s when updating to resource tier: %s",
+                    lambdaArn,
+                    resourceTier);
+            throw new DdFunctionException(message + lambdaArn, e);
+        }
     }
 }

@@ -1,8 +1,14 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.lambda;
 
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaNotFoundException;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaResourceTier;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaService;
+import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaUpdateMaxTriesException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
+import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,8 +29,13 @@ class LambdaDdFunctionServiceTest {
     private LambdaDdFunctionClient lambdaDdFunctionClient;
     @Mock
     private DdExpRecordRepository ddExpRecordRepository;
+    @Mock
+    private LambdaDdFunctionProps lambdaDdFunctionProps;
+    @Mock
+    private LambdaService lambdaService;
     @Spy
     private ClockService clockService;
+    private final EasyRandom generator = new EasyRandom();
 
     @Test
     public void Should_successfully_save_exp_record_from_function_call() {
@@ -134,5 +145,38 @@ class LambdaDdFunctionServiceTest {
         assertEquals(savedEntity.getThroughputKbPerSecond(), 7.7e9);
         assertNotNull(savedEntity.getCollectedAt());
         verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_set_function_resources() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
+        ResourceTier resourceTier = ResourceTier.TIER_3;
+        String functionArn = generator.nextObject(String.class);
+
+        when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
+
+        lambdaDdFunctionService.setFunctionResources(resourceTier);
+        verify(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+    }
+
+    @Test
+    public void Should_map_lambda_not_found_to_dd_function_exception() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
+        ResourceTier resourceTier = ResourceTier.TIER_3;
+        String functionArn = generator.nextObject(String.class);
+
+        when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
+        doThrow(LambdaNotFoundException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+
+        assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.setFunctionResources(resourceTier));
+    }
+
+    @Test
+    public void Should_map_update_max_tries_to_dd_function_exception() throws LambdaNotFoundException, LambdaUpdateMaxTriesException {
+        ResourceTier resourceTier = ResourceTier.TIER_3;
+        String functionArn = generator.nextObject(String.class);
+
+        when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
+        doThrow(LambdaUpdateMaxTriesException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+
+        assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.setFunctionResources(resourceTier));
     }
 }
