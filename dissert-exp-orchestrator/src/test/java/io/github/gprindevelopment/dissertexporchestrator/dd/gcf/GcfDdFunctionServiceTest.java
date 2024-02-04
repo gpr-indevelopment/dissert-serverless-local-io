@@ -4,7 +4,6 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfNotFoundException;
-import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfService;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
@@ -140,23 +139,25 @@ class GcfDdFunctionServiceTest {
     @Test
     public void Should_successfully_set_function_resources() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        GcfResourceTier tier = GcfResourceTier.TIER_2;
+        String memory = "1G";
+        String cpu = "1";
 
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        gcfDdFunctionService.setFunctionResources(tier);
-        verify(gcfService).setFunctionResources(functionName, tier);
+        gcfDdFunctionService.setFunctionResources(memory, cpu);
+        verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 
     @Test
     public void Should_map_to_runtime_exception_if_function_cannot_be_found() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        GcfResourceTier tier = GcfResourceTier.TIER_2;
+        String memory = "1G";
+        String cpu = "1";
 
-        when(gcfService.setFunctionResources(functionName, tier)).thenThrow(GcfNotFoundException.class);
+        when(gcfService.setFunctionResources(functionName, memory, cpu)).thenThrow(GcfNotFoundException.class);
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(tier));
-        verify(gcfService).setFunctionResources(functionName, tier);
+        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(memory, cpu));
+        verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 }

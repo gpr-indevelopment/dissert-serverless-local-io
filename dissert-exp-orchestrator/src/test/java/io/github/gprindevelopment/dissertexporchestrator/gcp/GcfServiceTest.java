@@ -34,7 +34,8 @@ class GcfServiceTest {
     @SuppressWarnings("unchecked")
     public void Should_successfully_set_function_resources() throws ExecutionException, InterruptedException, GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        GcfResourceTier tier = GcfResourceTier.TIER_1;
+        String memory = "1G";
+        String cpu = "1";
         Function expectedFunction = Function.newBuilder().build();
         OperationFuture<Function, OperationMetadata> operationFutureMock = mock(OperationFuture.class);
         ArgumentCaptor<UpdateFunctionRequest> updateFunctionRequestCaptor = ArgumentCaptor.forClass(UpdateFunctionRequest.class);
@@ -43,9 +44,9 @@ class GcfServiceTest {
         when(client.updateFunctionAsync(updateFunctionRequestCaptor.capture())).thenReturn(operationFutureMock);
         when(operationFutureMock.get()).thenAnswer(i -> updateFunctionRequestCaptor.getValue().getFunction());
 
-        Function actualFunction = gcfService.setFunctionResources(functionName, tier);
-        assertEquals(tier.getMemory(), actualFunction.getServiceConfig().getAvailableMemory());
-        assertEquals(tier.getCpu(), actualFunction.getServiceConfig().getAvailableCpu());
+        Function actualFunction = gcfService.setFunctionResources(functionName, memory, cpu);
+        assertEquals(memory, actualFunction.getServiceConfig().getAvailableMemory());
+        assertEquals(cpu, actualFunction.getServiceConfig().getAvailableCpu());
     }
 
     @Test
@@ -92,22 +93,24 @@ class GcfServiceTest {
     @Test
     public void Should_map_to_gcf_exception_when_unmapped_error_occurs_in_set_function_resources() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        GcfResourceTier tier = GcfResourceTier.TIER_1;
+        String memory = "1G";
+        String cpu = "1";
         Function expectedFunction = Function.newBuilder().build();
 
         doReturn(expectedFunction).when(gcfService).getFunction(functionName);
         when(client.updateFunctionAsync(any())).thenThrow(RuntimeException.class);
 
-        assertThrows(GcfOperationException.class, () -> gcfService.setFunctionResources(functionName, tier));
+        assertThrows(GcfOperationException.class, () -> gcfService.setFunctionResources(functionName, memory, cpu));
     }
 
     @Test
     public void Should_throw_gcf_not_found_when_not_found_while_setting_resources() throws GcfNotFoundException {
         String functionName = generator.nextObject(String.class);
-        GcfResourceTier tier = GcfResourceTier.TIER_1;
+        String memory = "1G";
+        String cpu = "1";
 
         doThrow(GcfNotFoundException.class).when(gcfService).getFunction(functionName);
 
-        assertThrows(GcfNotFoundException.class, () -> gcfService.setFunctionResources(functionName, tier));
+        assertThrows(GcfNotFoundException.class, () -> gcfService.setFunctionResources(functionName, memory, cpu));
     }
 }

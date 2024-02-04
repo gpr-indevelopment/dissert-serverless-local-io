@@ -34,19 +34,19 @@ public class GcfService {
         }
     }
 
-    public Function setFunctionResources(String functionName, GcfResourceTier tier) throws GcfNotFoundException {
+    public Function setFunctionResources(String functionName, String memory, String cpu) throws GcfNotFoundException {
         log.info("Updating resources of GCF with name: {}, memory: {} and cpu: {}",
                 functionName,
-                tier.getMemory(),
-                tier.getCpu());
+                memory,
+                cpu);
         Function existingFunction = getFunction(functionName);
         ServiceConfig existingServiceConfig = existingFunction.getServiceConfig();
         Function toUpdate = Function
                 .newBuilder(existingFunction)
                 .setServiceConfig(ServiceConfig
                         .newBuilder(existingServiceConfig)
-                        .setAvailableCpu(tier.getCpu())
-                        .setAvailableMemory(tier.getMemory())
+                        .setAvailableCpu(cpu)
+                        .setAvailableMemory(memory)
                         .build())
                 .build();
         UpdateFunctionRequest updateRequest = UpdateFunctionRequest
