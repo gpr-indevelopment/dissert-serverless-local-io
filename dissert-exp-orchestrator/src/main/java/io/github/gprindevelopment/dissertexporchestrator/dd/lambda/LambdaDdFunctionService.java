@@ -55,7 +55,7 @@ public class LambdaDdFunctionService extends DdFunctionService {
     }
 
     @Override
-    public void setFunctionResources(ResourceTier resourceTier) {
+    protected void callSetFunctionResources(ResourceTier resourceTier) {
         LambdaResourceTier lambdaResourceTier = LambdaResourceTier.from(resourceTier);
         String lambdaArn = lambdaDdFunctionProps.arn();
         try {

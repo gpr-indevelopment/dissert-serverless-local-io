@@ -54,7 +54,7 @@ public class GcfDdFunctionService extends DdFunctionService {
     }
 
     @Override
-    public void setFunctionResources(ResourceTier resourceTier) {
+    protected void callSetFunctionResources(ResourceTier resourceTier) {
         String functionName = gcfDdFunctionProps.name();
         GcfResourceTier gcfResourceTier = GcfResourceTier.from(resourceTier);
         try {

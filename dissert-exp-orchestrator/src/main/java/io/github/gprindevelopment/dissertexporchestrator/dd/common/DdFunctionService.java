@@ -13,10 +13,18 @@ public abstract class DdFunctionService {
 
     private final DdExpRecordRepository ddExpRecordRepository;
     private final ClockService clockService;
+    protected ResourceTier currentResourceTier;
+
     protected abstract String callFunction(CommandRequest commandRequest);
+    protected abstract String extractRawLatency(String rawResponse);
+    protected abstract String extractRawThroughput(String rawResponse);
+    protected abstract SystemName getSystemName();
+    protected abstract void callSetFunctionResources(ResourceTier resourceTier);
 
-    public abstract void setFunctionResources(ResourceTier resourceTier);
-
+    public void setFunctionResources(ResourceTier resourceTier) {
+        callSetFunctionResources(resourceTier);
+        currentResourceTier = resourceTier;
+    }
     public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
@@ -30,12 +38,6 @@ public abstract class DdFunctionService {
         String rawResponse = callFunction(commandRequest);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
     }
-
-    protected abstract String extractRawLatency(String rawResponse);
-
-    protected abstract String extractRawThroughput(String rawResponse);
-
-    protected abstract SystemName getSystemName();
 
     private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) {
         try {

@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.DayOfWeek;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,6 +91,15 @@ class DdFunctionServiceTest {
         verify(ddExpRecordRepository).save(any());
     }
 
+    @Test
+    public void Should_set_current_resource_tier_when_setting_resource_tier() {
+        ResourceTier resourceTier = ResourceTier.TIER_1;
+
+        assertNull(ddFunctionStubService.currentResourceTier);
+        ddFunctionStubService.setFunctionResources(resourceTier);
+        assertEquals(resourceTier, ddFunctionStubService.currentResourceTier);
+    }
+
     private static class DdFunctionStubService extends DdFunctionService {
 
         public DdFunctionStubService(DdExpRecordRepository ddExpRecordRepository, ClockService clockService) {
@@ -120,7 +130,7 @@ class DdFunctionServiceTest {
         }
 
         @Override
-        public void setFunctionResources(ResourceTier resourceTier) {}
+        public void callSetFunctionResources(ResourceTier resourceTier) {}
     }
 
 }

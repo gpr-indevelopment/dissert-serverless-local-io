@@ -146,7 +146,7 @@ class GcfDdFunctionServiceTest {
 
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        gcfDdFunctionService.setFunctionResources(resourceTier);
+        gcfDdFunctionService.callSetFunctionResources(resourceTier);
         verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 
@@ -160,7 +160,7 @@ class GcfDdFunctionServiceTest {
         when(gcfService.setFunctionResources(functionName, memory, cpu)).thenThrow(GcfNotFoundException.class);
         when(gcfDdFunctionProps.name()).thenReturn(functionName);
 
-        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(resourceTier));
+        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.callSetFunctionResources(resourceTier));
         verify(gcfService).setFunctionResources(functionName, memory, cpu);
     }
 }
