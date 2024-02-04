@@ -26,7 +26,9 @@ public abstract class DdFunctionService {
         callSetFunctionResources(resourceTier);
         currentResourceTier = resourceTier;
     }
-    public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
+    public DdExpRecordEntity collectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
+        Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         if (Objects.isNull(currentResourceTier)) {
@@ -37,7 +39,8 @@ public abstract class DdFunctionService {
         return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
     }
 
-    public DdExpRecordEntity collectReadExpRecord(Long ioSizeBytes) {
+    public DdExpRecordEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
+        Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         String command = buildReadCommand(ioSizeBytes);
         CommandRequest commandRequest = new CommandRequest(command);
         if (Objects.isNull(currentResourceTier)) {

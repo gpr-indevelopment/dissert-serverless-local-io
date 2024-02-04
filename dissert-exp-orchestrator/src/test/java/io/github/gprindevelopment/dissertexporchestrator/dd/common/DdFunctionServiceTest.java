@@ -4,10 +4,7 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandReques
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
-import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
-import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
+import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,11 +32,11 @@ class DdFunctionServiceTest {
 
     @Test
     public void Should_consider_business_hours_in_weekend_as_off_hours() {
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
         assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
         verify(ddExpRecordRepository).save(any());
@@ -47,22 +44,22 @@ class DdFunctionServiceTest {
 
     @Test
     public void Should_successfully_populate_time_of_day_as_off_hours() {
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
         verify(ddExpRecordRepository).save(any());
     }
 
     @Test
     public void Should_successfully_populate_week_period_as_weekday() {
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(WeekPeriod.WEEKDAY, savedEntity.getWeekPeriod());
         assertEquals(DayOfWeek.WEDNESDAY, savedEntity.getDayOfWeek());
         verify(ddExpRecordRepository).save(any());
@@ -70,22 +67,22 @@ class DdFunctionServiceTest {
 
     @Test
     public void Should_successfully_populate_time_of_day_as_business_hours() {
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(TimeOfDay.BUSINESS_HOUR, savedEntity.getTimeOfDay());
         verify(ddExpRecordRepository).save(any());
     }
 
     @Test
     public void Should_successfully_populate_week_period_as_weekend() {
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
         assertEquals(DayOfWeek.SUNDAY, savedEntity.getDayOfWeek());
         verify(ddExpRecordRepository).save(any());
@@ -94,11 +91,11 @@ class DdFunctionServiceTest {
     @Test
     public void Should_set_current_resource_tier_as_one_when_null_during_collect_write_record() {
         ddFunctionStubService.currentResourceTier = null;
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
-        ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         verify(ddExpRecordRepository).save(any());
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
     }
@@ -106,10 +103,10 @@ class DdFunctionServiceTest {
     @Test
     public void Should_set_current_resource_tier_as_one_when_null_during_collect_read_record() {
         ddFunctionStubService.currentResourceTier = null;
-        Long ioSizeBytes = 1_024_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
-        ddFunctionStubService.collectReadExpRecord(ioSizeBytes);
+        ddFunctionStubService.collectReadExpRecord(ioSizeTier);
         verify(ddExpRecordRepository).save(any());
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
     }
@@ -127,11 +124,11 @@ class DdFunctionServiceTest {
     @Test
     public void Should_successfully_populate_resource_tier_when_saving_write_record() {
         ddFunctionStubService.currentResourceTier = ResourceTier.TIER_1;
-        Long ioSizeBytes = 1_024_000L;
-        Long fileSize = 1_000_000_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeBytes, fileSize);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(ResourceTier.TIER_1, savedEntity.getResourceTier());
         verify(ddExpRecordRepository).save(any());
     }
@@ -139,10 +136,10 @@ class DdFunctionServiceTest {
     @Test
     public void Should_successfully_populate_resource_tier_when_saving_read_record() {
         ddFunctionStubService.currentResourceTier = ResourceTier.TIER_1;
-        Long ioSizeBytes = 1_024_000L;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
         when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectReadExpRecord(ioSizeBytes);
+        DdExpRecordEntity savedEntity = ddFunctionStubService.collectReadExpRecord(ioSizeTier);
         assertEquals(ResourceTier.TIER_1, savedEntity.getResourceTier());
         verify(ddExpRecordRepository).save(any());
     }
