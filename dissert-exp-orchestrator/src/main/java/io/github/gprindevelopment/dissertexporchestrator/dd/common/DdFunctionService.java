@@ -1,10 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
-import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
-import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
+import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +14,8 @@ public abstract class DdFunctionService {
     private final DdExpRecordRepository ddExpRecordRepository;
     private final ClockService clockService;
     protected abstract String callFunction(CommandRequest commandRequest);
+
+    public abstract void setFunctionResources(ResourceTier resourceTier);
 
     public DdExpRecordEntity collectWriteExpRecord(Long ioSizeBytes, Long fileSizeBytes) {
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);

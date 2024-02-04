@@ -5,6 +5,7 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEn
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import org.junit.jupiter.api.Test;
@@ -117,6 +118,9 @@ class DdFunctionServiceTest {
         protected SystemName getSystemName() {
             return SystemName.GCF_DD;
         }
+
+        @Override
+        public void setFunctionResources(ResourceTier resourceTier) {}
     }
 
 }
