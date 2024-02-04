@@ -3,6 +3,10 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfNotFoundException;
+import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfResourceTier;
+import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfService;
+import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,9 +26,14 @@ class GcfDdFunctionServiceTest {
     @Mock
     private GcfDdFunctionClient gcfDdFunctionClient;
     @Mock
+    private GcfDdFunctionProps gcfDdFunctionProps;
+    @Mock
+    private GcfService gcfService;
+    @Mock
     private DdExpRecordRepository ddExpRecordRepository;
     @Spy
     private ClockService clockService;
+    private final EasyRandom generator = new EasyRandom();
 
     @Test
     public void Should_successfully_save_exp_record_from_write_function_call() throws DdFunctionException {
@@ -126,5 +135,28 @@ class GcfDdFunctionServiceTest {
         assertEquals(savedEntity.getThroughputKbPerSecond(), 3.4e9);
         assertNotNull(savedEntity.getCollectedAt());
         verify(ddExpRecordRepository).save(any());
+    }
+
+    @Test
+    public void Should_successfully_set_function_resources() throws GcfNotFoundException {
+        String functionName = generator.nextObject(String.class);
+        GcfResourceTier tier = GcfResourceTier.TIER_2;
+
+        when(gcfDdFunctionProps.name()).thenReturn(functionName);
+
+        gcfDdFunctionService.setFunctionResources(tier);
+        verify(gcfService).setFunctionResources(functionName, tier);
+    }
+
+    @Test
+    public void Should_map_to_runtime_exception_if_function_cannot_be_found() throws GcfNotFoundException {
+        String functionName = generator.nextObject(String.class);
+        GcfResourceTier tier = GcfResourceTier.TIER_2;
+
+        when(gcfService.setFunctionResources(functionName, tier)).thenThrow(GcfNotFoundException.class);
+        when(gcfDdFunctionProps.name()).thenReturn(functionName);
+
+        assertThrows(DdFunctionException.class, () -> gcfDdFunctionService.setFunctionResources(tier));
+        verify(gcfService).setFunctionResources(functionName, tier);
     }
 }
