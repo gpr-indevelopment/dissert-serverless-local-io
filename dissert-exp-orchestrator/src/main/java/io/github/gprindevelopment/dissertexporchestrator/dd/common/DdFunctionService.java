@@ -13,6 +13,7 @@ import java.util.Objects;
 public abstract class DdFunctionService {
 
     private final DdExpRecordRepository ddExpRecordRepository;
+    private final DdOperationErrorRepository ddOperationErrorRepository;
     private final ClockService clockService;
     protected ResourceTier currentResourceTier;
 
@@ -30,25 +31,60 @@ public abstract class DdFunctionService {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
         String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
-        CommandRequest commandRequest = new CommandRequest(command);
         if (Objects.isNull(currentResourceTier)) {
             log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
             setFunctionResources(ResourceTier.TIER_1);
         }
-        String rawResponse = callFunction(commandRequest);
+        String rawResponse = executeCallFunction(ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
     }
 
     public DdExpRecordEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         String command = buildReadCommand(ioSizeBytes);
-        CommandRequest commandRequest = new CommandRequest(command);
         if (Objects.isNull(currentResourceTier)) {
             log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
             setFunctionResources(ResourceTier.TIER_1);
         }
-        String rawResponse = callFunction(commandRequest);
+        String rawResponse = executeCallFunction(ioSizeBytes, null, command, OperationType.READ);
         return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
+    }
+
+    private String executeCallFunction(Long ioSizeBytes,
+                                       Long fileSizeBytes,
+                                       String command,
+                                       OperationType operationType) {
+        CommandRequest commandRequest = new CommandRequest(command);
+        try {
+            return callFunction(commandRequest);
+        } catch (Exception ex) {
+            saveOperationError(ioSizeBytes, fileSizeBytes, command, operationType);
+            String message = String.format("Failure while calling function. Will save record. Command: %s", commandRequest);
+            throw new DdFunctionException(message, ex);
+        }
+    }
+
+    private void saveOperationError(
+            Long ioSizeBytes,
+            Long fileSizeBytes,
+            String command,
+            OperationType operationType
+    ) {
+        DdOperationErrorEntity entity = DdOperationErrorEntity
+                .builder()
+                .systemName(getSystemName())
+                .ioSizeBytes(ioSizeBytes)
+                .fileSizeBytes(fileSizeBytes)
+                .occurredAt(clockService.getCurrentTimestamp())
+                .operationType(operationType)
+                .command(command)
+                .timeOfDay(resolveTimeOfDay())
+                .dayOfWeek(resolveDayOfWeek())
+                .weekPeriod(resolveWeekPeriod())
+                .resourceTier(currentResourceTier)
+                .build();
+        DdOperationErrorEntity saved = ddOperationErrorRepository.save(entity);
+        log.info("Successfully persisted DdOperationErrorEntity: {}", saved);
     }
 
     private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) {

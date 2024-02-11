@@ -5,13 +5,19 @@ import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.TimeOfDay;
 import io.github.gprindevelopment.dissertexporchestrator.domain.WeekPeriod;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 
 @Entity
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Builder
 public class DdOperationErrorEntity {
 
     @Id

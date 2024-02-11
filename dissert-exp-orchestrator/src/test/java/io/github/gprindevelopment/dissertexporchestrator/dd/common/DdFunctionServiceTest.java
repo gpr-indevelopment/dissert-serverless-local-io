@@ -1,32 +1,33 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordEntity;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DdFunctionServiceTest {
 
     @InjectMocks
+    @Spy
     private DdFunctionStubService ddFunctionStubService;
     @Mock
     private DdExpRecordRepository ddExpRecordRepository;
+    @Mock
+    private DdOperationErrorRepository ddOperationErrorRepository;
+
     @Mock
     private ClockService clockService;
 
@@ -144,10 +145,83 @@ class DdFunctionServiceTest {
         verify(ddExpRecordRepository).save(any());
     }
 
+    @Test
+    public void Should_throw_exception_when_function_call_fails_on_write() {
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
+
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
+        doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
+
+        assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier));
+    }
+
+    @Test
+    public void Should_throw_exception_when_function_call_fails_on_read() {
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
+        doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
+
+        assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectReadExpRecord(ioSizeTier));
+    }
+
+    @Test
+    public void Should_persist_error_record_when_read_operation_fails() {
+        ddFunctionStubService.currentResourceTier = ResourceTier.TIER_2;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        ArgumentCaptor<DdOperationErrorEntity> entityCaptor = ArgumentCaptor.forClass(DdOperationErrorEntity.class);
+
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
+        when(ddOperationErrorRepository.save(entityCaptor.capture())).thenReturn(null);
+        doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
+
+        assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectReadExpRecord(ioSizeTier));
+        DdOperationErrorEntity savedEntity = entityCaptor.getValue();
+        assertNotNull(savedEntity.getCommand());
+        assertNotNull(savedEntity.getIoSizeBytes());
+        assertNotNull(savedEntity.getSystemName());
+        assertNotNull(savedEntity.getOccurredAt());
+        assertNotNull(savedEntity.getWeekPeriod());
+        assertNotNull(savedEntity.getDayOfWeek());
+        assertNotNull(savedEntity.getTimeOfDay());
+        assertEquals(ResourceTier.TIER_2, savedEntity.getResourceTier());
+        assertEquals(OperationType.READ, savedEntity.getOperationType());
+        assertNull(savedEntity.getFileSizeBytes());
+    }
+
+    @Test
+    public void Should_persist_error_record_when_write_operation_fails() {
+        ddFunctionStubService.currentResourceTier = ResourceTier.TIER_2;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
+        ArgumentCaptor<DdOperationErrorEntity> entityCaptor = ArgumentCaptor.forClass(DdOperationErrorEntity.class);
+
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
+        when(ddOperationErrorRepository.save(entityCaptor.capture())).thenReturn(null);
+        doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
+
+        assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier));
+        DdOperationErrorEntity savedEntity = entityCaptor.getValue();
+        assertNotNull(savedEntity.getCommand());
+        assertNotNull(savedEntity.getFileSizeBytes());
+        assertNotNull(savedEntity.getIoSizeBytes());
+        assertNotNull(savedEntity.getSystemName());
+        assertNotNull(savedEntity.getOccurredAt());
+        assertNotNull(savedEntity.getWeekPeriod());
+        assertNotNull(savedEntity.getDayOfWeek());
+        assertNotNull(savedEntity.getTimeOfDay());
+        assertEquals(ResourceTier.TIER_2, savedEntity.getResourceTier());
+        assertEquals(OperationType.WRITE, savedEntity.getOperationType());
+    }
+
     private static class DdFunctionStubService extends DdFunctionService {
 
-        public DdFunctionStubService(DdExpRecordRepository ddExpRecordRepository, ClockService clockService) {
-            super(ddExpRecordRepository, clockService);
+        public DdFunctionStubService(
+                DdExpRecordRepository ddExpRecordRepository,
+                DdOperationErrorRepository ddOperationErrorRepository,
+                ClockService clockService) {
+            super(ddExpRecordRepository, ddOperationErrorRepository, clockService);
         }
 
         @Override

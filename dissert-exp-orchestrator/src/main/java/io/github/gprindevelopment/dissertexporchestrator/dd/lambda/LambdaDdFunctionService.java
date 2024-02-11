@@ -5,10 +5,7 @@ import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaService;
 import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaUpdateMaxTriesException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +21,11 @@ public class LambdaDdFunctionService extends DdFunctionService {
 
     public LambdaDdFunctionService(LambdaDdFunctionClient lambdaDdFunctionClient,
                                    DdExpRecordRepository ddExpRecordRepository,
+                                   DdOperationErrorRepository ddOperationErrorRepository,
                                    LambdaDdFunctionProps lambdaDdFunctionProps,
                                    LambdaService lambdaService,
                                    ClockService clockService) {
-        super(ddExpRecordRepository, clockService);
+        super(ddExpRecordRepository, ddOperationErrorRepository, clockService);
         this.lambdaDdFunctionClient = lambdaDdFunctionClient;
         this.lambdaDdFunctionProps = lambdaDdFunctionProps;
         this.lambdaService = lambdaService;
