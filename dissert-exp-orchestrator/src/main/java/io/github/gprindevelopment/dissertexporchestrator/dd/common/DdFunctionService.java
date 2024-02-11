@@ -31,24 +31,26 @@ public abstract class DdFunctionService {
     public DdExpRecordEntity collectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
-        String command = buildWriteCommand(ioSizeBytes, fileSizeBytes);
-        if (Objects.isNull(currentResourceTier)) {
-            log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
-            setFunctionResources(ResourceTier.TIER_1);
-        }
-        String rawResponse = executeCallFunction(ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
-        return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, OperationType.WRITE);
+        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
     }
 
     public DdExpRecordEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
-        String command = buildReadCommand(ioSizeBytes);
+        return collectExpRecord(ioSizeBytes, null, buildReadCommand(ioSizeBytes), OperationType.READ);
+    }
+
+    private DdExpRecordEntity collectExpRecord(
+            Long ioSizeBytes,
+            Long fileSizeBytes,
+            String command,
+            OperationType operationType) {
         if (Objects.isNull(currentResourceTier)) {
             log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
             setFunctionResources(ResourceTier.TIER_1);
         }
-        String rawResponse = executeCallFunction(ioSizeBytes, null, command, OperationType.READ);
-        return parseAndSaveRecord(rawResponse, ioSizeBytes, null, command, OperationType.READ);
+        String rawResponse = executeCallFunction(ioSizeBytes, fileSizeBytes, command, operationType);
+        log.debug("Function called successfully. Will parse and save record");
+        return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, operationType);
     }
 
     private String executeCallFunction(Long ioSizeBytes,
