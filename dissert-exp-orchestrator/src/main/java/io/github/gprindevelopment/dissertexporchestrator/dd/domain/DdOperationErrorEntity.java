@@ -24,6 +24,7 @@ public class DdOperationErrorEntity {
     @GeneratedValue
     private Long id;
 
+    @Lob
     private String rawError;
 
     @Enumerated(EnumType.STRING)
