@@ -1,5 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
+import com.google.common.base.Throwables;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public abstract class DdFunctionService {
         try {
             return callFunction(commandRequest);
         } catch (Exception ex) {
-            saveOperationError(ioSizeBytes, fileSizeBytes, command, operationType);
+            saveOperationError(ioSizeBytes, fileSizeBytes, command, operationType, ex);
             String message = String.format("Failure while calling function. Will save record. Command: %s", commandRequest);
             throw new DdFunctionException(message, ex);
         }
@@ -68,10 +69,12 @@ public abstract class DdFunctionService {
             Long ioSizeBytes,
             Long fileSizeBytes,
             String command,
-            OperationType operationType
+            OperationType operationType,
+            Exception error
     ) {
         DdOperationErrorEntity entity = DdOperationErrorEntity
                 .builder()
+                .rawError(Throwables.getStackTraceAsString(error))
                 .systemName(getSystemName())
                 .ioSizeBytes(ioSizeBytes)
                 .fileSizeBytes(fileSizeBytes)

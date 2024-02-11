@@ -179,6 +179,7 @@ class DdFunctionServiceTest {
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectReadExpRecord(ioSizeTier));
         DdOperationErrorEntity savedEntity = entityCaptor.getValue();
         assertNotNull(savedEntity.getCommand());
+        assertNotNull(savedEntity.getRawError());
         assertNotNull(savedEntity.getIoSizeBytes());
         assertNotNull(savedEntity.getSystemName());
         assertNotNull(savedEntity.getOccurredAt());
@@ -204,6 +205,7 @@ class DdFunctionServiceTest {
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier));
         DdOperationErrorEntity savedEntity = entityCaptor.getValue();
         assertNotNull(savedEntity.getCommand());
+        assertNotNull(savedEntity.getRawError());
         assertNotNull(savedEntity.getFileSizeBytes());
         assertNotNull(savedEntity.getIoSizeBytes());
         assertNotNull(savedEntity.getSystemName());
