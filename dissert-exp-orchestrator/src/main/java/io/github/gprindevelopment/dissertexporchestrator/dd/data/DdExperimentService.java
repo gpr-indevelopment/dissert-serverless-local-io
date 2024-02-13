@@ -100,7 +100,7 @@ public class DdExperimentService {
                 .build();
     }
 
-    private Double extractThroughput(String rawThroughput) {
+    protected Double extractThroughput(String rawThroughput) {
         String[] splitRawThroughput = rawThroughput.split("\s");
         Double value = Double.parseDouble(splitRawThroughput[0]);
         String unit = splitRawThroughput[1];
@@ -117,6 +117,7 @@ public class DdExperimentService {
                 multiplier = 1e3;
                 break;
             default:
+                multiplier = 0;
                 log.warn("Unknown throughput unit: {}. Multiplier is set to {}.", unit, multiplier);
                 break;
         }
@@ -127,15 +128,15 @@ public class DdExperimentService {
         return Double.parseDouble(rawLatency.split("\s")[0]);
     }
 
-    private WeekPeriod resolveWeekPeriod() {
+    protected WeekPeriod resolveWeekPeriod() {
         return WeekPeriod.from(resolveDayOfWeek());
     }
 
-    private DayOfWeek resolveDayOfWeek() {
+    protected DayOfWeek resolveDayOfWeek() {
         return clockService.getCurrentTimestamp().toLocalDateTime().getDayOfWeek();
     }
 
-    private TimeOfDay resolveTimeOfDay() {
+    protected TimeOfDay resolveTimeOfDay() {
         return TimeOfDay.from(clockService.getCurrentTimestamp(), resolveDayOfWeek());
     }
 }

@@ -16,6 +16,7 @@ import java.time.DayOfWeek;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -116,6 +117,27 @@ class DdExperimentServiceTest {
         assertEquals(saved, saved.getError().getExperiment());
 
         assertNull(saved.getResult());
+    }
+
+    @Test
+    public void Should_set_zero_to_throughput_when_unit_not_resolvable() {
+        assertEquals(0, experimentService.extractThroughput("1234 L/s"));
+    }
+
+    @Test
+    public void Should_consider_business_hours_in_weekend_as_off_hours() {
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
+        assertEquals(TimeOfDay.OFF_HOUR, experimentService.resolveTimeOfDay());
+        assertEquals(WeekPeriod.WEEKEND, experimentService.resolveWeekPeriod());
+        assertEquals(DayOfWeek.SUNDAY, experimentService.resolveDayOfWeek());
+    }
+
+    @Test
+    public void Should_successfully_populate_week_period_as_weekday() {
+        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
+        assertEquals(TimeOfDay.BUSINESS_HOUR, experimentService.resolveTimeOfDay());
+        assertEquals(WeekPeriod.WEEKDAY, experimentService.resolveWeekPeriod());
+        assertEquals(DayOfWeek.WEDNESDAY, experimentService.resolveDayOfWeek());
     }
 
     /**
