@@ -7,10 +7,8 @@ import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaUpdateMaxTrie
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,11 +23,9 @@ public class LambdaDdFunctionService extends DdFunctionService {
 
     public LambdaDdFunctionService(LambdaDdFunctionClient lambdaDdFunctionClient,
                                    DdExperimentService experimentService,
-                                   DdExpRecordRepository ddExpRecordRepository,
                                    LambdaDdFunctionProps lambdaDdFunctionProps,
-                                   LambdaService lambdaService,
-                                   ClockService clockService) {
-        super(experimentService, ddExpRecordRepository, clockService);
+                                   LambdaService lambdaService) {
+        super(experimentService);
         this.lambdaDdFunctionClient = lambdaDdFunctionClient;
         this.lambdaDdFunctionProps = lambdaDdFunctionProps;
         this.lambdaService = lambdaService;

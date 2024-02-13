@@ -3,12 +3,16 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 import com.google.common.base.Throwables;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
-import io.github.gprindevelopment.dissertexporchestrator.domain.*;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
+import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.DayOfWeek;
 import java.util.Objects;
 
 @Slf4j
@@ -16,8 +20,6 @@ import java.util.Objects;
 public abstract class DdFunctionService {
 
     private final DdExperimentService experimentService;
-    private final DdExpRecordRepository ddExpRecordRepository;
-    private final ClockService clockService;
     protected ResourceTier currentResourceTier;
 
     protected abstract String callFunction(CommandRequest commandRequest);
@@ -30,18 +32,18 @@ public abstract class DdFunctionService {
         callSetFunctionResources(resourceTier);
         currentResourceTier = resourceTier;
     }
-    public DdExpRecordEntity collectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+    public DdExperimentEntity collectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
         return collectExpRecord(ioSizeBytes, fileSizeBytes, buildWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
     }
 
-    public DdExpRecordEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
+    public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         return collectExpRecord(ioSizeBytes, null, buildReadCommand(ioSizeBytes), OperationType.READ);
     }
 
-    private DdExpRecordEntity collectExpRecord(
+    private DdExperimentEntity collectExpRecord(
             Long ioSizeBytes,
             Long fileSizeBytes,
             String command,
@@ -52,7 +54,17 @@ public abstract class DdFunctionService {
         }
         String rawResponse = executeCallFunction(ioSizeBytes, fileSizeBytes, command, operationType);
         log.debug("Function called successfully. Will parse and save record");
-        return parseAndSaveRecord(rawResponse, ioSizeBytes, fileSizeBytes, command, operationType);
+        return experimentService.recordSuccessfulExperiment(
+                getSystemName(),
+                currentResourceTier,
+                rawResponse,
+                extractRawLatency(rawResponse),
+                extractRawThroughput(rawResponse),
+                ioSizeBytes,
+                fileSizeBytes,
+                command,
+                operationType
+        );
     }
 
     private String executeCallFunction(Long ioSizeBytes,
@@ -86,82 +98,6 @@ public abstract class DdFunctionService {
                 operationType
         );
         log.info("Successfully persisted DdOperationErrorEntity: {}", saved);
-    }
-
-    private DdExpRecordEntity parseAndSaveRecord(String rawResponse, Long ioSizeBytes, Long fileSizeBytes, String command, OperationType operationType) {
-        try {
-            DdExpRecordEntity ddExpRecordEntity = DdExpRecordEntity
-                    .builder()
-                    .rawResponse(rawResponse)
-                    .collectedAt(clockService.getCurrentTimestamp())
-                    .systemName(getSystemName())
-                    .command(command)
-                    .operationType(operationType)
-                    .ioSizeBytes(ioSizeBytes)
-                    .fileSizeBytes(fileSizeBytes)
-                    .rawLatency(extractRawLatency(rawResponse))
-                    .rawThroughput(extractRawThroughput(rawResponse))
-                    .latencySeconds(extractLatency(rawResponse))
-                    .throughputKbPerSecond(extractThroughput(rawResponse))
-                    .timeOfDay(resolveTimeOfDay())
-                    .dayOfWeek(resolveDayOfWeek())
-                    .weekPeriod(resolveWeekPeriod())
-                    .resourceTier(currentResourceTier)
-                    .build();
-            ddExpRecordEntity = ddExpRecordRepository.save(ddExpRecordEntity);
-            log.info("Persisted write experimental record: {}", ddExpRecordEntity);
-            return ddExpRecordEntity;
-        } catch (Exception ex) {
-            String message = String.format("Unable to build and save record with ioSizeBytes: %d, fileSizeBytes: %d, operationType: %s and command: %s for rawResponse: %s",
-                    ioSizeBytes,
-                    fileSizeBytes,
-                    operationType,
-                    command,
-                    rawResponse);
-            throw new DdFunctionException(message, ex);
-        }
-    }
-
-    private WeekPeriod resolveWeekPeriod() {
-        return WeekPeriod.from(resolveDayOfWeek());
-    }
-
-    private DayOfWeek resolveDayOfWeek() {
-        return clockService.getCurrentTimestamp().toLocalDateTime().getDayOfWeek();
-    }
-
-    private TimeOfDay resolveTimeOfDay() {
-        return TimeOfDay.from(clockService.getCurrentTimestamp(), resolveDayOfWeek());
-    }
-
-    private Double extractThroughput(String rawResponse) {
-        String rawThroughput = extractRawThroughput(rawResponse);
-        String[] splitRawThroughput = rawThroughput.split("\s");
-        Double value = Double.parseDouble(splitRawThroughput[0]);
-        String unit = splitRawThroughput[1];
-        return value * resolveMultiplierFromUnit(unit);
-    }
-
-    private Double resolveMultiplierFromUnit(String unit) {
-        double multiplier = 1.0;
-        switch (unit) {
-            case "GB/s":
-                multiplier = 1e9;
-                break;
-            case "MB/s":
-                multiplier = 1e6;
-                break;
-            default:
-                log.warn("Unknown throughput unit: {}. Multiplier is set to 0.", unit);
-                multiplier = 0;
-                break;
-        }
-        return multiplier;
-    }
-
-    private Double extractLatency(String rawResponse) {
-        String rawLatency = extractRawLatency(rawResponse);
-        return Double.parseDouble(rawLatency.split("\s")[0]);
     }
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {

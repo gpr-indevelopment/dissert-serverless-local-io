@@ -1,8 +1,12 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
-import io.github.gprindevelopment.dissertexporchestrator.domain.*;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
+import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,12 +14,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Timestamp;
-import java.time.DayOfWeek;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DdFunctionServiceTest {
@@ -25,78 +27,15 @@ class DdFunctionServiceTest {
     private DdFunctionStubService ddFunctionStubService;
     @Mock
     private DdExperimentService experimentService;
-    @Mock
-    private DdExpRecordRepository ddExpRecordRepository;
-    @Mock
-    private ClockService clockService;
-
-    @Test
-    public void Should_consider_business_hours_in_weekend_as_off_hours() {
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
-        assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
-        verify(ddExpRecordRepository).save(any());
-    }
-
-    @Test
-    public void Should_successfully_populate_time_of_day_as_off_hours() {
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(TimeOfDay.OFF_HOUR, savedEntity.getTimeOfDay());
-        verify(ddExpRecordRepository).save(any());
-    }
-
-    @Test
-    public void Should_successfully_populate_week_period_as_weekday() {
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699493949519L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(WeekPeriod.WEEKDAY, savedEntity.getWeekPeriod());
-        assertEquals(DayOfWeek.WEDNESDAY, savedEntity.getDayOfWeek());
-        verify(ddExpRecordRepository).save(any());
-    }
-
-    @Test
-    public void Should_successfully_populate_time_of_day_as_business_hours() {
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(TimeOfDay.BUSINESS_HOUR, savedEntity.getTimeOfDay());
-        verify(ddExpRecordRepository).save(any());
-    }
-
-    @Test
-    public void Should_successfully_populate_week_period_as_weekend() {
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(WeekPeriod.WEEKEND, savedEntity.getWeekPeriod());
-        assertEquals(DayOfWeek.SUNDAY, savedEntity.getDayOfWeek());
-        verify(ddExpRecordRepository).save(any());
-    }
 
     @Test
     public void Should_set_current_resource_tier_as_one_when_null_during_collect_write_record() {
         ddFunctionStubService.currentResourceTier = null;
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
+
         ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        verify(ddExpRecordRepository).save(any());
+        verify(experimentService).recordSuccessfulExperiment(any(), any(), any(), any(), any(), any(), any(), any(), any());
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
     }
 
@@ -104,10 +43,8 @@ class DdFunctionServiceTest {
     public void Should_set_current_resource_tier_as_one_when_null_during_collect_read_record() {
         ddFunctionStubService.currentResourceTier = null;
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
         ddFunctionStubService.collectReadExpRecord(ioSizeTier);
-        verify(ddExpRecordRepository).save(any());
+        verify(experimentService).recordSuccessfulExperiment(any(), any(), any(), any(), any(), any(), any(), any(), any());
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
     }
 
@@ -119,29 +56,6 @@ class DdFunctionServiceTest {
         assertNull(ddFunctionStubService.currentResourceTier);
         ddFunctionStubService.setFunctionResources(resourceTier);
         assertEquals(resourceTier, ddFunctionStubService.currentResourceTier);
-    }
-
-    @Test
-    public void Should_successfully_populate_resource_tier_when_saving_write_record() {
-        ddFunctionStubService.currentResourceTier = ResourceTier.TIER_1;
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
-        assertEquals(ResourceTier.TIER_1, savedEntity.getResourceTier());
-        verify(ddExpRecordRepository).save(any());
-    }
-
-    @Test
-    public void Should_successfully_populate_resource_tier_when_saving_read_record() {
-        ddFunctionStubService.currentResourceTier = ResourceTier.TIER_1;
-        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        when(ddExpRecordRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        DdExpRecordEntity savedEntity = ddFunctionStubService.collectReadExpRecord(ioSizeTier);
-        assertEquals(ResourceTier.TIER_1, savedEntity.getResourceTier());
-        verify(ddExpRecordRepository).save(any());
     }
 
     @Test
@@ -190,10 +104,8 @@ class DdFunctionServiceTest {
     private static class DdFunctionStubService extends DdFunctionService {
 
         public DdFunctionStubService(
-                DdExperimentService experimentService,
-                DdExpRecordRepository ddExpRecordRepository,
-                ClockService clockService) {
-            super(experimentService, ddExpRecordRepository, clockService);
+                DdExperimentService experimentService) {
+            super(experimentService);
         }
 
         @Override

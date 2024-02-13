@@ -3,10 +3,8 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExpRecordRepository;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfNotFoundException;
 import io.github.gprindevelopment.dissertexporchestrator.gcp.GcfResourceTier;
@@ -25,10 +23,8 @@ public class GcfDdFunctionService extends DdFunctionService {
     public GcfDdFunctionService(GcfDdFunctionClient gcfDdFunctionClient,
                                 GcfDdFunctionProps gcfDdFunctionProps,
                                 GcfService gcfService,
-                                DdExperimentService experimentService,
-                                DdExpRecordRepository ddExpRecordRepository,
-                                ClockService clockService) {
-        super(experimentService, ddExpRecordRepository, clockService);
+                                DdExperimentService experimentService) {
+        super(experimentService);
         this.gcfDdFunctionClient = gcfDdFunctionClient;
         this.gcfDdFunctionProps = gcfDdFunctionProps;
         this.gcfService = gcfService;
