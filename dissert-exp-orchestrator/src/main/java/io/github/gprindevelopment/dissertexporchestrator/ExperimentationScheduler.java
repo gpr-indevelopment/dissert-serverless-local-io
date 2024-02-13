@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class ExperimentationScheduler {
 
     private final List<DdFunctionService> ddFunctionServices;
 
-    @Scheduled(cron = "${dissert-exp-orchestrator.experimentation-scheduler.cron}")
+    @Scheduled(fixedDelayString = "${dissert-exp-orchestrator.experimentation-scheduler.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
     private void run() {
         log.info("Scheduler triggered");
         for (ResourceTier resourceTier : ResourceTier.values()) {
@@ -32,10 +33,20 @@ public class ExperimentationScheduler {
                 for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
                     log.info("Setting file size bytes to: {}", fileSizeTier.getFileSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
-                        ddFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+                        collectExpRecordIgnoreException(ddFunctionService, ioSizeTier, fileSizeTier);
                     }
                 }
             }
         }
+    }
+
+    private void collectExpRecordIgnoreException(
+            DdFunctionService functionService,
+            IoSizeTier ioSizeTier,
+            FileSizeTier fileSizeTier
+    ) {
+        try {
+            functionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        } catch (Exception ex) {}
     }
 }
