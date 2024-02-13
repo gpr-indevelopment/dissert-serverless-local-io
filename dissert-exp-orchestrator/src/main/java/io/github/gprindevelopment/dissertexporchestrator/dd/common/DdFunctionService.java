@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
@@ -52,42 +51,40 @@ public abstract class DdFunctionService {
             log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
             setFunctionResources(ResourceTier.TIER_1);
         }
-        String rawResponse = executeCallFunction(ioSizeBytes, fileSizeBytes, command, operationType);
-        log.debug("Function called successfully. Will parse and save record");
-        return experimentService.recordSuccessfulExperiment(
-                getSystemName(),
-                currentResourceTier,
-                rawResponse,
-                extractRawLatency(rawResponse),
-                extractRawThroughput(rawResponse),
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType
-        );
-    }
-
-    private String executeCallFunction(Long ioSizeBytes,
-                                       Long fileSizeBytes,
-                                       String command,
-                                       OperationType operationType) {
         CommandRequest commandRequest = new CommandRequest(command);
         try {
-            return callFunction(commandRequest);
+            String rawResponse = callFunction(commandRequest);
+            log.debug("Function called successfully. Will parse and save record");
+            return experimentService.recordSuccessfulExperiment(
+                    getSystemName(),
+                    currentResourceTier,
+                    rawResponse,
+                    extractRawLatency(rawResponse),
+                    extractRawThroughput(rawResponse),
+                    ioSizeBytes,
+                    fileSizeBytes,
+                    command,
+                    operationType
+            );
         } catch (Exception ex) {
-            saveOperationError(ioSizeBytes, fileSizeBytes, command, operationType, ex);
-            String message = String.format("Failure while calling function. Will save record. Command: %s", commandRequest);
-            throw new DdFunctionException(message, ex);
+            return saveOperationError(
+                    ioSizeBytes,
+                    fileSizeBytes,
+                    command,
+                    operationType,
+                    ex
+            );
         }
     }
 
-    private void saveOperationError(
+    private DdExperimentEntity saveOperationError(
             Long ioSizeBytes,
             Long fileSizeBytes,
             String command,
             OperationType operationType,
             Exception error
     ) {
+        log.info("Error found. Will record a failed experiment.");
         DdExperimentEntity saved = experimentService.recordFailedExperiment(
                 getSystemName(),
                 currentResourceTier,
@@ -97,7 +94,8 @@ public abstract class DdFunctionService {
                 command,
                 operationType
         );
-        log.info("Successfully persisted DdOperationErrorEntity: {}", saved);
+        log.info("Successfully persisted DdExperimentEntity as failure: {}", saved);
+        return saved;
     }
 
     private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
