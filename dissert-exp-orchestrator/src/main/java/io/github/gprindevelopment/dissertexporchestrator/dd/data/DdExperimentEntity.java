@@ -18,6 +18,7 @@ import java.time.DayOfWeek;
 @Getter
 @Setter
 @Builder
+@ToString
 public class DdExperimentEntity {
     @Id
     @GeneratedValue
