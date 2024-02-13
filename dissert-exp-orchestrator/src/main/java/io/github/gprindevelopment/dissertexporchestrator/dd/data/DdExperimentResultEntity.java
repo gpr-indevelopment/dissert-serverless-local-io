@@ -20,6 +20,7 @@ public class DdExperimentResultEntity {
     private String rawLatency;
     private Double latencySeconds;
     private Double throughputKbPerSecond;
+    @ToString.Exclude
     @OneToOne
     @MapsId
     @JoinColumn(name = "EXPERIMENT_ID")

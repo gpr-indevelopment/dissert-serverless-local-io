@@ -17,6 +17,7 @@ public class DdExperimentErrorEntity {
     private Long experimentId;
     @Lob
     private String rawError;
+    @ToString.Exclude
     @OneToOne
     @MapsId
     @JoinColumn(name = "EXPERIMENT_ID")
