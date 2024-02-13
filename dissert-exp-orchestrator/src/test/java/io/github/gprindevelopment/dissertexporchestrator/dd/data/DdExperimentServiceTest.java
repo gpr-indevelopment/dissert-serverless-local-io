@@ -139,11 +139,4 @@ class DdExperimentServiceTest {
         assertEquals(WeekPeriod.WEEKDAY, experimentService.resolveWeekPeriod());
         assertEquals(DayOfWeek.WEDNESDAY, experimentService.resolveDayOfWeek());
     }
-
-    /**
-     * Teste com todos os parses dessa camada...
-     * Teste com erro do parse
-     *
-     */
-
 }
