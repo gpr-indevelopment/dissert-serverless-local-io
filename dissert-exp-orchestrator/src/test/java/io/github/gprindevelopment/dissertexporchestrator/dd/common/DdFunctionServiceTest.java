@@ -1,10 +1,10 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -24,10 +24,9 @@ class DdFunctionServiceTest {
     @Spy
     private DdFunctionStubService ddFunctionStubService;
     @Mock
-    private DdExpRecordRepository ddExpRecordRepository;
+    private DdExperimentService experimentService;
     @Mock
-    private DdOperationErrorRepository ddOperationErrorRepository;
-
+    private DdExpRecordRepository ddExpRecordRepository;
     @Mock
     private ClockService clockService;
 
@@ -150,7 +149,6 @@ class DdFunctionServiceTest {
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
 
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier));
@@ -160,7 +158,6 @@ class DdFunctionServiceTest {
     public void Should_throw_exception_when_function_call_fails_on_read() {
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
 
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectReadExpRecord(ioSizeTier));
@@ -170,25 +167,12 @@ class DdFunctionServiceTest {
     public void Should_persist_error_record_when_read_operation_fails() {
         ddFunctionStubService.currentResourceTier = ResourceTier.TIER_2;
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        ArgumentCaptor<DdOperationErrorEntity> entityCaptor = ArgumentCaptor.forClass(DdOperationErrorEntity.class);
 
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
-        when(ddOperationErrorRepository.save(entityCaptor.capture())).thenReturn(null);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectReadExpRecord(ioSizeTier));
-        DdOperationErrorEntity savedEntity = entityCaptor.getValue();
-        assertNotNull(savedEntity.getCommand());
-        assertNotNull(savedEntity.getRawError());
-        assertNotNull(savedEntity.getIoSizeBytes());
-        assertNotNull(savedEntity.getSystemName());
-        assertNotNull(savedEntity.getOccurredAt());
-        assertNotNull(savedEntity.getWeekPeriod());
-        assertNotNull(savedEntity.getDayOfWeek());
-        assertNotNull(savedEntity.getTimeOfDay());
-        assertEquals(ResourceTier.TIER_2, savedEntity.getResourceTier());
-        assertEquals(OperationType.READ, savedEntity.getOperationType());
-        assertNull(savedEntity.getFileSizeBytes());
+
+        verify(experimentService).recordFailedExperiment(any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -196,34 +180,20 @@ class DdFunctionServiceTest {
         ddFunctionStubService.currentResourceTier = ResourceTier.TIER_2;
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
-        ArgumentCaptor<DdOperationErrorEntity> entityCaptor = ArgumentCaptor.forClass(DdOperationErrorEntity.class);
 
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(System.currentTimeMillis()));
-        when(ddOperationErrorRepository.save(entityCaptor.capture())).thenReturn(null);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
         assertThrows(DdFunctionException.class, () -> ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier));
-        DdOperationErrorEntity savedEntity = entityCaptor.getValue();
-        assertNotNull(savedEntity.getCommand());
-        assertNotNull(savedEntity.getRawError());
-        assertNotNull(savedEntity.getFileSizeBytes());
-        assertNotNull(savedEntity.getIoSizeBytes());
-        assertNotNull(savedEntity.getSystemName());
-        assertNotNull(savedEntity.getOccurredAt());
-        assertNotNull(savedEntity.getWeekPeriod());
-        assertNotNull(savedEntity.getDayOfWeek());
-        assertNotNull(savedEntity.getTimeOfDay());
-        assertEquals(ResourceTier.TIER_2, savedEntity.getResourceTier());
-        assertEquals(OperationType.WRITE, savedEntity.getOperationType());
+        verify(experimentService).recordFailedExperiment(any(), any(), any(), any(), any(), any(), any());
     }
 
     private static class DdFunctionStubService extends DdFunctionService {
 
         public DdFunctionStubService(
+                DdExperimentService experimentService,
                 DdExpRecordRepository ddExpRecordRepository,
-                DdOperationErrorRepository ddOperationErrorRepository,
                 ClockService clockService) {
-            super(ddExpRecordRepository, ddOperationErrorRepository, clockService);
+            super(experimentService, ddExpRecordRepository, clockService);
         }
 
         @Override

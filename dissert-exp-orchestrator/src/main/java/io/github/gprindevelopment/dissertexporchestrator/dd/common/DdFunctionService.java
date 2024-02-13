@@ -1,6 +1,8 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 
 import com.google.common.base.Throwables;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.*;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +15,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public abstract class DdFunctionService {
 
+    private final DdExperimentService experimentService;
     private final DdExpRecordRepository ddExpRecordRepository;
-    private final DdOperationErrorRepository ddOperationErrorRepository;
     private final ClockService clockService;
     protected ResourceTier currentResourceTier;
 
@@ -74,21 +76,15 @@ public abstract class DdFunctionService {
             OperationType operationType,
             Exception error
     ) {
-        DdOperationErrorEntity entity = DdOperationErrorEntity
-                .builder()
-                .rawError(Throwables.getStackTraceAsString(error))
-                .systemName(getSystemName())
-                .ioSizeBytes(ioSizeBytes)
-                .fileSizeBytes(fileSizeBytes)
-                .occurredAt(clockService.getCurrentTimestamp())
-                .operationType(operationType)
-                .command(command)
-                .timeOfDay(resolveTimeOfDay())
-                .dayOfWeek(resolveDayOfWeek())
-                .weekPeriod(resolveWeekPeriod())
-                .resourceTier(currentResourceTier)
-                .build();
-        DdOperationErrorEntity saved = ddOperationErrorRepository.save(entity);
+        DdExperimentEntity saved = experimentService.recordFailedExperiment(
+                getSystemName(),
+                currentResourceTier,
+                Throwables.getStackTraceAsString(error),
+                ioSizeBytes,
+                fileSizeBytes,
+                command,
+                operationType
+        );
         log.info("Successfully persisted DdOperationErrorEntity: {}", saved);
     }
 
