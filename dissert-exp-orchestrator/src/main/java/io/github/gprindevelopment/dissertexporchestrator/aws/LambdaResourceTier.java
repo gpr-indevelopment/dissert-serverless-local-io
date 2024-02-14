@@ -15,15 +15,15 @@ public enum LambdaResourceTier {
     TIER_4(1024),
     TIER_5(2048);
 
-    LambdaResourceTier(int memory) {
-        this.memory = memory;
+    LambdaResourceTier(int memoryMbs) {
+        this.memoryMbs = memoryMbs;
     }
 
     public static LambdaResourceTier from(ResourceTier resourceTier) {
         return resourceTierMap.get(resourceTier);
     }
 
-    private final int memory;
+    private final int memoryMbs;
 
     private static final Map<ResourceTier, LambdaResourceTier> resourceTierMap = Map.of(
             ResourceTier.TIER_1, LambdaResourceTier.TIER_1,

@@ -57,7 +57,7 @@ public class LambdaDdFunctionService extends DdFunctionService {
         LambdaResourceTier lambdaResourceTier = LambdaResourceTier.from(resourceTier);
         String lambdaArn = lambdaDdFunctionProps.arn();
         try {
-            lambdaService.setFunctionMemory(lambdaArn, lambdaResourceTier.getMemory());
+            lambdaService.setFunctionMemory(lambdaArn, lambdaResourceTier.getMemoryMbs());
         } catch (LambdaNotFoundException e) {
             String message = String.format("Unable to find Lambda DD function with ARN: %s when updating to resource tier: %s",
                     lambdaArn,

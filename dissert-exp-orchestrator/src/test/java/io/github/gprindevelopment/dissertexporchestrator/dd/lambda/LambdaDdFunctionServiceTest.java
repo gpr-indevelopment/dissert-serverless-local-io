@@ -109,7 +109,7 @@ class LambdaDdFunctionServiceTest {
         when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
 
         lambdaDdFunctionService.callSetFunctionResources(resourceTier);
-        verify(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+        verify(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemoryMbs());
     }
 
     @Test
@@ -118,7 +118,7 @@ class LambdaDdFunctionServiceTest {
         String functionArn = generator.nextObject(String.class);
 
         when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
-        doThrow(LambdaNotFoundException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+        doThrow(LambdaNotFoundException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemoryMbs());
 
         assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.callSetFunctionResources(resourceTier));
     }
@@ -129,7 +129,7 @@ class LambdaDdFunctionServiceTest {
         String functionArn = generator.nextObject(String.class);
 
         when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
-        doThrow(LambdaUpdateMaxTriesException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemory());
+        doThrow(LambdaUpdateMaxTriesException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemoryMbs());
 
         assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.callSetFunctionResources(resourceTier));
     }
