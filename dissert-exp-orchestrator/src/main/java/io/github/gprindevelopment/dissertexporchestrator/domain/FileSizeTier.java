@@ -18,4 +18,8 @@ public enum FileSizeTier {
     }
 
     private final long fileSizeBytes;
+
+    public boolean isCompatibleWith(ResourceTier resourceTier) {
+        return TierCompatibilityUtils.isCompatible(resourceTier, this);
+    }
 }
