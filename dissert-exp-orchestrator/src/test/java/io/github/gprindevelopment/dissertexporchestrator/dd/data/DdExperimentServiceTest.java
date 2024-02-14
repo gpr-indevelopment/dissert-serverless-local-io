@@ -121,7 +121,12 @@ class DdExperimentServiceTest {
 
     @Test
     public void Should_set_zero_to_throughput_when_unit_not_resolvable() {
-        assertEquals(0, experimentService.extractThroughput("1234 L/s"));
+        assertEquals(0, experimentService.extractThroughputKbs("1234 L/s"));
+    }
+
+    @Test
+    public void Should_correctly_resolve_kBs_throughput_unit() {
+        assertEquals(1234, experimentService.extractThroughputKbs("1234 kB/s"));
     }
 
     @Test

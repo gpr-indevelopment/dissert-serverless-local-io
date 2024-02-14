@@ -41,7 +41,7 @@ public class DdExperimentService {
                 .rawLatency(rawLatency)
                 .rawResponse(rawResponse)
                 .latencySeconds(extractLatency(rawLatency))
-                .throughputKbPerSecond(extractThroughput(rawThroughput))
+                .throughputKbPerSecond(extractThroughputKbs(rawThroughput))
                 .experiment(experiment)
                 .build();
         experiment.setResult(result);
@@ -100,26 +100,24 @@ public class DdExperimentService {
                 .build();
     }
 
-    protected Double extractThroughput(String rawThroughput) {
+    protected Double extractThroughputKbs(String rawThroughput) {
         String[] splitRawThroughput = rawThroughput.split("\s");
         Double value = Double.parseDouble(splitRawThroughput[0]);
         String unit = splitRawThroughput[1];
-        return value * resolveMultiplierFromUnit(unit);
+        double throughputBytes = value * resolveMultiplierFromUnit(unit);
+        return throughputBytes/1e3;
     }
 
     private Double resolveMultiplierFromUnit(String unit) {
-        double multiplier = 1.0;
+        double multiplier;
         switch (unit) {
-            case "GB/s":
-                multiplier = 1e6;
-                break;
-            case "MB/s":
-                multiplier = 1e3;
-                break;
-            default:
+            case "GB/s" -> multiplier = 1e9;
+            case "MB/s" -> multiplier = 1e6;
+            case "kB/s" -> multiplier = 1e3;
+            default -> {
                 multiplier = 0;
                 log.warn("Unknown throughput unit: {}. Multiplier is set to {}.", unit, multiplier);
-                break;
+            }
         }
         return multiplier;
     }
