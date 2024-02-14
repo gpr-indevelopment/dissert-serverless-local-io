@@ -14,9 +14,7 @@ public enum GcfResourceTier {
     TIER_2("256M", "0.145"),
     TIER_3("512M", "0.289"),
     TIER_4("1024M", "0.579"),
-    TIER_5("2048M", "1"),
-    TIER_6("4096M", "2"),
-    TIER_7("8192M", "4");
+    TIER_5("2048M", "1");
 
     GcfResourceTier(String memory, String cpu) {
         this.memory = memory;
@@ -36,8 +34,6 @@ public enum GcfResourceTier {
             ResourceTier.TIER_2, GcfResourceTier.TIER_2,
             ResourceTier.TIER_3, GcfResourceTier.TIER_3,
             ResourceTier.TIER_4, GcfResourceTier.TIER_4,
-            ResourceTier.TIER_5, GcfResourceTier.TIER_5,
-            ResourceTier.TIER_6, GcfResourceTier.TIER_6,
-            ResourceTier.TIER_7, GcfResourceTier.TIER_7
+            ResourceTier.TIER_5, GcfResourceTier.TIER_5
     );
 }

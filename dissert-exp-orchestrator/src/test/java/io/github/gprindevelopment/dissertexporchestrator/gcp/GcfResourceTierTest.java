@@ -23,9 +23,7 @@ class GcfResourceTierTest {
                 Arguments.of(ResourceTier.TIER_2, GcfResourceTier.TIER_2),
                 Arguments.of(ResourceTier.TIER_3, GcfResourceTier.TIER_3),
                 Arguments.of(ResourceTier.TIER_4, GcfResourceTier.TIER_4),
-                Arguments.of(ResourceTier.TIER_5, GcfResourceTier.TIER_5),
-                Arguments.of(ResourceTier.TIER_6, GcfResourceTier.TIER_6),
-                Arguments.of(ResourceTier.TIER_7, GcfResourceTier.TIER_7)
+                Arguments.of(ResourceTier.TIER_5, GcfResourceTier.TIER_5)
         );
     }
 }

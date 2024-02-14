@@ -23,9 +23,7 @@ class LambdaResourceTierTest {
                 Arguments.of(ResourceTier.TIER_2, LambdaResourceTier.TIER_2),
                 Arguments.of(ResourceTier.TIER_3, LambdaResourceTier.TIER_3),
                 Arguments.of(ResourceTier.TIER_4, LambdaResourceTier.TIER_4),
-                Arguments.of(ResourceTier.TIER_5, LambdaResourceTier.TIER_5),
-                Arguments.of(ResourceTier.TIER_6, LambdaResourceTier.TIER_6),
-                Arguments.of(ResourceTier.TIER_7, LambdaResourceTier.TIER_7)
+                Arguments.of(ResourceTier.TIER_5, LambdaResourceTier.TIER_5)
         );
     }
 

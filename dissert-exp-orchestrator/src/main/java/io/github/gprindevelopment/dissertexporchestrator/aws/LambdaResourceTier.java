@@ -13,9 +13,7 @@ public enum LambdaResourceTier {
     TIER_2(256),
     TIER_3(512),
     TIER_4(1024),
-    TIER_5(2048),
-    TIER_6(4096),
-    TIER_7(8192);
+    TIER_5(2048);
 
     LambdaResourceTier(int memory) {
         this.memory = memory;
@@ -32,8 +30,6 @@ public enum LambdaResourceTier {
             ResourceTier.TIER_2, LambdaResourceTier.TIER_2,
             ResourceTier.TIER_3, LambdaResourceTier.TIER_3,
             ResourceTier.TIER_4, LambdaResourceTier.TIER_4,
-            ResourceTier.TIER_5, LambdaResourceTier.TIER_5,
-            ResourceTier.TIER_6, LambdaResourceTier.TIER_6,
-            ResourceTier.TIER_7, LambdaResourceTier.TIER_7
+            ResourceTier.TIER_5, LambdaResourceTier.TIER_5
     );
 }

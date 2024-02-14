@@ -45,7 +45,7 @@ class GcfDdFunctionServiceTest {
                 976+0 records out
                 999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
-        FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
         String expectedCommand = "if=/dev/zero of=/tmp/file1 bs=500 count=256000";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
