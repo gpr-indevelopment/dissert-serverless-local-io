@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.github.gpr-indevelopment</groupId>
 	<artifactId>dissert-exp-orchestrator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>dissert-exp-orchestrator</name>
 	<description>Experiments orchestrator for my dissertation around performance analysis of local file I/O workloads in serverless environments</description>
 	<properties>
@@ -98,7 +98,49 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>docker-clean</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>rmi</argument>
+								<argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+							</arguments>
+							<successCodes>
+								<successCode>0</successCode>
+								<successCode>1</successCode>
+							</successCodes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>docker-build</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>docker</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>build</argument>
+								<argument>-t</argument>
+								<argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+								<argument>.</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
