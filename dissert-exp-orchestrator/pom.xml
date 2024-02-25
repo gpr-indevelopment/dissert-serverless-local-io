@@ -54,8 +54,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -80,6 +80,11 @@
 			<groupId>org.jeasy</groupId>
 			<artifactId>easy-random-core</artifactId>
 			<version>5.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
