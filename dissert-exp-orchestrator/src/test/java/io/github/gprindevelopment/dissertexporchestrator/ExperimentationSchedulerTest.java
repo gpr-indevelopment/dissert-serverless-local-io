@@ -68,4 +68,18 @@ class ExperimentationSchedulerTest {
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_2);
         inOrder.verify(ddFunctionService, times(ioSizeTiers.length)).collectWriteExpRecord(any(), any());
     }
+
+    @Test
+    public void Should_run_all_compatible_combinations_of_io_file_sizes() {
+        ResourceTier[] resourceTiers = new ResourceTier[]{ResourceTier.TIER_1};
+        experimentationScheduler.runExperiments(resourceTiers, FileSizeTier.values(), IoSizeTier.values());
+        for (IoSizeTier ioSizeTier : IoSizeTier.values()) {
+            for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
+                if (!fileSizeTier.isCompatibleWith(ResourceTier.TIER_1)) {
+                    continue;
+                }
+                verify(ddFunctionService).collectWriteExpRecord(ioSizeTier, fileSizeTier);
+            }
+        }
+    }
 }

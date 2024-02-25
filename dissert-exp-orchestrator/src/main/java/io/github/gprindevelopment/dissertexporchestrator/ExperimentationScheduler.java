@@ -39,10 +39,10 @@ public class ExperimentationScheduler {
                     continue;
                 }
                 log.info("Setting file size to: {} bytes", fileSizeTier.getFileSizeBytes());
-                for (IoSizeTier value : ioSizeTiers) {
-                    log.info("Setting IO size to: {} bytes", value.getIoSizeBytes());
+                for (IoSizeTier ioSizeTier : ioSizeTiers) {
+                    log.info("Setting IO size to: {} bytes", ioSizeTier.getIoSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
-                        ddFunctionService.collectWriteExpRecord(IoSizeTier.TIER_1, fileSizeTier);
+                        ddFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
                     }
                 }
             }
