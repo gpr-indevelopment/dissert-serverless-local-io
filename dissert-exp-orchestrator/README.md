@@ -27,5 +27,5 @@ This application uses H2 for testing and Postgres for production.
 2. Deploy the new image to ECR. Refer to the AWS console ECR page on how to do it.
 3. Download the new image in EC2 instance from ECR using `docker image pull ${ECR_IMAGE_NAME}`.
 4. Copy the environment variables file from local machine to the EC2 instance using SCP.
-5. Run the application with the environment variables file. Eg. `docker run --env-file ./docker.env --name orch ${ECR_IMAGE_NAME}`.
+5. Run the application with the environment variables file. Eg. `docker run --env-file ./docker.env -d --name orch ${ECR_IMAGE_NAME}`.
 
