@@ -27,10 +27,7 @@ public class ExperimentationScheduler {
 
     public void runExperiments(ResourceTier[] resourceTiers, FileSizeTier[] fileSizeTiers, IoSizeTier[] ioSizeTiers) {
         for (ResourceTier resourceTier : resourceTiers) {
-            log.info("Setting resource tier to: {}", resourceTier);
-            for (DdFunctionService ddFunctionService : ddFunctionServices) {
-                ddFunctionService.setFunctionResources(resourceTier);
-            }
+            setupResourceTier(resourceTier);
             for (FileSizeTier fileSizeTier : fileSizeTiers) {
                 if (!fileSizeTier.isCompatibleWith(resourceTier)) {
                     log.info("Resource tier is not compatible with file size. Will skip. ResourceTier: {}, FileSizeTier: {}",
@@ -40,12 +37,23 @@ public class ExperimentationScheduler {
                 }
                 log.info("Setting file size to: {} bytes", fileSizeTier.getFileSizeBytes());
                 for (IoSizeTier ioSizeTier : ioSizeTiers) {
+                    if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
+                        log.debug("FileSizeTier {} is not compatible with IoSizeTier: {}. Will skip.", fileSizeTier, ioSizeTier);
+                        continue;
+                    }
                     log.info("Setting IO size to: {} bytes", ioSizeTier.getIoSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
                         ddFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
                     }
                 }
             }
+        }
+    }
+
+    private void setupResourceTier(ResourceTier resourceTier) {
+        log.info("Setting resource tier to: {}", resourceTier);
+        for (DdFunctionService ddFunctionService : ddFunctionServices) {
+            ddFunctionService.setFunctionResources(resourceTier);
         }
     }
 }

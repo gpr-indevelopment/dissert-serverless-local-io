@@ -18,4 +18,8 @@ public enum IoSizeTier {
         this.ioSizeBytes = ioSizeBytes;
     }
     private final long ioSizeBytes;
+
+    public boolean isCompatibleWith(FileSizeTier fileSizeTier) {
+        return TierCompatibilityUtils.isCompatible(fileSizeTier, this);
+    }
 }

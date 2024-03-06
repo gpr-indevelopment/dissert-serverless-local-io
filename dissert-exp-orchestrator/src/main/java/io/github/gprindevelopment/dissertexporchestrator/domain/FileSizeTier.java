@@ -22,4 +22,8 @@ public enum FileSizeTier {
     public boolean isCompatibleWith(ResourceTier resourceTier) {
         return TierCompatibilityUtils.isCompatible(resourceTier, this);
     }
+
+    public boolean isCompatibleWith(IoSizeTier ioSizeTier) {
+        return TierCompatibilityUtils.isCompatible(this, ioSizeTier);
+    }
 }

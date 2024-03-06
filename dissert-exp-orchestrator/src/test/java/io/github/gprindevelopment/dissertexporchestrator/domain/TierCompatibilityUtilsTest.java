@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TierCompatibilityUtilsTest {
 
     @ParameterizedTest
-    @MethodSource("provideAllTierCombinations")
+    @MethodSource("provideAllResourceFileSizeTierCombinations")
     public void File_sizes_bigger_or_equal_to_resource_allocation_should_not_be_compatible(ResourceTier resourceTier, FileSizeTier fileSizeTier) {
         if (fileSizeTier.getFileSizeBytes() >= resourceTier.getMemoryMbs() * 1e6) {
             assertFalse(TierCompatibilityUtils.isCompatible(resourceTier, fileSizeTier));
@@ -21,18 +21,39 @@ class TierCompatibilityUtilsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllTierCombinations")
+    @MethodSource("provideAllResourceFileSizeTierCombinations")
     public void File_sizes_smaller_than_resource_allocation_are_compatible(ResourceTier resourceTier, FileSizeTier fileSizeTier) {
         if (fileSizeTier.getFileSizeBytes() < resourceTier.getMemoryMbs() * 1e6) {
             assertTrue(TierCompatibilityUtils.isCompatible(resourceTier, fileSizeTier));
         }
     }
 
-    private static List<Arguments> provideAllTierCombinations() {
+    @ParameterizedTest
+    @MethodSource("provideAllFileSizeIoSizeTierCombinations")
+    public void Io_sizes_are_not_compatible_to_smaller_file_sizes(FileSizeTier fileSizeTier, IoSizeTier ioSizeTier) {
+        boolean actual = TierCompatibilityUtils.isCompatible(fileSizeTier, ioSizeTier);
+        if (ioSizeTier.getIoSizeBytes() <= fileSizeTier.getFileSizeBytes()) {
+            assertTrue(actual);
+        } else {
+            assertFalse(actual);
+        }
+    }
+
+    private static List<Arguments> provideAllResourceFileSizeTierCombinations() {
         List<Arguments> arguments = new ArrayList<>();
         for (ResourceTier resourceTier : ResourceTier.values()) {
             for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
                 arguments.add(Arguments.of(resourceTier, fileSizeTier));
+            }
+        }
+        return arguments;
+    }
+
+    private static List<Arguments> provideAllFileSizeIoSizeTierCombinations() {
+        List<Arguments> arguments = new ArrayList<>();
+        for (IoSizeTier ioSizeTier : IoSizeTier.values()) {
+            for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
+                arguments.add(Arguments.of(fileSizeTier, ioSizeTier));
             }
         }
         return arguments;

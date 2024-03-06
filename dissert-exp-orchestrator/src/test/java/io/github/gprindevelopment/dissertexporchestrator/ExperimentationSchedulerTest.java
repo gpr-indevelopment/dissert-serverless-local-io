@@ -78,6 +78,10 @@ class ExperimentationSchedulerTest {
                 if (!fileSizeTier.isCompatibleWith(ResourceTier.TIER_1)) {
                     continue;
                 }
+                if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
+                    verify(ddFunctionService, never()).collectWriteExpRecord(ioSizeTier, fileSizeTier);
+                    continue;
+                }
                 verify(ddFunctionService).collectWriteExpRecord(ioSizeTier, fileSizeTier);
             }
         }
