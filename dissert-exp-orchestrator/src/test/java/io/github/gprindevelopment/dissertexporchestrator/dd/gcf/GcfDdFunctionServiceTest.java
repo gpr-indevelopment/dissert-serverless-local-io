@@ -68,6 +68,35 @@ class GcfDdFunctionServiceTest {
     }
 
     @Test
+    public void Should_successfully_save_exp_record_from_urandom_write_function_call() {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
+        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                SystemName.GCF_DD,
+                ResourceTier.TIER_1,
+                expectedFunctionResponse,
+                "0.830883 s",
+                "1.2 GB/s",
+                ioSizeTier.getIoSizeBytes(),
+                fileSizeTier.getFileSizeBytes(),
+                expectedCommand,
+                OperationType.WRITE
+        )).thenReturn(expectedExperiment);
+        when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+        assertEquals(expectedExperiment, savedEntity);
+    }
+
+    @Test
     public void Should_successfully_save_exp_record_from_read_function_call() {
         String expectedFunctionResponse = """
                 953+1 records in

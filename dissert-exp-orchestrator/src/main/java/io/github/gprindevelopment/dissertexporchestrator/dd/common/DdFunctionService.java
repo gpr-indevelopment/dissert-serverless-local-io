@@ -34,7 +34,13 @@ public abstract class DdFunctionService {
     public DdExperimentEntity collectZeroWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
-        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
+        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildZeroWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
+    }
+
+    public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
+        Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
+        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildURandomWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
     }
 
     public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
@@ -98,8 +104,12 @@ public abstract class DdFunctionService {
         return saved;
     }
 
-    private String buildWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
+    private String buildZeroWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
+    }
+
+    private String buildURandomWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
+        return String.format("if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
     }
 
     private String buildReadCommand(Long ioSizeBytes) {

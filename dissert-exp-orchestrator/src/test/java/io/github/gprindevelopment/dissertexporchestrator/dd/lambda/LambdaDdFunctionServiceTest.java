@@ -72,6 +72,38 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
+    public void Should_successfully_save_exp_record_from_urandom_write_function_call() {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB) copied,
+                1.31127 s,
+                762 MB/s
+                """;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
+        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                SystemName.LAMBDA_DD,
+                ResourceTier.TIER_1,
+                expectedFunctionResponse,
+                "1.31127 s",
+                "762 MB/s",
+                ioSizeTier.getIoSizeBytes(),
+                fileSizeTier.getFileSizeBytes(),
+                expectedCommand,
+                OperationType.WRITE
+        )).thenReturn(expectedExperiment);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+
+        assertEquals(expectedExperiment, savedEntity);
+    }
+
+    @Test
     public void Should_successfully_save_exp_record_from_read_function_call() {
         String expectedFunctionResponse = """
                 953+1 records in
