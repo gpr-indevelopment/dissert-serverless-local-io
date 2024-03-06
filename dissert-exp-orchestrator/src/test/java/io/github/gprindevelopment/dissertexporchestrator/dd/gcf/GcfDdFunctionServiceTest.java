@@ -63,7 +63,7 @@ class GcfDdFunctionServiceTest {
         )).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 

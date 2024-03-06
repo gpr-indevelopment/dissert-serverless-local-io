@@ -66,7 +66,7 @@ class LambdaDdFunctionServiceTest {
                 OperationType.WRITE
         )).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
-        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }

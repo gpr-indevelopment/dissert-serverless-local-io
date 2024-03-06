@@ -34,7 +34,7 @@ class DdFunctionServiceTest {
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_1;
 
-        ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        ddFunctionStubService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
         verify(experimentService).recordSuccessfulExperiment(any(), any(), any(), any(), any(), any(), any(), any(), any());
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
     }
@@ -68,7 +68,7 @@ class DdFunctionServiceTest {
                 .thenReturn(expectedFailure);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
-        DdExperimentEntity result = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity result = ddFunctionStubService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedFailure, result);
     }
 
@@ -110,7 +110,7 @@ class DdFunctionServiceTest {
                 .thenReturn(expectedFailure);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
-        DdExperimentEntity result = ddFunctionStubService.collectWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity result = ddFunctionStubService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedFailure, result);
     }
 

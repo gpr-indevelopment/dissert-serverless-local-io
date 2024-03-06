@@ -31,7 +31,7 @@ public abstract class DdFunctionService {
         callSetFunctionResources(resourceTier);
         currentResourceTier = resourceTier;
     }
-    public DdExperimentEntity collectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+    public DdExperimentEntity collectZeroWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
         return collectExpRecord(ioSizeBytes, fileSizeBytes, buildWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
