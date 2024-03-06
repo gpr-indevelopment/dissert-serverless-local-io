@@ -40,7 +40,7 @@ class LambdaDdFunctionServiceTest {
     private final EasyRandom generator = new EasyRandom();
 
     @Test
-    public void Should_successfully_save_exp_record_from_function_call() {
+    public void Should_successfully_save_exp_record_from_zero_write_function_call() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
