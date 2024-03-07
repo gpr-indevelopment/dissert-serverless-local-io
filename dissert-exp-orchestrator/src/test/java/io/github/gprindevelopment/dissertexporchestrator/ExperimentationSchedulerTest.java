@@ -64,9 +64,16 @@ class ExperimentationSchedulerTest {
         experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
         InOrder inOrder = inOrder(ddFunctionService);
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
-        inOrder.verify(ddFunctionService, times(ioSizeTiers.length)).collectZeroWriteExpRecord(any(), any());
+        for (int i = 0; i < ioSizeTiers.length; i++) {
+            inOrder.verify(ddFunctionService).collectZeroWriteExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
+        }
+
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_2);
-        inOrder.verify(ddFunctionService, times(ioSizeTiers.length)).collectZeroWriteExpRecord(any(), any());
+        for (int i = 0; i < ioSizeTiers.length; i++) {
+            inOrder.verify(ddFunctionService).collectZeroWriteExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
+        }
     }
 
     @Test
@@ -80,9 +87,11 @@ class ExperimentationSchedulerTest {
                 }
                 if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
                     verify(ddFunctionService, never()).collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
+                    verify(ddFunctionService, never()).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                     continue;
                 }
                 verify(ddFunctionService).collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
+                verify(ddFunctionService).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
             }
         }
     }
