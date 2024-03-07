@@ -43,6 +43,12 @@ public abstract class DdFunctionService {
         return collectExpRecord(ioSizeBytes, fileSizeBytes, buildURandomWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
     }
 
+    /**
+     * Requires that a file with absolute path /tmp/file1 exists prior to the read action.
+     * Will read the entirety of the existing file using the provided ioSizeTier
+     * @param ioSizeTier
+     * @return the result of the read experiment
+     */
     public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         return collectExpRecord(ioSizeBytes, null, buildReadCommand(ioSizeBytes), OperationType.READ);

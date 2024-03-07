@@ -45,6 +45,7 @@ public class ExperimentationScheduler {
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
                         ddFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
                         ddFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+                        ddFunctionService.collectReadExpRecord(ioSizeTier);
                     }
                 }
             }
