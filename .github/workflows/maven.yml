@@ -44,7 +44,7 @@ jobs:
         
   docker-build:
 
-    name: Docker build
+    name: Docker to ECR
     runs-on: ubuntu-latest
     needs: build
     
@@ -67,3 +67,20 @@ jobs:
       run: echo $GCF_CREDS > dissert-exp-orchestrator/gcf-creds.json
     - name: Build Docker with Maven
       run: mvn exec:exec@docker-clean exec:exec@docker-build --file dissert-exp-orchestrator/pom.xml
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
+    - name: Push Docker image to ECR
+      env:
+        AWS_ECR_IMAGE_NAME: ${{ secrets.AWS_ECR_IMAGE_NAME }}
+      run: |
+        docker tag io.github.gpr-indevelopment/dissert-exp-orchestrator:1.0.0 $AWS_ECR_IMAGE_NAME
+        docker push $AWS_ECR_IMAGE_NAME
+
+      
