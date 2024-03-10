@@ -99,6 +99,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY_PEM }}
+        envs: AWS_ECR_IMAGE_NAME
         script: |
           docker stop $(docker ps -a -q)
           docker rm $(docker ps -a -q)
