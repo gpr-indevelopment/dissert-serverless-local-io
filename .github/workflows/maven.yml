@@ -82,7 +82,6 @@ jobs:
       env:
         AWS_ECR_IMAGE_NAME: ${{ secrets.AWS_ECR_IMAGE_NAME }}
       run: |
-        docker tag io.github.gpr-indevelopment/dissert-exp-orchestrator:1.0.0 $AWS_ECR_IMAGE_NAME
         docker push $AWS_ECR_IMAGE_NAME
 
       
