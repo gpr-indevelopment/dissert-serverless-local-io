@@ -61,5 +61,9 @@ jobs:
       with:
         name: build-result
         path: dissert-exp-orchestrator/target/
+    - name: Save GCF credentials to file
+      env:
+        GCF_CREDS: ${{ secrets.GCF_CREDS }}
+      run: echo $GCF_CREDS > dissert-exp-orchestrator/gcf-creds.json
     - name: Build Docker with Maven
       run: mvn exec:exec@docker-clean exec:exec@docker-build --file dissert-exp-orchestrator/pom.xml
