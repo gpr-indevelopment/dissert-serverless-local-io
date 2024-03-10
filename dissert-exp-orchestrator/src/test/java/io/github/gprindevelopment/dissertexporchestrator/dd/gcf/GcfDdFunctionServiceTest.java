@@ -103,6 +103,7 @@ class GcfDdFunctionServiceTest {
                 953+1 records out
                 999424000 bytes (999 MB, 953 MiB) copied, 0.296427 s, 3.4 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
         String expectedCommand = "if=/tmp/file1 of=/dev/null bs=500";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
@@ -114,13 +115,13 @@ class GcfDdFunctionServiceTest {
                 "0.296427 s",
                 "3.4 GB/s",
                 ioSizeTier.getIoSizeBytes(),
-                null,
+                fileSizeTier.getFileSizeBytes(),
                 expectedCommand,
                 OperationType.READ
         )).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 
