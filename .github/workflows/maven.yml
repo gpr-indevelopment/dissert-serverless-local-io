@@ -84,4 +84,26 @@ jobs:
       run: |
         docker push $AWS_ECR_IMAGE_NAME
 
+  update-container:
+
+    name: Update container
+    runs-on: ubuntu-latest
+    needs: docker-build
+    
+    steps:
+    - name: SSH and update container
+      uses: appleboy/ssh-action@v1.0.3
+      env:
+        AWS_ECR_IMAGE_NAME: ${{ secrets.AWS_ECR_IMAGE_NAME }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY_PEM }}
+        script: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+          docker rmi -f $(docker images -aq)
+          cd ~/app
+          docker run --env-file ./docker.env --name orch -d $AWS_ECR_IMAGE_NAME
+          
       
