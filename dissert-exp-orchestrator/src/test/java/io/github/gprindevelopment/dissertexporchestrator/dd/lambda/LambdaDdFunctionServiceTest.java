@@ -6,6 +6,7 @@ import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaService;
 import io.github.gprindevelopment.dissertexporchestrator.aws.LambdaUpdateMaxTriesException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.SuccessfulExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
@@ -55,16 +56,15 @@ class LambdaDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.LAMBDA_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "1.31127 s",
-                "762 MB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.WRITE
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "1.31127 s",
+                        "762 MB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
 
@@ -87,16 +87,15 @@ class LambdaDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.LAMBDA_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "1.31127 s",
-                "762 MB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.WRITE
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "1.31127 s",
+                        "762 MB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
 
@@ -118,16 +117,15 @@ class LambdaDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.LAMBDA_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "0.130173 s",
-                "7.7 GB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.READ
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.130173 s",
+                        "7.7 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
 
@@ -151,7 +149,8 @@ class LambdaDdFunctionServiceTest {
         String functionArn = generator.nextObject(String.class);
 
         when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
-        doThrow(LambdaNotFoundException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemoryMbs());
+        doThrow(LambdaNotFoundException.class).when(lambdaService).setFunctionMemory(functionArn,
+                LambdaResourceTier.TIER_3.getMemoryMbs());
 
         assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.callSetFunctionResources(resourceTier));
     }
@@ -162,7 +161,8 @@ class LambdaDdFunctionServiceTest {
         String functionArn = generator.nextObject(String.class);
 
         when(lambdaDdFunctionProps.arn()).thenReturn(functionArn);
-        doThrow(LambdaUpdateMaxTriesException.class).when(lambdaService).setFunctionMemory(functionArn, LambdaResourceTier.TIER_3.getMemoryMbs());
+        doThrow(LambdaUpdateMaxTriesException.class).when(lambdaService).setFunctionMemory(functionArn,
+                LambdaResourceTier.TIER_3.getMemoryMbs());
 
         assertThrows(DdFunctionException.class, () -> lambdaDdFunctionService.callSetFunctionResources(resourceTier));
     }

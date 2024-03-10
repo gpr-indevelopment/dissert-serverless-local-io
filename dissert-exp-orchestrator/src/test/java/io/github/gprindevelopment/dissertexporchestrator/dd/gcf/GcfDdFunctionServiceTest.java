@@ -2,6 +2,7 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.gcf;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.SuccessfulExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
@@ -51,16 +52,15 @@ class GcfDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.GCF_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "0.830883 s",
-                "1.2 GB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.WRITE
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.GCF_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.830883 s",
+                        "1.2 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
         DdExperimentEntity savedEntity = gcfDdFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
@@ -80,16 +80,15 @@ class GcfDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.GCF_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "0.830883 s",
-                "1.2 GB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.WRITE
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.GCF_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.830883 s",
+                        "1.2 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
         DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
@@ -109,16 +108,15 @@ class GcfDdFunctionServiceTest {
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
         when(experimentService.recordSuccessfulExperiment(
-                SystemName.GCF_DD,
-                ResourceTier.TIER_1,
-                expectedFunctionResponse,
-                "0.296427 s",
-                "3.4 GB/s",
-                ioSizeTier.getIoSizeBytes(),
-                fileSizeTier.getFileSizeBytes(),
-                expectedCommand,
-                OperationType.READ
-        )).thenReturn(expectedExperiment);
+                new SuccessfulExperiment(SystemName.GCF_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.296427 s",
+                        "3.4 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.READ))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
         DdExperimentEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);

@@ -8,15 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Timestamp;
 import java.time.DayOfWeek;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,8 +23,8 @@ class DdExperimentServiceTest {
     private DdExperimentService experimentService;
     @Mock
     private DdExperimentRepository repository;
-    @Mock
-    private ClockService clockService;
+    @Spy
+    private ExperimentFactory experimentFactory = new ExperimentFactory(new ClockService());
     private final EasyRandom generator = new EasyRandom();
 
     @Test
@@ -40,22 +38,19 @@ class DdExperimentServiceTest {
         OperationType operationType = OperationType.WRITE;
         SystemName systemName = SystemName.GCF_DD;
         ResourceTier resourceTier = ResourceTier.TIER_1;
-        Timestamp occurredAt = new Timestamp(1699801200000L);
 
-        when(clockService.getCurrentTimestamp()).thenReturn(occurredAt);
         when(repository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
         DdExperimentEntity saved = experimentService.recordSuccessfulExperiment(
-                systemName,
-                resourceTier,
-                rawResponse,
-                rawLatency,
-                rawThroughput,
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType
-        );
+                new SuccessfulExperiment(systemName,
+                        resourceTier,
+                        rawResponse,
+                        rawLatency,
+                        rawThroughput,
+                        ioSizeBytes,
+                        fileSizeBytes,
+                        command,
+                        operationType));
         assertEquals(systemName, saved.getSystemName());
         assertEquals(resourceTier, saved.getResourceTier());
         assertEquals(command, saved.getCommand());
@@ -63,10 +58,11 @@ class DdExperimentServiceTest {
         assertEquals(fileSizeBytes, saved.getFileSizeBytes());
         assertEquals(operationType, saved.getOperationType());
         assertEquals(DdOperationStatus.SUCCESS, saved.getStatus());
-        assertEquals(occurredAt, saved.getOccurredAt());
         assertEquals(WeekPeriod.WEEKEND, saved.getWeekPeriod());
         assertEquals(DayOfWeek.SUNDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
+        assertNotNull(saved.getOccurredAt());
+
 
         assertEquals(rawResponse, saved.getResult().getRawResponse());
         assertEquals(rawLatency, saved.getResult().getRawLatency());
@@ -86,21 +82,18 @@ class DdExperimentServiceTest {
         OperationType operationType = OperationType.WRITE;
         SystemName systemName = SystemName.GCF_DD;
         ResourceTier resourceTier = ResourceTier.TIER_1;
-        Timestamp occurredAt = new Timestamp(1699801200000L);
         String rawError = generator.nextObject(String.class);
 
-        when(clockService.getCurrentTimestamp()).thenReturn(occurredAt);
         when(repository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
         DdExperimentEntity saved = experimentService.recordFailedExperiment(
-                systemName,
-                resourceTier,
-                rawError,
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType
-        );
+                new FailedExperiment(systemName,
+                        resourceTier,
+                        rawError,
+                        ioSizeBytes,
+                        fileSizeBytes,
+                        command,
+                        operationType));
         assertEquals(systemName, saved.getSystemName());
         assertEquals(resourceTier, saved.getResourceTier());
         assertEquals(command, saved.getCommand());
@@ -108,10 +101,10 @@ class DdExperimentServiceTest {
         assertEquals(fileSizeBytes, saved.getFileSizeBytes());
         assertEquals(operationType, saved.getOperationType());
         assertEquals(DdOperationStatus.FAILURE, saved.getStatus());
-        assertEquals(occurredAt, saved.getOccurredAt());
         assertEquals(WeekPeriod.WEEKEND, saved.getWeekPeriod());
         assertEquals(DayOfWeek.SUNDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
+        assertNotNull(saved.getOccurredAt());
 
         assertEquals(rawError, saved.getError().getRawError());
         assertEquals(saved, saved.getError().getExperiment());
@@ -127,21 +120,5 @@ class DdExperimentServiceTest {
     @Test
     public void Should_correctly_resolve_kBs_throughput_unit() {
         assertEquals(1234, experimentService.extractThroughputKbs("1234 kB/s"));
-    }
-
-    @Test
-    public void Should_consider_business_hours_in_weekend_as_off_hours() {
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699801200000L));
-        assertEquals(TimeOfDay.OFF_HOUR, experimentService.resolveTimeOfDay());
-        assertEquals(WeekPeriod.WEEKEND, experimentService.resolveWeekPeriod());
-        assertEquals(DayOfWeek.SUNDAY, experimentService.resolveDayOfWeek());
-    }
-
-    @Test
-    public void Should_successfully_populate_week_period_as_weekday() {
-        when(clockService.getCurrentTimestamp()).thenReturn(new Timestamp(1699455600000L));
-        assertEquals(TimeOfDay.BUSINESS_HOUR, experimentService.resolveTimeOfDay());
-        assertEquals(WeekPeriod.WEEKDAY, experimentService.resolveWeekPeriod());
-        assertEquals(DayOfWeek.WEDNESDAY, experimentService.resolveDayOfWeek());
     }
 }

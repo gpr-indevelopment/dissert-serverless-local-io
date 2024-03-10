@@ -3,6 +3,8 @@ package io.github.gprindevelopment.dissertexporchestrator.dd.common;
 import com.google.common.base.Throwables;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEntity;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.FailedExperiment;
+import io.github.gprindevelopment.dissertexporchestrator.dd.data.SuccessfulExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
@@ -22,25 +24,36 @@ public abstract class DdFunctionService {
     protected ResourceTier currentResourceTier;
 
     protected abstract String callFunction(CommandRequest commandRequest);
+
     protected abstract String extractRawLatency(String rawResponse);
+
     protected abstract String extractRawThroughput(String rawResponse);
+
     protected abstract SystemName getSystemName();
+
     protected abstract void callSetFunctionResources(ResourceTier resourceTier);
 
     public void setFunctionResources(ResourceTier resourceTier) {
         callSetFunctionResources(resourceTier);
         currentResourceTier = resourceTier;
     }
+
     public DdExperimentEntity collectZeroWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
-        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildZeroWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
+        return collectExpRecord(ioSizeBytes,
+                fileSizeBytes,
+                buildZeroWriteCommand(ioSizeBytes, fileSizeBytes),
+                OperationType.WRITE);
     }
 
     public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
         Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
-        return collectExpRecord(ioSizeBytes, fileSizeBytes, buildURandomWriteCommand(ioSizeBytes, fileSizeBytes), OperationType.WRITE);
+        return collectExpRecord(ioSizeBytes,
+                fileSizeBytes,
+                buildURandomWriteCommand(ioSizeBytes, fileSizeBytes),
+                OperationType.WRITE);
     }
 
     /**
@@ -54,7 +67,10 @@ public abstract class DdFunctionService {
      */
     public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
-        return collectExpRecord(ioSizeBytes, fileSizeTier.getFileSizeBytes(), buildReadCommand(ioSizeBytes), OperationType.READ);
+        return collectExpRecord(ioSizeBytes,
+                fileSizeTier.getFileSizeBytes(),
+                buildReadCommand(ioSizeBytes),
+                OperationType.READ);
     }
 
     private DdExperimentEntity collectExpRecord(
@@ -70,8 +86,7 @@ public abstract class DdFunctionService {
         try {
             String rawResponse = callFunction(commandRequest);
             log.debug("Function called successfully. Will parse and save record");
-            return experimentService.recordSuccessfulExperiment(
-                    getSystemName(),
+            SuccessfulExperiment successfulExperiment = new SuccessfulExperiment(getSystemName(),
                     currentResourceTier,
                     rawResponse,
                     extractRawLatency(rawResponse),
@@ -79,8 +94,8 @@ public abstract class DdFunctionService {
                     ioSizeBytes,
                     fileSizeBytes,
                     command,
-                    operationType
-            );
+                    operationType);
+            return experimentService.recordSuccessfulExperiment(successfulExperiment);
         } catch (Exception ex) {
             return saveOperationError(
                     ioSizeBytes,
@@ -101,24 +116,23 @@ public abstract class DdFunctionService {
     ) {
         log.info("Error found. Will record a failed experiment.");
         DdExperimentEntity saved = experimentService.recordFailedExperiment(
-                getSystemName(),
-                currentResourceTier,
-                Throwables.getStackTraceAsString(error),
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType
-        );
+                new FailedExperiment(getSystemName(),
+                        currentResourceTier,
+                        Throwables.getStackTraceAsString(error),
+                        ioSizeBytes,
+                        fileSizeBytes,
+                        command,
+                        operationType));
         log.info("Successfully persisted DdExperimentEntity as failure: {}", saved);
         return saved;
     }
 
     private String buildZeroWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
-        return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
+        return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
     private String buildURandomWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
-        return String.format("if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes/ioSizeBytes);
+        return String.format("if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
     private String buildReadCommand(Long ioSizeBytes) {

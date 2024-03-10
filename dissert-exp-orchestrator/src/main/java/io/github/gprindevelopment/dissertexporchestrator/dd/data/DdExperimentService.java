@@ -1,103 +1,40 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.data;
 
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdOperationStatus;
-import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
-import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.DayOfWeek;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DdExperimentService {
     private final DdExperimentRepository repository;
-    private final ClockService clockService;
+    private final ExperimentFactory experimentFactory;
 
-    public DdExperimentEntity recordSuccessfulExperiment(
-            SystemName systemName,
-            ResourceTier resourceTier,
-            String rawResponse,
-            String rawLatency,
-            String rawThroughput,
-            Long ioSizeBytes,
-            Long fileSizeBytes,
-            String command,
-            OperationType operationType) {
-        DdExperimentEntity experiment = buildExperiment(
-                systemName,
-                resourceTier,
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType,
-                DdOperationStatus.SUCCESS
-        );
+    public DdExperimentEntity recordSuccessfulExperiment(SuccessfulExperiment successfulExperiment) {
+        DdExperimentEntity experiment = experimentFactory.buildExperiment(successfulExperiment);
         DdExperimentResultEntity result = DdExperimentResultEntity
                 .builder()
-                .rawThroughput(rawThroughput)
-                .rawLatency(rawLatency)
-                .rawResponse(rawResponse)
-                .latencySeconds(extractLatency(rawLatency))
-                .throughputKbPerSecond(extractThroughputKbs(rawThroughput))
+                .rawThroughput(successfulExperiment.rawThroughput())
+                .rawLatency(successfulExperiment.rawLatency())
+                .rawResponse(successfulExperiment.rawResponse())
+                .latencySeconds(extractLatency(successfulExperiment.rawLatency()))
+                .throughputKbPerSecond(extractThroughputKbs(successfulExperiment.rawThroughput()))
                 .experiment(experiment)
                 .build();
         experiment.setResult(result);
         return repository.save(experiment);
     }
 
-    public DdExperimentEntity recordFailedExperiment(
-            SystemName systemName,
-            ResourceTier resourceTier,
-            String rawError,
-            Long ioSizeBytes,
-            Long fileSizeBytes,
-            String command,
-            OperationType operationType) {
-        DdExperimentEntity experiment = buildExperiment(
-                systemName,
-                resourceTier,
-                ioSizeBytes,
-                fileSizeBytes,
-                command,
-                operationType,
-                DdOperationStatus.FAILURE
-        );
+    public DdExperimentEntity recordFailedExperiment(FailedExperiment failedExperiment) {
+        DdExperimentEntity experiment = experimentFactory.buildExperiment(failedExperiment);
         DdExperimentErrorEntity error = DdExperimentErrorEntity
                 .builder()
                 .experiment(experiment)
-                .rawError(rawError)
+                .rawError(failedExperiment.rawError())
                 .build();
         experiment.setError(error);
         return repository.save(experiment);
-    }
-
-    private DdExperimentEntity buildExperiment(
-            SystemName systemName,
-            ResourceTier resourceTier,
-            Long ioSizeBytes,
-            Long fileSizeBytes,
-            String command,
-            OperationType operationType,
-            DdOperationStatus status
-
-    ) {
-        return DdExperimentEntity
-                .builder()
-                .occurredAt(clockService.getCurrentTimestamp())
-                .status(status)
-                .systemName(systemName)
-                .command(command)
-                .ioSizeBytes(ioSizeBytes)
-                .fileSizeBytes(fileSizeBytes)
-                .operationType(operationType)
-                .resourceTier(resourceTier)
-                .dayOfWeek(resolveDayOfWeek())
-                .weekPeriod(resolveWeekPeriod())
-                .timeOfDay(resolveTimeOfDay())
-                .build();
     }
 
     protected Double extractThroughputKbs(String rawThroughput) {
@@ -105,7 +42,7 @@ public class DdExperimentService {
         Double value = Double.parseDouble(splitRawThroughput[0]);
         String unit = splitRawThroughput[1];
         double throughputBytes = value * resolveMultiplierFromUnit(unit);
-        return throughputBytes/1e3;
+        return throughputBytes / 1e3;
     }
 
     private Double resolveMultiplierFromUnit(String unit) {
@@ -124,17 +61,5 @@ public class DdExperimentService {
 
     private Double extractLatency(String rawLatency) {
         return Double.parseDouble(rawLatency.split("\s")[0]);
-    }
-
-    protected WeekPeriod resolveWeekPeriod() {
-        return WeekPeriod.from(resolveDayOfWeek());
-    }
-
-    protected DayOfWeek resolveDayOfWeek() {
-        return clockService.getCurrentTimestamp().toLocalDateTime().getDayOfWeek();
-    }
-
-    protected TimeOfDay resolveTimeOfDay() {
-        return TimeOfDay.from(clockService.getCurrentTimestamp(), resolveDayOfWeek());
     }
 }
