@@ -13,5 +13,5 @@ This repository includes the source code for functions used in the I/O experimen
 
 ## Other source code
 
-* [dissert-exp-orchestrator](./dissert-exp-orchestrator): Java Spring Boot application that periodically calls functions for collecting data. The data gets saved to a permanente file based H2 database.
+* [dissert-exp-orchestrator](./dissert-exp-orchestrator): Java Spring Boot application that periodically calls functions for collecting data. The data gets saved to a PostgreSQL database in the cloud.
 * [analysis](./analysis): R source code and raw data used for analysis.
