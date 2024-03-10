@@ -62,4 +62,4 @@ jobs:
         name: build-result
         path: dissert-exp-orchestrator/target/
     - name: Build Docker with Maven
-      run: mvn exec:exec@docker-clean exec:exec@docker-build
+      run: mvn exec:exec@docker-clean exec:exec@docker-build --file dissert-exp-orchestrator/pom.xml
