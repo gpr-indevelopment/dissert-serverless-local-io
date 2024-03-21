@@ -4,6 +4,7 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdOperationSt
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,10 +12,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,9 +27,16 @@ class DdExperimentServiceTest {
     private DdExperimentService experimentService;
     @Mock
     private DdExperimentRepository repository;
+    private final ClockService clockService = mock(ClockService.class);
     @Spy
-    private ExperimentFactory experimentFactory = new ExperimentFactory(new ClockService());
+    private ExperimentFactory experimentFactory = new ExperimentFactory(clockService);
     private final EasyRandom generator = new EasyRandom();
+
+    @BeforeEach
+    public void init() {
+        when(clockService.getCurrentTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2024, 3, 21, 4, 1)));
+    }
 
     @Test
     public void Should_record_successful_experiment() {
@@ -58,8 +69,8 @@ class DdExperimentServiceTest {
         assertEquals(fileSizeBytes, saved.getFileSizeBytes());
         assertEquals(operationType, saved.getOperationType());
         assertEquals(DdOperationStatus.SUCCESS, saved.getStatus());
-        assertEquals(WeekPeriod.WEEKEND, saved.getWeekPeriod());
-        assertEquals(DayOfWeek.SUNDAY, saved.getDayOfWeek());
+        assertEquals(WeekPeriod.WEEKDAY, saved.getWeekPeriod());
+        assertEquals(DayOfWeek.THURSDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
         assertNotNull(saved.getOccurredAt());
 
@@ -101,8 +112,8 @@ class DdExperimentServiceTest {
         assertEquals(fileSizeBytes, saved.getFileSizeBytes());
         assertEquals(operationType, saved.getOperationType());
         assertEquals(DdOperationStatus.FAILURE, saved.getStatus());
-        assertEquals(WeekPeriod.WEEKEND, saved.getWeekPeriod());
-        assertEquals(DayOfWeek.SUNDAY, saved.getDayOfWeek());
+        assertEquals(WeekPeriod.WEEKDAY, saved.getWeekPeriod());
+        assertEquals(DayOfWeek.THURSDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
         assertNotNull(saved.getOccurredAt());
 
