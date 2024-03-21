@@ -1,0 +1,26 @@
+---
+title: "Dissert-final-exp"
+author: "Gabriel Robaina"
+date: "2024-03-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("postgres-connect-test-script.R")
+options(warn=-1)
+```
+
+## Dissert experiments
+
+The following are [density plots](https://r-graph-gallery.com/density-plot) for experiments ran between 02/25/2024 and 03/20/2024.
+
+```{r pressure, echo=FALSE}
+densityMinFileAndMinIoWrite()
+densityMaxFileAndMinIoWrite()
+densityMaxFileAndMaxIoWrite()
+
+densityMinFileAndMinIoRead()
+densityMaxFileAndMinIoRead()
+densityMaxFileAndMaxIoRead()
+```
