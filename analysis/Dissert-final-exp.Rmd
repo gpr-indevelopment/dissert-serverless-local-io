@@ -11,11 +11,17 @@ source("postgres-connect-test-script.R")
 options(warn=-1)
 ```
 
-## Dissert experiments
+# Dissert experiments
+
+These are the experiments!
+
+## Density plots
 
 The following are [density plots](https://r-graph-gallery.com/density-plot) for experiments ran between 02/25/2024 and 03/20/2024.
 
-```{r pressure, echo=FALSE}
+On the first density plot, it is limited between 0 and 1. Its hiding a mode for Lambda_DD on Tier 1 that happens after 25 and 50 ms.
+
+```{r densities, echo=FALSE}
 densityMinFileAndMinIoWrite()
 densityMaxFileAndMinIoWrite()
 densityMaxFileAndMaxIoWrite()
@@ -23,4 +29,16 @@ densityMaxFileAndMaxIoWrite()
 densityMinFileAndMinIoRead()
 densityMaxFileAndMinIoRead()
 densityMaxFileAndMaxIoRead()
+```
+
+## Box plots
+
+```{r boxplots, echo=FALSE}
+boxplotMinFileAndMinIoWrite()
+boxplotMaxFileAndMinIoWrite()
+boxplotMaxFileAndMaxIoWrite()
+
+boxplotMinFileAndMinIoRead()
+boxplotMaxFileAndMinIoRead()
+boxplotMaxFileAndMaxIoRead()
 ```
