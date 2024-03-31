@@ -8,6 +8,8 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source("postgres-connect-test-script.R")
+source("dissert-anova.R")
+
 options(warn=-1)
 ```
 
@@ -41,4 +43,14 @@ boxplotMaxFileAndMaxIoWrite()
 boxplotMinFileAndMinIoRead()
 boxplotMaxFileAndMinIoRead()
 boxplotMaxFileAndMaxIoRead()
+```
+
+## Anovas
+
+```{r anovas, echo=FALSE}
+bigFileWriteAnova()
+smallFileWriteAnova()
+
+bigFileReadAnova()
+smallFileReadAnova()
 ```
