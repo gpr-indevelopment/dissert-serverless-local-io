@@ -8,6 +8,7 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentEnt
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentService;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.SuccessfulExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExperimentName;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdFunctionException;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
@@ -64,7 +65,8 @@ class LambdaDdFunctionServiceTest {
                         ioSizeTier.getIoSizeBytes(),
                         fileSizeTier.getFileSizeBytes(),
                         expectedCommand,
-                        OperationType.WRITE))).thenReturn(expectedExperiment);
+                        OperationType.WRITE,
+                        DdExperimentName.DEV_ZERO_WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
 
@@ -95,7 +97,8 @@ class LambdaDdFunctionServiceTest {
                         ioSizeTier.getIoSizeBytes(),
                         fileSizeTier.getFileSizeBytes(),
                         expectedCommand,
-                        OperationType.WRITE))).thenReturn(expectedExperiment);
+                        OperationType.WRITE,
+                        DdExperimentName.URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
 
@@ -125,7 +128,8 @@ class LambdaDdFunctionServiceTest {
                         ioSizeTier.getIoSizeBytes(),
                         fileSizeTier.getFileSizeBytes(),
                         expectedCommand,
-                        OperationType.READ))).thenReturn(expectedExperiment);
+                        OperationType.READ,
+                        DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
 

@@ -6,6 +6,7 @@ import io.github.gprindevelopment.dissertexporchestrator.dd.data.DdExperimentSer
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.FailedExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.data.SuccessfulExperiment;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.CommandRequest;
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExperimentName;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
@@ -44,7 +45,8 @@ public abstract class DdFunctionService {
         return collectExpRecord(ioSizeBytes,
                 fileSizeBytes,
                 buildZeroWriteCommand(ioSizeBytes, fileSizeBytes),
-                OperationType.WRITE);
+                OperationType.WRITE,
+                DdExperimentName.DEV_ZERO_WRITE);
     }
 
     public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
@@ -53,7 +55,8 @@ public abstract class DdFunctionService {
         return collectExpRecord(ioSizeBytes,
                 fileSizeBytes,
                 buildURandomWriteCommand(ioSizeBytes, fileSizeBytes),
-                OperationType.WRITE);
+                OperationType.WRITE,
+                DdExperimentName.URANDOM_WRITE);
     }
 
     /**
@@ -70,14 +73,16 @@ public abstract class DdFunctionService {
         return collectExpRecord(ioSizeBytes,
                 fileSizeTier.getFileSizeBytes(),
                 buildReadCommand(ioSizeBytes),
-                OperationType.READ);
+                OperationType.READ,
+                DdExperimentName.DIRECT_READ);
     }
 
     private DdExperimentEntity collectExpRecord(
             Long ioSizeBytes,
             Long fileSizeBytes,
             String command,
-            OperationType operationType) {
+            OperationType operationType,
+            DdExperimentName experimentName) {
         if (Objects.isNull(currentResourceTier)) {
             log.info("Current resource tier is null. Will calibrate and default to TIER 1.");
             setFunctionResources(ResourceTier.TIER_1);
@@ -94,7 +99,8 @@ public abstract class DdFunctionService {
                     ioSizeBytes,
                     fileSizeBytes,
                     command,
-                    operationType);
+                    operationType,
+                    experimentName);
             return experimentService.recordSuccessfulExperiment(successfulExperiment);
         } catch (Exception ex) {
             return saveOperationError(
@@ -102,6 +108,7 @@ public abstract class DdFunctionService {
                     fileSizeBytes,
                     command,
                     operationType,
+                    experimentName,
                     ex
             );
         }
@@ -112,6 +119,7 @@ public abstract class DdFunctionService {
             Long fileSizeBytes,
             String command,
             OperationType operationType,
+            DdExperimentName experimentName,
             Exception error
     ) {
         log.info("Error found. Will record a failed experiment.");
@@ -122,7 +130,8 @@ public abstract class DdFunctionService {
                         ioSizeBytes,
                         fileSizeBytes,
                         command,
-                        operationType));
+                        operationType,
+                        experimentName));
         log.info("Successfully persisted DdExperimentEntity as failure: {}", saved);
         return saved;
     }

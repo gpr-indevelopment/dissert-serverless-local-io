@@ -1,5 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.data;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExperimentName;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdOperationStatus;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.OperationType;
@@ -33,6 +34,8 @@ public class DdExperimentEntity {
     private OperationType operationType;
     @Enumerated(EnumType.STRING)
     private SystemName systemName;
+    @Enumerated(EnumType.STRING)
+    private DdExperimentName experimentName;
     @Enumerated(EnumType.STRING)
     private ResourceTier resourceTier;
     @Enumerated(EnumType.STRING)

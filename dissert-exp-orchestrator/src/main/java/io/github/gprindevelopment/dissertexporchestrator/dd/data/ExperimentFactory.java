@@ -1,5 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.data;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExperimentName;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdOperationStatus;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
@@ -21,7 +22,8 @@ public class ExperimentFactory {
                 successfulExperiment.fileSizeBytes(),
                 successfulExperiment.command(),
                 successfulExperiment.operationType(),
-                DdOperationStatus.SUCCESS
+                DdOperationStatus.SUCCESS,
+                successfulExperiment.experimentName()
         );
     }
 
@@ -33,7 +35,8 @@ public class ExperimentFactory {
                 failedExperiment.fileSizeBytes(),
                 failedExperiment.command(),
                 failedExperiment.operationType(),
-                DdOperationStatus.FAILURE
+                DdOperationStatus.FAILURE,
+                failedExperiment.experimentName()
         );
     }
 
@@ -44,8 +47,8 @@ public class ExperimentFactory {
             Long fileSizeBytes,
             String command,
             OperationType operationType,
-            DdOperationStatus status
-
+            DdOperationStatus status,
+            DdExperimentName experimentName
     ) {
         return DdExperimentEntity
                 .builder()
@@ -60,6 +63,7 @@ public class ExperimentFactory {
                 .dayOfWeek(resolveDayOfWeek())
                 .weekPeriod(resolveWeekPeriod())
                 .timeOfDay(resolveTimeOfDay())
+                .experimentName(experimentName)
                 .build();
     }
 

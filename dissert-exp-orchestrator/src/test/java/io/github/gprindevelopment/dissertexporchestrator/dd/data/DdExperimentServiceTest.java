@@ -1,5 +1,6 @@
 package io.github.gprindevelopment.dissertexporchestrator.dd.data;
 
+import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdExperimentName;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.DdOperationStatus;
 import io.github.gprindevelopment.dissertexporchestrator.dd.domain.SystemName;
 import io.github.gprindevelopment.dissertexporchestrator.domain.*;
@@ -49,6 +50,7 @@ class DdExperimentServiceTest {
         OperationType operationType = OperationType.WRITE;
         SystemName systemName = SystemName.GCF_DD;
         ResourceTier resourceTier = ResourceTier.TIER_1;
+        DdExperimentName experimentName = DdExperimentName.DIRECT_READ;
 
         when(repository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
@@ -61,7 +63,8 @@ class DdExperimentServiceTest {
                         ioSizeBytes,
                         fileSizeBytes,
                         command,
-                        operationType));
+                        operationType,
+                        experimentName));
         assertEquals(systemName, saved.getSystemName());
         assertEquals(resourceTier, saved.getResourceTier());
         assertEquals(command, saved.getCommand());
@@ -72,6 +75,7 @@ class DdExperimentServiceTest {
         assertEquals(WeekPeriod.WEEKDAY, saved.getWeekPeriod());
         assertEquals(DayOfWeek.THURSDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
+        assertEquals(DdExperimentName.DIRECT_READ, saved.getExperimentName());
         assertNotNull(saved.getOccurredAt());
 
 
@@ -94,6 +98,7 @@ class DdExperimentServiceTest {
         SystemName systemName = SystemName.GCF_DD;
         ResourceTier resourceTier = ResourceTier.TIER_1;
         String rawError = generator.nextObject(String.class);
+        DdExperimentName experimentName = DdExperimentName.DIRECT_READ;
 
         when(repository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
@@ -104,7 +109,8 @@ class DdExperimentServiceTest {
                         ioSizeBytes,
                         fileSizeBytes,
                         command,
-                        operationType));
+                        operationType,
+                        experimentName));
         assertEquals(systemName, saved.getSystemName());
         assertEquals(resourceTier, saved.getResourceTier());
         assertEquals(command, saved.getCommand());
@@ -115,6 +121,7 @@ class DdExperimentServiceTest {
         assertEquals(WeekPeriod.WEEKDAY, saved.getWeekPeriod());
         assertEquals(DayOfWeek.THURSDAY, saved.getDayOfWeek());
         assertEquals(TimeOfDay.OFF_HOUR, saved.getTimeOfDay());
+        assertEquals(DdExperimentName.DIRECT_READ, saved.getExperimentName());
         assertNotNull(saved.getOccurredAt());
 
         assertEquals(rawError, saved.getError().getRawError());
