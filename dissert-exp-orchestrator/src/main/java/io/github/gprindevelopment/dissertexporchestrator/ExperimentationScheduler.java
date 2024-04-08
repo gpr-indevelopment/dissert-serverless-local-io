@@ -1,6 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class ExperimentationScheduler {
 
     private final List<DdFunctionService> ddFunctionServices;
+    private final ClockService clockService;
 
     @Scheduled(fixedDelayString = "${dissert-exp-orchestrator.experimentation-scheduler.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runAllExperiments() {
@@ -44,6 +46,7 @@ public class ExperimentationScheduler {
                     log.info("Setting IO size to: {} bytes", ioSizeTier.getIoSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
                         ddFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+                        clockService.wait(TimeUnit.SECONDS, 5);
                         ddFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
                     }
                 }

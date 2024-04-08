@@ -1,6 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
+import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
 import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
 import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
@@ -25,6 +26,8 @@ class ExperimentationSchedulerTest {
     private ExperimentationScheduler experimentationScheduler;
     @Mock
     private DdFunctionService ddFunctionService;
+    @Mock
+    private ClockService clockService;
     @Spy
     private List<DdFunctionService> ddFunctionServices = new ArrayList<>();
 
