@@ -145,6 +145,6 @@ public abstract class DdFunctionService {
     }
 
     private String buildReadCommand(Long ioSizeBytes) {
-        return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
+        return String.format("iflag=direct oflag=direct if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
     }
 }

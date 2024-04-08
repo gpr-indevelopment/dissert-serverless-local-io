@@ -115,7 +115,7 @@ class LambdaDdFunctionServiceTest {
                 7.7 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
-        String expectedCommand = "iflag=direct if=/tmp/file1 of=/dev/null bs=500";
+        String expectedCommand = "iflag=direct oflag=direct if=/tmp/file1 of=/dev/null bs=500";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
