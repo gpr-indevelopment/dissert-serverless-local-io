@@ -52,7 +52,7 @@ class ExperimentationSchedulerTest {
 
         experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
         verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
-        verify(ddFunctionService, times(ioSizeTiers.length)).collectZeroWriteExpRecord(any(), any());
+        verify(ddFunctionService, times(ioSizeTiers.length)).collectURandomWriteExpRecord(any(), any());
     }
 
     @Test
@@ -65,14 +65,12 @@ class ExperimentationSchedulerTest {
         InOrder inOrder = inOrder(ddFunctionService);
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
         for (int i = 0; i < ioSizeTiers.length; i++) {
-            inOrder.verify(ddFunctionService).collectZeroWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
         }
 
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_2);
         for (int i = 0; i < ioSizeTiers.length; i++) {
-            inOrder.verify(ddFunctionService).collectZeroWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
         }
@@ -88,12 +86,10 @@ class ExperimentationSchedulerTest {
             }
             for (IoSizeTier ioSizeTier : IoSizeTier.values()) {
                 if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
-                    verify(ddFunctionService, never()).collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
                     verify(ddFunctionService, never()).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                     verify(ddFunctionService, never()).collectReadExpRecord(ioSizeTier, fileSizeTier);
                     continue;
                 }
-                verify(ddFunctionService).collectZeroWriteExpRecord(ioSizeTier, fileSizeTier);
                 verify(ddFunctionService).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                 verify(ddFunctionService).collectReadExpRecord(ioSizeTier, fileSizeTier);
             }
