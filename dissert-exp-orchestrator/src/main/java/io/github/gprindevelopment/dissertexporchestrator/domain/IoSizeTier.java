@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum IoSizeTier {
-    TIER_1(500L),
+    TIER_1(512L),
     TIER_2(1_000L),
     TIER_3(2_000L),
     TIER_4(4_000L),
