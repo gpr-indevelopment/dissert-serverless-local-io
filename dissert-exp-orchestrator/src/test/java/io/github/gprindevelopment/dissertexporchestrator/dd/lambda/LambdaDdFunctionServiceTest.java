@@ -84,7 +84,7 @@ class LambdaDdFunctionServiceTest {
                 """;
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
-        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
+        String expectedCommand = "iflag=direct oflag=direct if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
@@ -98,7 +98,7 @@ class LambdaDdFunctionServiceTest {
                         fileSizeTier.getFileSizeBytes(),
                         expectedCommand,
                         OperationType.WRITE,
-                        DdExperimentName.URANDOM_WRITE))).thenReturn(expectedExperiment);
+                        DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
 

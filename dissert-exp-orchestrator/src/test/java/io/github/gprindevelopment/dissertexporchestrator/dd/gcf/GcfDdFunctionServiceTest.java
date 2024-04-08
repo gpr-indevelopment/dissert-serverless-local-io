@@ -77,7 +77,7 @@ class GcfDdFunctionServiceTest {
                 999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
-        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
+        String expectedCommand = "iflag=direct oflag=direct if=/dev/urandom of=/tmp/file1 bs=500 count=256000";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
@@ -91,7 +91,7 @@ class GcfDdFunctionServiceTest {
                         fileSizeTier.getFileSizeBytes(),
                         expectedCommand,
                         OperationType.WRITE,
-                        DdExperimentName.URANDOM_WRITE))).thenReturn(expectedExperiment);
+                        DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
         DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);

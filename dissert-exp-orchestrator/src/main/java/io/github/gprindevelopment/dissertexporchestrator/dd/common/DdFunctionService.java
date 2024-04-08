@@ -56,7 +56,7 @@ public abstract class DdFunctionService {
                 fileSizeBytes,
                 buildURandomWriteCommand(ioSizeBytes, fileSizeBytes),
                 OperationType.WRITE,
-                DdExperimentName.URANDOM_WRITE);
+                DdExperimentName.DIRECT_URANDOM_WRITE);
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class DdFunctionService {
     }
 
     private String buildURandomWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
-        return String.format("if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
+        return String.format("iflag=direct oflag=direct if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
     private String buildReadCommand(Long ioSizeBytes) {
