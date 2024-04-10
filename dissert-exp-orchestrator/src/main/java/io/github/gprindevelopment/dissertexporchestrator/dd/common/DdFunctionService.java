@@ -141,10 +141,10 @@ public abstract class DdFunctionService {
     }
 
     private String buildURandomWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
-        return String.format("iflag=nocache oflag=nocache if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
+        return String.format("oflag=direct if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
     private String buildReadCommand(Long ioSizeBytes) {
-        return String.format("iflag=nocache oflag=nocache if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
+        return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
     }
 }

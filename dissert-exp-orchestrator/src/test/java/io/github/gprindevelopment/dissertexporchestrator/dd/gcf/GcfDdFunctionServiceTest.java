@@ -77,7 +77,7 @@ class GcfDdFunctionServiceTest {
                 999424000 bytes (999 MB, 953 MiB) copied, 0.830883 s, 1.2 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
-        String expectedCommand = "iflag=nocache oflag=nocache if=/dev/urandom of=/tmp/file1 bs=512 count=250000";
+        String expectedCommand = "oflag=direct if=/dev/urandom of=/tmp/file1 bs=512 count=250000";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
@@ -106,7 +106,7 @@ class GcfDdFunctionServiceTest {
                 999424000 bytes (999 MB, 953 MiB) copied, 0.296427 s, 3.4 GB/s""";
         IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
         FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
-        String expectedCommand = "iflag=nocache oflag=nocache if=/tmp/file1 of=/dev/null bs=512";
+        String expectedCommand = "iflag=direct if=/tmp/file1 of=/dev/null bs=512";
         CommandRequest commandRequest = new CommandRequest(expectedCommand);
         DdExperimentEntity expectedExperiment = new DdExperimentEntity();
 
