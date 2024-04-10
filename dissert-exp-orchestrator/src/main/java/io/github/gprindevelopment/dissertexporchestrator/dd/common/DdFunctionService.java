@@ -50,11 +50,9 @@ public abstract class DdFunctionService {
     }
 
     public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
-        Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
-        Long fileSizeBytes = fileSizeTier.getFileSizeBytes();
-        return collectExpRecord(ioSizeBytes,
-                fileSizeBytes,
-                buildURandomWriteCommand(ioSizeBytes, fileSizeBytes),
+        return collectExpRecord(ioSizeTier.getIoSizeBytes(),
+                fileSizeTier.getFileSizeBytes(),
+                buildURandomWriteCommand(ioSizeTier, fileSizeTier),
                 OperationType.WRITE,
                 DdExperimentName.DIRECT_URANDOM_WRITE);
     }
@@ -69,10 +67,9 @@ public abstract class DdFunctionService {
      * @return the result of the read experiment
      */
     public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
-        Long ioSizeBytes = ioSizeTier.getIoSizeBytes();
-        return collectExpRecord(ioSizeBytes,
+        return collectExpRecord(ioSizeTier.getIoSizeBytes(),
                 fileSizeTier.getFileSizeBytes(),
-                buildReadCommand(ioSizeBytes),
+                buildReadCommand(ioSizeTier),
                 OperationType.READ,
                 DdExperimentName.DIRECT_READ);
     }
@@ -140,11 +137,11 @@ public abstract class DdFunctionService {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
-    private String buildURandomWriteCommand(Long ioSizeBytes, Long fileSizeBytes) {
-        return String.format("oflag=direct if=/dev/urandom of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
+    private String buildURandomWriteCommand(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        return String.format("oflag=direct if=/dev/urandom of=/tmp/file1 bs=%s count=%d", ioSizeTier.getStringNotationBytes(), fileSizeTier.getFileSizeBytes() / ioSizeTier.getIoSizeBytes());
     }
 
-    private String buildReadCommand(Long ioSizeBytes) {
-        return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%d", ioSizeBytes);
+    private String buildReadCommand(IoSizeTier ioSizeTier) {
+        return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%s", ioSizeTier.getStringNotationBytes());
     }
 }
