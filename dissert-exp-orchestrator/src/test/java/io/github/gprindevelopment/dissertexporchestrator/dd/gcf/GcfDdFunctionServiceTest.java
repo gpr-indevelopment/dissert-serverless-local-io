@@ -70,7 +70,7 @@ class GcfDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_save_exp_record_from_urandom_write_function_call() {
+    public void Should_successfully_save_exp_record_from_urandom_direct_write_function_call() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
@@ -155,7 +155,7 @@ class GcfDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_save_exp_record_from_urandom_write_function_call_converting_iosize_to_KB() {
+    public void Should_successfully_save_exp_record_from_urandom_direct_write_function_call_converting_iosize_to_KB() {
         String expectedFunctionResponse = """
                 976+0 records in
                 976+0 records out
