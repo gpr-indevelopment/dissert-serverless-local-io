@@ -52,7 +52,7 @@ public abstract class DdFunctionService {
     public DdExperimentEntity collectURandomDirectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         return collectExpRecord(ioSizeTier.getIoSizeBytes(),
                 fileSizeTier.getFileSizeBytes(),
-                buildURandomWriteCommand(ioSizeTier, fileSizeTier),
+                buildURandomDirectWriteCommand(ioSizeTier, fileSizeTier),
                 OperationType.WRITE,
                 DdExperimentName.DIRECT_URANDOM_WRITE);
     }
@@ -137,7 +137,7 @@ public abstract class DdFunctionService {
         return String.format("if=/dev/zero of=/tmp/file1 bs=%d count=%d", ioSizeBytes, fileSizeBytes / ioSizeBytes);
     }
 
-    private String buildURandomWriteCommand(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+    private String buildURandomDirectWriteCommand(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         return String.format("oflag=direct if=/dev/urandom of=/tmp/file1 bs=%s count=%d", ioSizeTier.getStringNotationBytes(), fileSizeTier.getFileSizeBytes() / ioSizeTier.getIoSizeBytes());
     }
 
