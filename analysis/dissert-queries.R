@@ -1,38 +1,9 @@
 ########################## Setup ##############################
-
-## Package install
-## install.packages("RPostgres")
-## install.packages("hrbrthemes")
-## install.packages("viridis")
-## install.packages("dplyr")
-## install.packages("tidyr")
-## install.packages("cli")
-require(RPostgres)
-library(ggplot2)
-library(gridExtra)
-library(hrbrthemes)
-library(dplyr)
-library(tidyr)
-library(viridis)
 library(stringr)
+library(rstudioapi)
 
-# Database properties
-dsn_database = "postgres"   
-dsn_hostname = "*"  
-dsn_port = 5432                
-dsn_uid = "postgres"         
-dsn_pwd = "*"
-# Other props
-
-getCon = function() {
-  return(dbConnect(Postgres(), 
-                   dbname = dsn_database,
-                   host = dsn_hostname, 
-                   port = dsn_port,
-                   user = dsn_uid, 
-                   password = dsn_pwd))
-}  
-  
+curDir = rstudioapi::getActiveDocumentContext()$path 
+source(file.path(dirname(curDir), "dissert-db-con.R"))
 
 ########################## Global query vars ##############################
 cutoffDate = "'2024-04-10'";
