@@ -45,6 +45,19 @@ boxplotMaxFileAndMinIoRead()
 boxplotMaxFileAndMaxIoRead()
 ```
 
+## ECDFs
+
+
+```{r ecdfs, echo=FALSE}
+ecdfMinFileAndMinIoWrite()
+ecdfMaxFileAndMinIoWrite()
+ecdfMaxFileAndMaxIoWrite()
+
+ecdfMinFileAndMinIoRead()
+ecdfMaxFileAndMinIoRead()
+ecdfMaxFileAndMaxIoRead()
+```
+
 ## Anovas
 
 ```{r anovas, echo=FALSE}
