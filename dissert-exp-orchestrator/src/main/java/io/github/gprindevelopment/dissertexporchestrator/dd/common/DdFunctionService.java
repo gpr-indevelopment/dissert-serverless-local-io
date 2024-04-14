@@ -62,7 +62,7 @@ public abstract class DdFunctionService {
                 fileSizeTier.getFileSizeBytes(),
                 buildURandomWriteCommand(ioSizeTier, fileSizeTier),
                 OperationType.WRITE,
-                DdExperimentName.DIRECT_URANDOM_WRITE);
+                DdExperimentName.URANDOM_WRITE);
     }
 
     /**
