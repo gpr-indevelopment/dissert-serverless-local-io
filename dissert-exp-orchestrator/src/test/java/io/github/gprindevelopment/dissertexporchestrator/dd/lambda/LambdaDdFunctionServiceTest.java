@@ -100,7 +100,7 @@ class LambdaDdFunctionServiceTest {
                         OperationType.WRITE,
                         DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
-        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }
@@ -198,7 +198,7 @@ class LambdaDdFunctionServiceTest {
                         OperationType.WRITE,
                         DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
-        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }

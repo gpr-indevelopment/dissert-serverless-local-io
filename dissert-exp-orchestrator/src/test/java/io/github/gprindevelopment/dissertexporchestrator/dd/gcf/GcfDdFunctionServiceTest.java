@@ -94,7 +94,7 @@ class GcfDdFunctionServiceTest {
                         DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 
@@ -179,7 +179,7 @@ class GcfDdFunctionServiceTest {
                         DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 

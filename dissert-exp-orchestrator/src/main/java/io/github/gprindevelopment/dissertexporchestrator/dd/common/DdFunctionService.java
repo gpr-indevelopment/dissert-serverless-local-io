@@ -49,7 +49,7 @@ public abstract class DdFunctionService {
                 DdExperimentName.DEV_ZERO_WRITE);
     }
 
-    public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+    public DdExperimentEntity collectURandomDirectWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         return collectExpRecord(ioSizeTier.getIoSizeBytes(),
                 fileSizeTier.getFileSizeBytes(),
                 buildURandomWriteCommand(ioSizeTier, fileSizeTier),

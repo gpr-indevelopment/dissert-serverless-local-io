@@ -45,7 +45,7 @@ public class ExperimentationScheduler {
                     }
                     log.info("Setting IO size to: {} bytes", ioSizeTier.getIoSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
-                        ddFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+                        ddFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
                         clockService.wait(TimeUnit.SECONDS, 5);
                         ddFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
                     }
