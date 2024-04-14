@@ -259,3 +259,168 @@ maxFileMaxIoReadQuery = function() {
   
   return(res);
 }
+
+########################## ANOVA WRITE ########################## 
+
+bigFileWriteAnovaQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'WRITE'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 1024000000
+        AND io_size_bytes in (512, 128000)
+        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
+
+smallFileWriteAnovaQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'WRITE'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 10000
+        AND io_size_bytes = 512
+        and resource_tier in ('TIER_1', 'TIER_5')
+        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
+########################## ANOVA READ ########################## 
+
+bigFileReadAnovaQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'READ'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 1024000000
+        AND io_size_bytes in (512, 128000)
+        AND experiment_name = 'DIRECT_READ'
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
+
+smallFileReadAnovaQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'READ'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 10000
+        AND io_size_bytes = 512
+        and resource_tier in ('TIER_1', 'TIER_5')
+        AND experiment_name = 'DIRECT_READ'
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
