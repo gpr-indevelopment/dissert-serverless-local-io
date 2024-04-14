@@ -233,4 +233,68 @@ class LambdaDdFunctionServiceTest {
 
         assertEquals(expectedExperiment, savedEntity);
     }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_urandom_write_function_call() {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB) copied,
+                1.31127 s,
+                762 MB/s
+                """;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
+        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=512 count=250000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "1.31127 s",
+                        "762 MB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE,
+                        DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+
+        assertEquals(expectedExperiment, savedEntity);
+    }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_urandom_direct_function_call_converting_iosize_to_KB() {
+        String expectedFunctionResponse = """
+                976+0 records in
+                976+0 records out
+                999424000 bytes (999 MB) copied,
+                1.31127 s,
+                762 MB/s
+                """;
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_2;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_5;
+        String expectedCommand = "if=/dev/urandom of=/tmp/file1 bs=1k count=128000";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "1.31127 s",
+                        "762 MB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.WRITE,
+                        DdExperimentName.DIRECT_URANDOM_WRITE))).thenReturn(expectedExperiment);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
+
+        assertEquals(expectedExperiment, savedEntity);
+    }
 }

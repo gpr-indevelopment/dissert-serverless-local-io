@@ -57,6 +57,14 @@ public abstract class DdFunctionService {
                 DdExperimentName.DIRECT_URANDOM_WRITE);
     }
 
+    public DdExperimentEntity collectURandomWriteExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        return collectExpRecord(ioSizeTier.getIoSizeBytes(),
+                fileSizeTier.getFileSizeBytes(),
+                buildURandomWriteCommand(ioSizeTier, fileSizeTier),
+                OperationType.WRITE,
+                DdExperimentName.DIRECT_URANDOM_WRITE);
+    }
+
     /**
      * Requires that a file with absolute path /tmp/file1 exists prior to the read action.
      * Will read the entirety of the existing file using the provided ioSizeTier
@@ -139,6 +147,10 @@ public abstract class DdFunctionService {
 
     private String buildURandomDirectWriteCommand(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         return String.format("oflag=direct if=/dev/urandom of=/tmp/file1 bs=%s count=%d", ioSizeTier.getStringNotationBytes(), fileSizeTier.getFileSizeBytes() / ioSizeTier.getIoSizeBytes());
+    }
+
+    private String buildURandomWriteCommand(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        return String.format("if=/dev/urandom of=/tmp/file1 bs=%s count=%d", ioSizeTier.getStringNotationBytes(), fileSizeTier.getFileSizeBytes() / ioSizeTier.getIoSizeBytes());
     }
 
     private String buildReadCommand(IoSizeTier ioSizeTier) {
