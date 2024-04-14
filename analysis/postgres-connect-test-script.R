@@ -1,4 +1,5 @@
 library(rstudioapi)
+library(scales)
 curDir = rstudioapi::getActiveDocumentContext()$path 
 source(file.path(dirname(curDir), "dissert-queries.R"))
 
@@ -77,6 +78,7 @@ boxplotMinFileAndMinIoWrite = function() {
   
   ggplot(data=res, aes(y=latency_seconds*1000, fill=system_name, x=resource_tier)) +
     geom_boxplot(outlier.shape = NA) + 
+    coord_cartesian(ylim = c(0, 25)) + 
     #ylim(0,1) + limits it between 0 and 1, and hides some of the values
     ggtitle("Write latency for a 10 KB file and 512 B I/O size") + labs(x="Resource tier", y="Latency (ms)", fill="Provider") + theme_bw()
 }
@@ -85,6 +87,8 @@ boxplotMaxFileAndMinIoWrite = function() {
   res = maxFileMinIoWriteQuery();
   
   ggplot(data=res, aes(y=latency_seconds, fill=system_name, x=resource_tier)) +
+    scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                  labels = trans_format("log10", math_format(10^.x))) +  
     geom_boxplot(outlier.shape = NA) + 
     ggtitle("Write latency for a 1 GB file and 512 B I/O size") + labs(x="Resource tier", y="Latency (s)", fill="Provider") + theme_bw()
   
@@ -175,6 +179,7 @@ ecdfMinFileAndMinIoRead = function() {
   
   ggplot(data=res, aes(x=latency_seconds * 1000, colour = resource_tier)) +
     stat_ecdf() + 
+    facet_wrap(~system_name) + 
     ggtitle("Read latency for a 10 KB file and 512 B I/O size") + labs(x="Latency (ms)") + theme_bw()
 }
 
@@ -183,6 +188,7 @@ ecdfMaxFileAndMinIoRead = function() {
   
   ggplot(data=res, aes(x=latency_seconds, colour = resource_tier)) +
     stat_ecdf() + 
+    facet_wrap(~system_name) + 
     ggtitle("Read latency for a 1 GB file and 512 B I/O size") + labs(x="Latency (s)") + theme_bw()
 }
 
@@ -191,6 +197,7 @@ ecdfMaxFileAndMaxIoRead = function() {
   
   ggplot(data=res, aes(x=latency_seconds, colour = resource_tier)) +
     stat_ecdf() + 
+    facet_wrap(~system_name) + 
     ggtitle("Read latency for a 1 GB file and 128 KB I/O size") + labs(x="Latency (s)") + theme_bw()
 }
 
