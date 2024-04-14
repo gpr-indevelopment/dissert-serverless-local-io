@@ -69,12 +69,14 @@ class ExperimentationSchedulerTest {
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
         for (int i = 0; i < ioSizeTiers.length; i++) {
             inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
         }
 
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_2);
         for (int i = 0; i < ioSizeTiers.length; i++) {
             inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
         }
     }
@@ -90,12 +92,30 @@ class ExperimentationSchedulerTest {
             for (IoSizeTier ioSizeTier : IoSizeTier.values()) {
                 if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
                     verify(ddFunctionService, never()).collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
+                    verify(ddFunctionService, never()).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                     verify(ddFunctionService, never()).collectReadExpRecord(ioSizeTier, fileSizeTier);
                     continue;
                 }
                 verify(ddFunctionService).collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
+                verify(ddFunctionService).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                 verify(ddFunctionService).collectReadExpRecord(ioSizeTier, fileSizeTier);
             }
         }
+    }
+
+    /**
+     * It is assumed that non-direct experiments lead to the OS taking a while before actually writing
+     * to the file. This can create a race condition or bottleneck if we trigger a direct writing in sequence.
+     * To avoid this risk, we do a sync direct write first, and then do non-direct.
+     */
+    @Test
+    public void Should_run_direct_urandom_write_before_non_direct_experiment() {
+        ResourceTier[] resourceTiers = new ResourceTier[]{ResourceTier.TIER_1};
+        FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_1};
+        IoSizeTier[] ioSizeTiers = new IoSizeTier[]{IoSizeTier.TIER_1};
+        experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
+        InOrder inOrder = inOrder(ddFunctionService);
+        inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
+        inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
     }
 }
