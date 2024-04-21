@@ -8,6 +8,7 @@ source(file.path(dirname(curDir), "dissert-db-con.R"))
 ########################## Global query vars ##############################
 cutoffDate = "'2024-04-10'";
 repetitions = 50;
+writeExperiment = "'URANDOM_WRITE'"
 
 ########################## Common table expression (CTE) explanation #####################
 
@@ -38,7 +39,7 @@ minFileMinIoWriteQuery = function() {
         AND status = 'SUCCESS'
         AND file_size_bytes = 10000
         AND io_size_bytes = 512
-        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
     )
     SELECT
@@ -53,7 +54,8 @@ minFileMinIoWriteQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -78,7 +80,7 @@ maxFileMinIoWriteQuery = function() {
         AND status = 'SUCCESS'
         AND file_size_bytes = 1024000000
         AND io_size_bytes = 512
-        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
     )
     SELECT
@@ -93,7 +95,8 @@ maxFileMinIoWriteQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -118,7 +121,7 @@ maxFileMaxIoWriteQuery = function() {
         AND status = 'SUCCESS'
         AND file_size_bytes = 1024000000
         AND io_size_bytes = 128000
-        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
     )
     SELECT
@@ -133,7 +136,8 @@ maxFileMaxIoWriteQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -282,7 +286,7 @@ bigFileWriteAnovaQuery = function() {
         AND status = 'SUCCESS'
         AND file_size_bytes = 1024000000
         AND io_size_bytes in (512, 128000)
-        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
     )
     SELECT
@@ -297,7 +301,8 @@ bigFileWriteAnovaQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -323,7 +328,7 @@ smallFileWriteAnovaQuery = function() {
         AND file_size_bytes = 10000
         AND io_size_bytes = 512
         and resource_tier in ('TIER_1', 'TIER_5')
-        AND experiment_name = 'DIRECT_URANDOM_WRITE'
+        AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
     )
     SELECT
@@ -338,7 +343,8 @@ smallFileWriteAnovaQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
