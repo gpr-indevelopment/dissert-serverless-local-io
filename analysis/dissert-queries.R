@@ -30,6 +30,7 @@ minFileMinIoWriteQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -50,7 +51,8 @@ minFileMinIoWriteQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -71,6 +73,7 @@ maxFileMinIoWriteQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -91,7 +94,8 @@ maxFileMinIoWriteQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -112,6 +116,7 @@ maxFileMaxIoWriteQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -132,7 +137,8 @@ maxFileMaxIoWriteQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -155,6 +161,7 @@ minFileMinIoReadQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -175,7 +182,8 @@ minFileMinIoReadQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -195,6 +203,7 @@ maxFileMinIoReadQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -215,7 +224,8 @@ maxFileMinIoReadQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -235,6 +245,7 @@ maxFileMaxIoReadQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -255,7 +266,8 @@ maxFileMaxIoReadQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -277,6 +289,7 @@ bigFileWriteAnovaQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -297,7 +310,8 @@ bigFileWriteAnovaQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -318,6 +332,7 @@ smallFileWriteAnovaQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -339,7 +354,8 @@ smallFileWriteAnovaQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -361,6 +377,7 @@ bigFileReadAnovaQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -381,7 +398,8 @@ bigFileReadAnovaQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
@@ -401,6 +419,7 @@ smallFileReadAnovaQuery = function() {
         experiment_name,
         status,
         occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
         public.dd_experiment_entity en
@@ -422,7 +441,8 @@ smallFileReadAnovaQuery = function() {
         io_size_bytes,
         experiment_name,
         status,
-        occurred_at
+        occurred_at,
+        group_id
     FROM
         ranked_data
     WHERE
