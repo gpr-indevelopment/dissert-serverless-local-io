@@ -7,7 +7,7 @@ source(file.path(dirname(curDir), "dissert-db-con.R"))
 
 ########################## Global query vars ##############################
 cutoffDate = "'2024-04-10'";
-repetitions = 50;
+repetitions = 150;
 writeExperiment = "'URANDOM_WRITE'"
 
 ########################## Common table expression (CTE) explanation #####################
@@ -447,6 +447,88 @@ smallFileReadAnovaQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
+
+cvWriteQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name, file_size_bytes, io_size_bytes) AS group_id,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name, file_size_bytes, io_size_bytes ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'WRITE'
+        AND status = 'SUCCESS'
+        AND experiment_name = ${writeExperiment}
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        group_id
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", 
+    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+  
+  return(res);
+}
+
+cvReadQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name, file_size_bytes, io_size_bytes) AS group_id,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name, file_size_bytes, io_size_bytes ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'READ'
+        AND status = 'SUCCESS'
+        AND experiment_name = 'DIRECT_READ'
+        AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        group_id
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", 
+                                                 list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
