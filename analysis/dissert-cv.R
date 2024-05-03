@@ -13,6 +13,7 @@ calculateGroupCvs = function(data) {
     io_size_bytes = integer(),
     cv = numeric(),
     observations = integer(),
+    is_normal = logical(),
     stringsAsFactors = FALSE
   );
   uniques = unique(data$group_id);
@@ -25,7 +26,8 @@ calculateGroupCvs = function(data) {
       file_size_bytes= c(head(group_data, 1)$file_size_bytes),
       io_size_bytes= c(head(group_data, 1)$io_size_bytes),
       cv = cv_result,
-      observations = nrow(group_data)
+      observations = nrow(group_data),
+      is_normal = ifelse(shapiro.test(group_data$latency_seconds)$p.value > 0.05, TRUE, FALSE)
     );
     resultDf = rbind(resultDf,newRow);
   }
