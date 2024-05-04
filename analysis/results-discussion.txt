@@ -1,0 +1,38 @@
+Analise dos resultados de latencia (performance), usando escrita com cache e leitura direta:
+
+
+1. Para arquivos grandes na escrita: 
+
+O provedor, io_size e interação foram significativos. Isso significa que o io_size tem impacto
+diferente em cada provedor.
+
+Lambda é mais rapido.
+
+io_size maior é mais rapido.
+
+Nada de interessante na avaliação da interação de provedor com io_size
+
+2. Para arquivos pequenos na escrita:
+
+
+
+
+3. Leitura do Lambda_DD para arquivos grandes é super lenta
+
+Considerando essa consulta: reads[reads$file_size_bytes == 1024000000, ]
+
+482   LAMBDA_DD        TIER_5      1024000000           512 0.001313298 265.26323333          150     FALSE
+483   LAMBDA_DD        TIER_5      1024000000          1000 0.001429020 135.16916000          150     FALSE
+484   LAMBDA_DD        TIER_5      1024000000          2000 0.001281496  66.95726400          150     FALSE
+485   LAMBDA_DD        TIER_5      1024000000          4000 0.002035138  32.80410667          150     FALSE
+486   LAMBDA_DD        TIER_5      1024000000          8000 0.342782732  24.82428467          150     FALSE
+487   LAMBDA_DD        TIER_5      1024000000         16000 0.592383176  21.07278240          150     FALSE
+488   LAMBDA_DD        TIER_5      1024000000         32000 0.575101010  22.87679293          150     FALSE
+489   LAMBDA_DD        TIER_5      1024000000         64000 0.534120553  21.78068578          150     FALSE
+490   LAMBDA_DD        TIER_5      1024000000        128000 0.500203730  21.95714647          150     FALSE
+
+A performance da leitura aumenta conforme o aumento do IO_SIZE, até um teto em 16000
+Porém, se continuarmos aumentando o IO_SIZE, a leitura fica mais estável
+Embora muito lento, em 265s, a leitura é super estável. 
+Isso pode indicar um storage device externo que é lento (pois se comunica na rede), mas é estável.
+
