@@ -10,12 +10,20 @@ Lambda é mais rapido.
 
 io_size maior é mais rapido.
 
-Nada de interessante na avaliação da interação de provedor com io_size
+Nada de interessante na avaliação da interação de provedor com io_size. Lambda é mais rapido no IO_SIZE pequeno e grande.
 
 2. Para arquivos pequenos na escrita:
 
+O provedor, resource_tier e interação foram significativos. Isso significa que o resource_tier tem impacto
+diferente em cada provedor.
 
+No entanto, system_name e a interação não seriam significativos para 99% de confiança
 
+Ao contrário de arquivos grandes, o GCF foi mais rapido.
+
+TIER_5 é mais rapido (como esperado)
+
+Embora GCF seja mais rapido no TIER_1, no TIER_5 as performances são iguais.
 
 3. Leitura do Lambda_DD para arquivos grandes é super lenta
 
