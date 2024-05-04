@@ -11,6 +11,7 @@ densityMinFileAndMinIoWrite = function() {
   ggplot(data=res, aes(x=latency_seconds*1000, group=system_name, fill=system_name)) +
     facet_wrap(~resource_tier) +
     geom_density(alpha=.4) +
+    scale_x_log10() +
     ggtitle("Write latency for a 10 KB file and 512 B I/O size") + labs(x="Latency (ms)", y="Density", fill="Provider") + theme_bw()
 }
 
@@ -44,6 +45,7 @@ densityMinFileAndMinIoRead = function() {
   ggplot(data=res, aes(x=latency_seconds*1000, group=system_name, fill=system_name)) +
     facet_wrap(~resource_tier) +
     geom_density(alpha=.4) +
+    scale_x_log10() +
     ggtitle("Read latency for a 10 KB file and 512 B I/O size") + labs(x="Latency (ms)", y="Density", fill="Provider") + theme_bw()
 }
 
@@ -51,8 +53,8 @@ densityMaxFileAndMinIoRead = function() {
   res = maxFileMinIoReadQuery();
   
   ggplot(data=res, aes(x=latency_seconds, group=system_name, fill=system_name)) +
-    facet_wrap(~resource_tier) +
     geom_density(alpha=.4) +
+    scale_x_log10(limits = c(0.1, 1000)) +
     ggtitle("Read latency for a 1 GB file and 512 B I/O size") + labs(x="Latency (s)", y="Density", fill="Provider") + theme_bw()
 }
 
@@ -60,8 +62,8 @@ densityMaxFileAndMaxIoRead = function() {
   res = maxFileMaxIoReadQuery()
   
   ggplot(data=res, aes(x=latency_seconds, group=system_name, fill=system_name)) +
-    facet_wrap(~resource_tier) +
     geom_density(alpha=.4) +
+    scale_x_log10(limits = c(0.1, 1000)) +
     ggtitle("Read latency for a 1 GB file and 128 KB I/O size") + labs(x="Read latency (s)", y="Density", fill="Provider") + theme_bw()
 }
 
@@ -78,7 +80,8 @@ boxplotMinFileAndMinIoWrite = function() {
   
   ggplot(data=res, aes(y=latency_seconds*1000, fill=system_name, x=resource_tier)) +
     geom_boxplot(outlier.shape = NA) + 
-    coord_cartesian(ylim = c(0, 25)) + 
+    scale_y_log10() +
+    #coord_cartesian(ylim = c(0, 25)) + 
     #ylim(0,1) + limits it between 0 and 1, and hides some of the values
     ggtitle("Write latency for a 10 KB file and 512 B I/O size") + labs(x="Resource tier", y="Latency (ms)", fill="Provider") + theme_bw()
 }
@@ -113,6 +116,7 @@ boxplotMinFileAndMinIoRead = function() {
   
   ggplot(data=res, aes(y=latency_seconds*1000, fill=system_name, x=resource_tier)) +
     geom_boxplot(outlier.shape = NA) + 
+    scale_y_log10() +
     #coord_cartesian(ylim = c(0, 0.3)) + 
     ggtitle("Read latency for a 10 KB file and 512 B I/O size") + labs(x="Resource tier", y="Latency (ms)", fill="Provider") + theme_bw()
 }
