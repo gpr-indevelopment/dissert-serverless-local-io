@@ -451,6 +451,8 @@ smallFileReadAnovaQuery = function() {
   return(res);
 }
 
+########################## CV ########################## 
+
 cvWriteQuery = function() {
   res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
     SELECT

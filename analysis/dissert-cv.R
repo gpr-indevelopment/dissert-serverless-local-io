@@ -11,6 +11,7 @@ calculateGroupCvs = function(data) {
     resource_tier = character(),
     file_size_bytes = integer(),
     io_size_bytes = integer(),
+    mean = numeric(),
     cv = numeric(),
     observations = integer(),
     is_normal = logical(),
@@ -19,13 +20,13 @@ calculateGroupCvs = function(data) {
   uniques = unique(data$group_id);
   for (group in 1:length(unique(data$group_id))) {
     group_data = data[data$group_id == uniques[group],]
-    cv_result = CV(group_data$latency_seconds);
     newRow = data.frame(
       system_name = c(head(group_data, 1)$system_name),
       resource_tier= c(head(group_data, 1)$resource_tier),
       file_size_bytes= c(head(group_data, 1)$file_size_bytes),
       io_size_bytes= c(head(group_data, 1)$io_size_bytes),
-      cv = cv_result,
+      cv =  CV(group_data$latency_seconds),
+      mean = mean(group_data$latency_seconds),
       observations = nrow(group_data),
       is_normal = ifelse(shapiro.test(group_data$latency_seconds)$p.value > 0.05, TRUE, FALSE)
     );
