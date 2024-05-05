@@ -19,8 +19,6 @@ diferente em cada provedor.
 
 No entanto, system_name e a interação não seriam significativos para 99% de confiança
 
-Ao contrário de arquivos grandes, o GCF foi mais rapido.
-
 TIER_5 é mais rapido (como esperado)
 
 Embora GCF seja mais rapido no TIER_1, no TIER_5 as performances são iguais.
