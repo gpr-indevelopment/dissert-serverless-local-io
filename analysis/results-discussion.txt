@@ -1,7 +1,7 @@
 Analise dos resultados de latencia (performance), usando escrita com cache e leitura direta:
 
 
-1. Para arquivos grandes na escrita: 
+1. [WRITE] Para arquivos grandes na escrita: 
 
 O provedor, io_size e interação foram significativos. Isso significa que o io_size tem impacto
 diferente em cada provedor.
@@ -12,7 +12,7 @@ io_size maior é mais rapido.
 
 Nada de interessante na avaliação da interação de provedor com io_size. Lambda é mais rapido no IO_SIZE pequeno e grande.
 
-2. Para arquivos pequenos na escrita:
+2. [WRITE] Para arquivos pequenos na escrita:
 
 O provedor, resource_tier e interação foram significativos. Isso significa que o resource_tier tem impacto
 diferente em cada provedor.
@@ -25,7 +25,25 @@ TIER_5 é mais rapido (como esperado)
 
 Embora GCF seja mais rapido no TIER_1, no TIER_5 as performances são iguais.
 
-3. Leitura do Lambda_DD para arquivos grandes é super lenta
+3. [READ] Para arquivos grandes na leitura:
+
+Todos os fatores são significativos (system, IO_SIZE e interação).
+
+GCF é mais rapido nas leituras.
+
+IO_SIZE maior é mais rápido.
+
+Nada de muito interessante nas interações.
+
+4. [READ] Para arquivos pequenos na leitura:
+
+Todos os fatores são significativos (system, resource_tier e interação).
+
+GCF é mais rápido.
+
+No TIER_5 LAMBDA e GCF tem a mesma performance.
+
+5. [CV] Leitura do Lambda_DD para arquivos grandes é super lenta
 
 Considerando essa consulta: reads[reads$file_size_bytes == 1024000000, ]
 
