@@ -154,6 +154,18 @@ ecdfMinFileAndMinIoWrite = function() {
     ggtitle("Write latency for a 10 KB file and 512 B I/O size") + labs(x="Latency (ms)") + theme_bw()
 }
 
+ecdfMinFileMinIoMinMaxResourceWrite = function() {
+  res = minFileMinIoMinMaxResourceWriteQuery();
+  print("ECDF of write latency for a 10 KB file and 512 B I/O size")
+  ggplot(data=res, aes(x=latency_seconds*1000, colour = system_name)) +
+    stat_ecdf() + 
+    facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
+    scale_color_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    #ggtitle("Write latency for a 10 KB file and 512 B I/O size") + 
+    labs(x="Latency (s)",y="Percentile", colour = "Platform") + theme_bw() + 
+    theme(legend.position = "bottom", legend.box = "horizontal")
+}
+
 ecdfMaxFileAndMinIoWrite = function() {
   res = maxFileMinIoWriteQuery();
   
@@ -199,6 +211,18 @@ ecdfMinFileAndMinIoRead = function() {
     stat_ecdf() + 
     facet_wrap(~system_name) + 
     ggtitle("Read latency for a 10 KB file and 512 B I/O size") + labs(x="Latency (ms)") + theme_bw()
+}
+
+ecdfMinFileMinIoMinMaxResourceRead = function() {
+  res = minFileMinIoMinMaxResourceReadQuery();
+  print("ECDF of read latency for a 10 KB file and 512 B I/O size")
+  ggplot(data=res, aes(x=latency_seconds*1000, colour = system_name)) +
+    stat_ecdf() + 
+    facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
+    scale_color_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    #ggtitle("Read latency for a 10 KB file and 512 B I/O size") + 
+    labs(x="Latency (s)",y="Percentile", colour = "Platform") + theme_bw() + 
+    theme(legend.position = "bottom", legend.box = "horizontal")
 }
 
 ecdfMaxFileAndMinIoRead = function() {

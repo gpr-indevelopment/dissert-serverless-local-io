@@ -62,6 +62,51 @@ minFileMinIoWriteQuery = function() {
   return(res);
 }
 
+minFileMinIoMinMaxResourceWriteQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'WRITE'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 10000
+        AND io_size_bytes = 512
+        AND experiment_name = ${writeExperiment}
+        AND occurred_at >= ${cutoffDate}
+        AND resource_tier in ('TIER_1', 'TIER_5')
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        group_id
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", 
+                                                 list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+  
+  return(res);
+}
+
+
 maxFileMinIoWriteQuery = function() {
   res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
     SELECT
@@ -217,6 +262,49 @@ minFileMinIoReadQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+    )
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+        group_id
+    FROM
+        ranked_data
+    WHERE
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+  
+  return(res);
+}
+
+minFileMinIoMinMaxResourceReadQuery = function() {
+  res = dbGetQuery(getCon(), stringr::str_interp("WITH ranked_data AS (
+    SELECT
+        latency_seconds,
+        resource_tier,
+        system_name,
+        file_size_bytes,
+        io_size_bytes,
+        experiment_name,
+        status,
+        occurred_at,
+    		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
+        ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
+    FROM
+        public.dd_experiment_entity en
+        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+    WHERE
+        operation_type = 'READ'
+        AND status = 'SUCCESS'
+        AND file_size_bytes = 10000
+        AND io_size_bytes = 512
+        AND experiment_name = 'DIRECT_READ'
+        AND occurred_at >= ${cutoffDate}
+        AND resource_tier in ('TIER_1', 'TIER_5')
     )
     SELECT
         latency_seconds,
