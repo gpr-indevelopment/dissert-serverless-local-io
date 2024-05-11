@@ -50,12 +50,10 @@ boxplotMaxFileAndMaxIoRead()
 
 ```{r ecdfs, echo=FALSE}
 ecdfMinFileAndMinIoWrite()
-ecdfMaxFileAndMinIoWrite()
-ecdfMaxFileAndMaxIoWrite()
+ecdfMaxFileAndMinMaxIoWrite()
 
 ecdfMinFileAndMinIoRead()
-ecdfMaxFileAndMinIoRead()
-ecdfMaxFileAndMaxIoRead()
+ecdfMaxFileAndMinMaxIoRead()
 ```
 
 ## Anovas
