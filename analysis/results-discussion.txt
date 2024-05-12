@@ -14,14 +14,12 @@ Nada de interessante na avaliação da interação de provedor com io_size. Lamb
 
 2. [WRITE] Para arquivos pequenos na escrita:
 
-O provedor, resource_tier e interação foram significativos. Isso significa que o resource_tier tem impacto
-diferente em cada provedor.
-
-No entanto, system_name e a interação não seriam significativos para 99% de confiança
+Apenas resource_tier é significativo. Isso significa que as plataformas nao sao determinantes na performance.
 
 TIER_5 é mais rapido (como esperado)
 
 Embora GCF seja mais rapido no TIER_1, no TIER_5 as performances são iguais.
+No entanto, a significância de fatores no ANOVA indica que a performance dos provedores é a mesma.
 
 3. [READ] Para arquivos grandes na leitura:
 
@@ -39,7 +37,7 @@ Todos os fatores são significativos (system, resource_tier e interação).
 
 GCF é mais rápido.
 
-No TIER_5 LAMBDA e GCF tem a mesma performance.
+No TIER_5 LAMBDA e GCF tem a mesma performance. (O Tukey diz que tem, mas o IC diz que GCF é mais rapido...)
 
 5. [CV] Leitura do Lambda_DD para arquivos grandes é super lenta
 
