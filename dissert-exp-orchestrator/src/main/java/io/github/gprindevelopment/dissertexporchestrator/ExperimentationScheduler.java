@@ -48,7 +48,7 @@ public class ExperimentationScheduler {
                         ddFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
                         ddFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
                         clockService.wait(TimeUnit.SECONDS, 5);
-                        ddFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+                        ddFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
                     }
                 }
             }

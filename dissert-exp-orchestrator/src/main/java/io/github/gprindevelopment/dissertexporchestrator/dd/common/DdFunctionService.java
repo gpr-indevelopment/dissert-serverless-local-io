@@ -74,10 +74,10 @@ public abstract class DdFunctionService {
      * @param fileSizeTier
      * @return the result of the read experiment
      */
-    public DdExperimentEntity collectReadExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+    public DdExperimentEntity collectDirectReadExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
         return collectExpRecord(ioSizeTier.getIoSizeBytes(),
                 fileSizeTier.getFileSizeBytes(),
-                buildReadCommand(ioSizeTier),
+                buildDirectReadCommand(ioSizeTier),
                 OperationType.READ,
                 DdExperimentName.DIRECT_READ);
     }
@@ -153,7 +153,7 @@ public abstract class DdFunctionService {
         return String.format("if=/dev/urandom of=/tmp/file1 bs=%s count=%d", ioSizeTier.getStringNotationBytes(), fileSizeTier.getFileSizeBytes() / ioSizeTier.getIoSizeBytes());
     }
 
-    private String buildReadCommand(IoSizeTier ioSizeTier) {
+    private String buildDirectReadCommand(IoSizeTier ioSizeTier) {
         return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%s", ioSizeTier.getStringNotationBytes());
     }
 }

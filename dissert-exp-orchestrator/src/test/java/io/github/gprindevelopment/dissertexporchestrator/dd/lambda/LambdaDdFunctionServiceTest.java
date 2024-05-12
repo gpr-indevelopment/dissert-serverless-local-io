@@ -131,7 +131,7 @@ class LambdaDdFunctionServiceTest {
                         OperationType.READ,
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
-        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }
@@ -229,7 +229,7 @@ class LambdaDdFunctionServiceTest {
                         OperationType.READ,
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
-        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }

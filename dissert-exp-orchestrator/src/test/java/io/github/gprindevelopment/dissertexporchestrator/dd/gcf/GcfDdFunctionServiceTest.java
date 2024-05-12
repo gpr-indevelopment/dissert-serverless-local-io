@@ -123,7 +123,7 @@ class GcfDdFunctionServiceTest {
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 
@@ -208,7 +208,7 @@ class GcfDdFunctionServiceTest {
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(gcfDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
 
-        DdExperimentEntity savedEntity = gcfDdFunctionService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity savedEntity = gcfDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedExperiment, savedEntity);
     }
 

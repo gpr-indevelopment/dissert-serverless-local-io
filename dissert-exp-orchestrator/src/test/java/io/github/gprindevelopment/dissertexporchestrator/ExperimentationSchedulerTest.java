@@ -70,14 +70,14 @@ class ExperimentationSchedulerTest {
         for (int i = 0; i < ioSizeTiers.length; i++) {
             inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
-            inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectDirectReadExpRecord(any(), any());
         }
 
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_2);
         for (int i = 0; i < ioSizeTiers.length; i++) {
             inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(any(), any());
             inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(any(), any());
-            inOrder.verify(ddFunctionService).collectReadExpRecord(any(), any());
+            inOrder.verify(ddFunctionService).collectDirectReadExpRecord(any(), any());
         }
     }
 
@@ -93,12 +93,12 @@ class ExperimentationSchedulerTest {
                 if (!fileSizeTier.isCompatibleWith(ioSizeTier)) {
                     verify(ddFunctionService, never()).collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
                     verify(ddFunctionService, never()).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
-                    verify(ddFunctionService, never()).collectReadExpRecord(ioSizeTier, fileSizeTier);
+                    verify(ddFunctionService, never()).collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
                     continue;
                 }
                 verify(ddFunctionService).collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
                 verify(ddFunctionService).collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
-                verify(ddFunctionService).collectReadExpRecord(ioSizeTier, fileSizeTier);
+                verify(ddFunctionService).collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
             }
         }
     }

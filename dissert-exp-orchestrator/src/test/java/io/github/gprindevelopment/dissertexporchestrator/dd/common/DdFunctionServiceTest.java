@@ -50,7 +50,7 @@ class DdFunctionServiceTest {
         ArgumentCaptor<SuccessfulExperiment> successfulExperimentCaptor = ArgumentCaptor.forClass(SuccessfulExperiment.class);
         when(experimentService.recordSuccessfulExperiment(successfulExperimentCaptor.capture())).thenReturn(null);
 
-        ddFunctionStubService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        ddFunctionStubService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(ResourceTier.TIER_1, ddFunctionStubService.currentResourceTier);
         assertEquals(ioSizeTier.getIoSizeBytes(), successfulExperimentCaptor.getValue().ioSizeBytes());
         assertEquals(fileSizeTier.getFileSizeBytes(), successfulExperimentCaptor.getValue().fileSizeBytes());
@@ -91,7 +91,7 @@ class DdFunctionServiceTest {
                 .thenReturn(expectedFailure);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
-        DdExperimentEntity result = ddFunctionStubService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity result = ddFunctionStubService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedFailure, result);
         assertEquals(ioSizeTier.getIoSizeBytes(), failedExperimentCaptor.getValue().ioSizeBytes());
         assertEquals(fileSizeTier.getFileSizeBytes(), failedExperimentCaptor.getValue().fileSizeBytes());
@@ -108,7 +108,7 @@ class DdFunctionServiceTest {
         when(experimentService.recordFailedExperiment(failedExperimentCaptor.capture())).thenReturn(expectedFailure);
         doThrow(RuntimeException.class).when(ddFunctionStubService).callFunction(any());
 
-        DdExperimentEntity result = ddFunctionStubService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        DdExperimentEntity result = ddFunctionStubService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(expectedFailure, result);
         assertEquals(ioSizeTier.getIoSizeBytes(), failedExperimentCaptor.getValue().ioSizeBytes());
         assertEquals(fileSizeTier.getFileSizeBytes(), failedExperimentCaptor.getValue().fileSizeBytes());
@@ -138,7 +138,7 @@ class DdFunctionServiceTest {
         when(experimentService.recordFailedExperiment(failedExperimentCaptor.capture())).thenReturn(null);
         doThrow(RuntimeException.class).when(ddFunctionStubService).extractRawLatency(any());
 
-        ddFunctionStubService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        ddFunctionStubService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(ioSizeTier.getIoSizeBytes(), failedExperimentCaptor.getValue().ioSizeBytes());
         assertEquals(fileSizeTier.getFileSizeBytes(), failedExperimentCaptor.getValue().fileSizeBytes());
     }
@@ -152,7 +152,7 @@ class DdFunctionServiceTest {
         when(experimentService.recordFailedExperiment(failedExperimentCaptor.capture())).thenReturn(null);
         doThrow(RuntimeException.class).when(ddFunctionStubService).extractRawThroughput(any());
 
-        ddFunctionStubService.collectReadExpRecord(ioSizeTier, fileSizeTier);
+        ddFunctionStubService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
         assertEquals(ioSizeTier.getIoSizeBytes(), failedExperimentCaptor.getValue().ioSizeBytes());
         assertEquals(fileSizeTier.getFileSizeBytes(), failedExperimentCaptor.getValue().fileSizeBytes());
     }
