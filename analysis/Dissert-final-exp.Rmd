@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 source("postgres-connect-test-script.R")
 source("dissert-anova.R")
 source("dissert-conf-int.R")
+source("dissert-cv.R")
 
 options(warn=-1)
 ```
@@ -75,4 +76,11 @@ maxFileConfInt(maxFileMinMaxIoReadQuery())
 
 minFileConfInt(minFileMinIoMinMaxResourceWriteQuery())
 minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
+```
+
+## CVs
+
+```{r cvs, echo=FALSE}
+generateWriteCvBar()
+generateReadCvBar()
 ```

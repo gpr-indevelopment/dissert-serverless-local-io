@@ -9,11 +9,11 @@ calculateGroupCvs = function(data) {
   resultDf = data.frame(
     system_name = character(),
     resource_tier = character(),
-    file_size_bytes = integer(),
-    io_size_bytes = integer(),
+    file_size_bytes = numeric(),
+    io_size_bytes = numeric(),
     mean = numeric(),
     cv = numeric(),
-    observations = integer(),
+    observations = numeric(),
     is_normal = logical(),
     stringsAsFactors = FALSE
   );
@@ -35,5 +35,43 @@ calculateGroupCvs = function(data) {
   return (resultDf);
 }
 
-writes = calculateGroupCvs(cvWriteQuery())
-reads = calculateGroupCvs(cvReadQuery())
+generateWriteCvBar = function() {
+  print("CV for writes")
+  writes = calculateGroupCvs(cvWriteQuery())
+  filtered_write = writes[
+    writes$resource_tier %in% c("TIER_1", "TIER_5") & 
+      as.integer(writes$io_size_bytes) %in% c(512, 128000) &
+      as.integer(writes$file_size_bytes) %in% c(10000, 1024000000),]
+  
+  ggplot(data=filtered_write, aes(x=resource_tier, y=cv*100, fill=system_name)) +
+    geom_bar(stat="identity", position="dodge") +
+    geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
+    facet_wrap(io_size_bytes~file_size_bytes, scales="free", labeller = labeller(
+      io_size_bytes = c("512" = "I/O = 512 B", "128000" = "I/O = 128 KB"),
+      file_size_bytes = c("10000" = "File = 10 KB", "1024000000" = "File = 1 GB"))) +
+    labs(x = "Resource tier", y = "CV (%)", fill = "Platform") + theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal") +
+    scale_x_discrete(labels=c("TIER_1"="Tier 1", "TIER_5"="Tier 5")) + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+}
+
+generateReadCvBar = function() {
+  print("CV for reads")
+  reads = calculateGroupCvs(cvReadQuery())
+  filtered_read = reads[
+    reads$resource_tier %in% c("TIER_1", "TIER_5") & 
+      as.integer(reads$io_size_bytes) %in% c(512, 128000) &
+      as.integer(reads$file_size_bytes) %in% c(10000, 1024000000),]
+  
+  ggplot(data=filtered_read, aes(x=resource_tier, y=cv*100, fill=system_name)) +
+    geom_bar(stat="identity", position="dodge") +
+    geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
+    facet_wrap(io_size_bytes~file_size_bytes, scales="free", labeller = labeller(
+      io_size_bytes = c("512" = "I/O = 512 B", "128000" = "I/O = 128 KB"),
+      file_size_bytes = c("10000" = "File = 10 KB", "1024000000" = "File = 1 GB"))) +
+    labs(x = "Resource tier", y = "CV (%)", fill = "Platform") + theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal") +
+    scale_x_discrete(labels=c("TIER_1"="Tier 1", "TIER_5"="Tier 5")) + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+}
+
