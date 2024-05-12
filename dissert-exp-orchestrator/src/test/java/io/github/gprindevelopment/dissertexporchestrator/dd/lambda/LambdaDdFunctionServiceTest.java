@@ -106,7 +106,7 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_save_exp_record_from_read_function_call() {
+    public void Should_successfully_save_exp_record_from_direct_read_function_call() {
         String expectedFunctionResponse = """
                 953+1 records in
                 953+1 records out
@@ -132,6 +132,37 @@ class LambdaDdFunctionServiceTest {
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
+
+        assertEquals(expectedExperiment, savedEntity);
+    }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_read_function_call() {
+        String expectedFunctionResponse = """
+                953+1 records in
+                953+1 records out
+                999424000 bytes (999 MB) copied,
+                0.130173 s,
+                7.7 GB/s""";
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_1;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
+        String expectedCommand = "if=/tmp/file1 of=/dev/null bs=512";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.130173 s",
+                        "7.7 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.READ,
+                        DdExperimentName.CACHED_READ))).thenReturn(expectedExperiment);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectCachedReadExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }
@@ -204,7 +235,7 @@ class LambdaDdFunctionServiceTest {
     }
 
     @Test
-    public void Should_successfully_save_exp_record_from_read_function_call_converting_iosize_to_KB() {
+    public void Should_successfully_save_exp_record_from_direct_read_function_call_converting_iosize_to_KB() {
         String expectedFunctionResponse = """
                 953+1 records in
                 953+1 records out
@@ -230,6 +261,37 @@ class LambdaDdFunctionServiceTest {
                         DdExperimentName.DIRECT_READ))).thenReturn(expectedExperiment);
         when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
         DdExperimentEntity savedEntity = lambdaDdFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
+
+        assertEquals(expectedExperiment, savedEntity);
+    }
+
+    @Test
+    public void Should_successfully_save_exp_record_from_read_function_call_converting_iosize_to_KB() {
+        String expectedFunctionResponse = """
+                953+1 records in
+                953+1 records out
+                999424000 bytes (999 MB) copied,
+                0.130173 s,
+                7.7 GB/s""";
+        IoSizeTier ioSizeTier = IoSizeTier.TIER_2;
+        FileSizeTier fileSizeTier = FileSizeTier.TIER_2;
+        String expectedCommand = "if=/tmp/file1 of=/dev/null bs=1k";
+        CommandRequest commandRequest = new CommandRequest(expectedCommand);
+        DdExperimentEntity expectedExperiment = new DdExperimentEntity();
+
+        when(experimentService.recordSuccessfulExperiment(
+                new SuccessfulExperiment(SystemName.LAMBDA_DD,
+                        ResourceTier.TIER_1,
+                        expectedFunctionResponse,
+                        "0.130173 s",
+                        "7.7 GB/s",
+                        ioSizeTier.getIoSizeBytes(),
+                        fileSizeTier.getFileSizeBytes(),
+                        expectedCommand,
+                        OperationType.READ,
+                        DdExperimentName.CACHED_READ))).thenReturn(expectedExperiment);
+        when(lambdaDdFunctionClient.callFunction(commandRequest)).thenReturn(expectedFunctionResponse);
+        DdExperimentEntity savedEntity = lambdaDdFunctionService.collectCachedReadExpRecord(ioSizeTier, fileSizeTier);
 
         assertEquals(expectedExperiment, savedEntity);
     }

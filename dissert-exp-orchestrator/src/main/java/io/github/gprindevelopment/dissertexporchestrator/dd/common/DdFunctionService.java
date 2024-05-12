@@ -67,7 +67,7 @@ public abstract class DdFunctionService {
 
     /**
      * Requires that a file with absolute path /tmp/file1 exists prior to the read action.
-     * Will read the entirety of the existing file using the provided ioSizeTier
+     * Will read the entirety of the existing file using the provided ioSizeTier with direct I/O
      * Will persist experiment considering read file with fileSizeTier
      *
      * @param ioSizeTier
@@ -80,6 +80,24 @@ public abstract class DdFunctionService {
                 buildDirectReadCommand(ioSizeTier),
                 OperationType.READ,
                 DdExperimentName.DIRECT_READ);
+    }
+
+    /**
+     * Requires that a file with absolute path /tmp/file1 exists prior to the read action.
+     * Will read the entirety of the existing file using the provided ioSizeTier without direct I/O
+     * Assumes that file was just written, so the read is cached.
+     * Will persist experiment considering read file with fileSizeTier
+     *
+     * @param ioSizeTier
+     * @param fileSizeTier
+     * @return the result of the read experiment
+     */
+    public DdExperimentEntity collectCachedReadExpRecord(IoSizeTier ioSizeTier, FileSizeTier fileSizeTier) {
+        return collectExpRecord(ioSizeTier.getIoSizeBytes(),
+                fileSizeTier.getFileSizeBytes(),
+                buildReadCommand(ioSizeTier),
+                OperationType.READ,
+                DdExperimentName.CACHED_READ);
     }
 
     private DdExperimentEntity collectExpRecord(
@@ -155,5 +173,9 @@ public abstract class DdFunctionService {
 
     private String buildDirectReadCommand(IoSizeTier ioSizeTier) {
         return String.format("iflag=direct if=/tmp/file1 of=/dev/null bs=%s", ioSizeTier.getStringNotationBytes());
+    }
+
+    private String buildReadCommand(IoSizeTier ioSizeTier) {
+        return String.format("if=/tmp/file1 of=/dev/null bs=%s", ioSizeTier.getStringNotationBytes());
     }
 }
