@@ -162,7 +162,7 @@ ecdfMinFileMinIoMinMaxResourceWrite = function() {
     facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
     scale_color_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
     #ggtitle("Write latency for a 10 KB file and 512 B I/O size") + 
-    labs(x="Latency (s)",y="Percentile", colour = "Platform") + theme_bw() + 
+    labs(x="Latency (ms)",y="Percentile", colour = "Platform") + theme_bw() + 
     theme(legend.position = "bottom", legend.box = "horizontal")
 }
 
@@ -221,7 +221,7 @@ ecdfMinFileMinIoMinMaxResourceRead = function() {
     facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
     scale_color_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
     #ggtitle("Read latency for a 10 KB file and 512 B I/O size") + 
-    labs(x="Latency (s)",y="Percentile", colour = "Platform") + theme_bw() + 
+    labs(x="Latency (ms)",y="Percentile", colour = "Platform") + theme_bw() + 
     theme(legend.position = "bottom", legend.box = "horizontal")
 }
 
