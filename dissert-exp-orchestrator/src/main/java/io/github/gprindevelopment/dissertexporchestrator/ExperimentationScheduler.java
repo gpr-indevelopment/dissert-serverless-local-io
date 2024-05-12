@@ -1,10 +1,7 @@
 package io.github.gprindevelopment.dissertexporchestrator;
 
 import io.github.gprindevelopment.dissertexporchestrator.dd.common.DdFunctionService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ClockService;
-import io.github.gprindevelopment.dissertexporchestrator.domain.FileSizeTier;
-import io.github.gprindevelopment.dissertexporchestrator.domain.IoSizeTier;
-import io.github.gprindevelopment.dissertexporchestrator.domain.ResourceTier;
+import io.github.gprindevelopment.dissertexporchestrator.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +22,20 @@ public class ExperimentationScheduler {
     @Scheduled(fixedDelayString = "${dissert-exp-orchestrator.experimentation-scheduler.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runAllExperiments() {
         log.info("Scheduler triggered");
-        runExperiments(ResourceTier.values(), FileSizeTier.values(), IoSizeTier.values());
+        runFullExperiment(ResourceTier.values(), FileSizeTier.values(), IoSizeTier.values());
     }
 
-    public void runExperiments(ResourceTier[] resourceTiers, FileSizeTier[] fileSizeTiers, IoSizeTier[] ioSizeTiers) {
+    public void runFullExperiment(ResourceTier[] resourceTiers, FileSizeTier[] fileSizeTiers, IoSizeTier[] ioSizeTiers) {
+        Consumer<ExperimentSettings> experiment = (experimentSettings) -> {
+            experimentSettings.functionService().collectURandomDirectWriteExpRecord(experimentSettings.ioSizeTier(), experimentSettings.fileSizeTier());
+            experimentSettings.functionService().collectURandomWriteExpRecord(experimentSettings.ioSizeTier(),  experimentSettings.fileSizeTier());
+            clockService.wait(TimeUnit.SECONDS, 5);
+            experimentSettings.functionService().collectDirectReadExpRecord(experimentSettings.ioSizeTier(),  experimentSettings.fileSizeTier());
+        };
+        runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers, experiment);
+    }
+
+    public void runExperiments(ResourceTier[] resourceTiers, FileSizeTier[] fileSizeTiers, IoSizeTier[] ioSizeTiers, Consumer<ExperimentSettings> experiment) {
         for (ResourceTier resourceTier : resourceTiers) {
             setupResourceTier(resourceTier);
             for (FileSizeTier fileSizeTier : fileSizeTiers) {
@@ -45,10 +53,7 @@ public class ExperimentationScheduler {
                     }
                     log.info("Setting IO size to: {} bytes", ioSizeTier.getIoSizeBytes());
                     for (DdFunctionService ddFunctionService : ddFunctionServices) {
-                        ddFunctionService.collectURandomDirectWriteExpRecord(ioSizeTier, fileSizeTier);
-                        ddFunctionService.collectURandomWriteExpRecord(ioSizeTier, fileSizeTier);
-                        clockService.wait(TimeUnit.SECONDS, 5);
-                        ddFunctionService.collectDirectReadExpRecord(ioSizeTier, fileSizeTier);
+                        experiment.accept(new ExperimentSettings(ddFunctionService, ioSizeTier, fileSizeTier));
                     }
                 }
             }

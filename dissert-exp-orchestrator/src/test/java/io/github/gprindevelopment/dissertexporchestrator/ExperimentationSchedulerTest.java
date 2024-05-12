@@ -42,7 +42,7 @@ class ExperimentationSchedulerTest {
         FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_5};
         IoSizeTier[] ioSizeTiers = IoSizeTier.values();
 
-        experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
+        experimentationScheduler.runFullExperiment(resourceTiers, fileSizeTiers, ioSizeTiers);
         verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
         verify(ddFunctionService, never()).collectZeroWriteExpRecord(any(), any());
     }
@@ -53,7 +53,7 @@ class ExperimentationSchedulerTest {
         FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_4};
         IoSizeTier[] ioSizeTiers = IoSizeTier.values();
 
-        experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
+        experimentationScheduler.runFullExperiment(resourceTiers, fileSizeTiers, ioSizeTiers);
         verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
         verify(ddFunctionService, times(ioSizeTiers.length)).collectURandomDirectWriteExpRecord(any(), any());
     }
@@ -64,7 +64,7 @@ class ExperimentationSchedulerTest {
         FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_4};
         IoSizeTier[] ioSizeTiers = IoSizeTier.values();
 
-        experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
+        experimentationScheduler.runFullExperiment(resourceTiers, fileSizeTiers, ioSizeTiers);
         InOrder inOrder = inOrder(ddFunctionService);
         inOrder.verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
         for (int i = 0; i < ioSizeTiers.length; i++) {
@@ -84,7 +84,7 @@ class ExperimentationSchedulerTest {
     @Test
     public void Should_run_all_compatible_combinations_of_io_file_sizes() {
         ResourceTier[] resourceTiers = new ResourceTier[]{ResourceTier.TIER_1};
-        experimentationScheduler.runExperiments(resourceTiers, FileSizeTier.values(), IoSizeTier.values());
+        experimentationScheduler.runFullExperiment(resourceTiers, FileSizeTier.values(), IoSizeTier.values());
         for (FileSizeTier fileSizeTier : FileSizeTier.values()) {
             if (!fileSizeTier.isCompatibleWith(ResourceTier.TIER_1)) {
                 continue;
@@ -113,7 +113,7 @@ class ExperimentationSchedulerTest {
         ResourceTier[] resourceTiers = new ResourceTier[]{ResourceTier.TIER_1};
         FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_1};
         IoSizeTier[] ioSizeTiers = new IoSizeTier[]{IoSizeTier.TIER_1};
-        experimentationScheduler.runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers);
+        experimentationScheduler.runFullExperiment(resourceTiers, fileSizeTiers, ioSizeTiers);
         InOrder inOrder = inOrder(ddFunctionService);
         inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
         inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
