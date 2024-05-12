@@ -9,6 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 source("postgres-connect-test-script.R")
 source("dissert-anova.R")
+source("dissert-conf-int.R")
 
 options(warn=-1)
 ```
@@ -64,4 +65,14 @@ smallFileWriteAnova()
 
 bigFileReadAnova()
 smallFileReadAnova()
+```
+
+## Confidence intervals
+
+```{r ics, echo=FALSE}
+maxFileConfInt(maxFileMinMaxIoWriteQuery())
+maxFileConfInt(maxFileMinMaxIoReadQuery())
+
+minFileConfInt(minFileMinIoMinMaxResourceWriteQuery())
+minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
 ```
