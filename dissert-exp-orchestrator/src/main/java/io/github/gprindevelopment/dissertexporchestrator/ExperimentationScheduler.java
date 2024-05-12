@@ -22,7 +22,19 @@ public class ExperimentationScheduler {
     @Scheduled(fixedDelayString = "${dissert-exp-orchestrator.experimentation-scheduler.fixedDelayMinutes}", timeUnit = TimeUnit.MINUTES)
     public void runAllExperiments() {
         log.info("Scheduler triggered");
-        runFullExperiment(ResourceTier.values(), FileSizeTier.values(), IoSizeTier.values());
+        //runFullExperiment(ResourceTier.values(), FileSizeTier.values(), IoSizeTier.values());
+        runCachedReadExperiment();
+    }
+
+    public void runCachedReadExperiment() {
+        Consumer<ExperimentSettings> experiment = (experimentSettings) -> {
+            experimentSettings.functionService().collectURandomWriteExpRecord(experimentSettings.ioSizeTier(),  experimentSettings.fileSizeTier());
+            experimentSettings.functionService().collectCachedReadExpRecord(experimentSettings.ioSizeTier(),  experimentSettings.fileSizeTier());
+        };
+        ResourceTier[] resourceTiers = new ResourceTier[]{ResourceTier.TIER_1, ResourceTier.TIER_5};
+        FileSizeTier[] fileSizeTiers = new FileSizeTier[]{FileSizeTier.TIER_1, FileSizeTier.TIER_8};
+        IoSizeTier[] ioSizeTiers = new IoSizeTier[]{IoSizeTier.TIER_1, IoSizeTier.TIER_9};
+        runExperiments(resourceTiers, fileSizeTiers, ioSizeTiers, experiment);
     }
 
     public void runFullExperiment(ResourceTier[] resourceTiers, FileSizeTier[] fileSizeTiers, IoSizeTier[] ioSizeTiers) {

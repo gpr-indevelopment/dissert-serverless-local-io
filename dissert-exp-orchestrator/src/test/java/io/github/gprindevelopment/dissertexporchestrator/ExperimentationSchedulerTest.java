@@ -118,4 +118,19 @@ class ExperimentationSchedulerTest {
         inOrder.verify(ddFunctionService).collectURandomDirectWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
         inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
     }
+
+    @Test
+    public void Should_run_cached_read_experiment_with_min_max_factor_values_only() {
+        experimentationScheduler.runCachedReadExperiment();
+        InOrder inOrder = inOrder(ddFunctionService);
+        verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_1);
+        inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
+        inOrder.verify(ddFunctionService).collectCachedReadExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
+        verify(ddFunctionService).setFunctionResources(ResourceTier.TIER_5);
+        inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
+        inOrder.verify(ddFunctionService).collectCachedReadExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_1);
+        inOrder.verify(ddFunctionService).collectURandomWriteExpRecord(IoSizeTier.TIER_1, FileSizeTier.TIER_8);
+        inOrder.verify(ddFunctionService).collectCachedReadExpRecord(IoSizeTier.TIER_9, FileSizeTier.TIER_8);
+        inOrder.verifyNoMoreInteractions();
+    }
 }
