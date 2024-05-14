@@ -7,6 +7,7 @@ source(file.path(dirname(curDir), "dissert-db-con.R"))
 
 ########################## Global query vars ##############################
 cutoffDate = "'2024-04-10'";
+limitDate = "'2024-05-11'"
 repetitions = 150;
 writeExperiment = "'URANDOM_WRITE'"
 
@@ -42,6 +43,7 @@ minFileMinIoWriteQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -57,7 +59,7 @@ minFileMinIoWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -85,6 +87,7 @@ minFileMinIoMinMaxResourceWriteQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
         AND resource_tier in ('TIER_1', 'TIER_5')
     )
     SELECT
@@ -101,7 +104,7 @@ minFileMinIoMinMaxResourceWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-                                                 list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -130,6 +133,7 @@ maxFileMinIoWriteQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -145,7 +149,7 @@ maxFileMinIoWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -173,6 +177,7 @@ maxFileMaxIoWriteQuery = function() {
         AND io_size_bytes = 128000
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -188,7 +193,7 @@ maxFileMaxIoWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -216,6 +221,7 @@ maxFileMinMaxIoWriteQuery = function() {
         AND io_size_bytes in (512, 128000)
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -231,7 +237,7 @@ maxFileMinMaxIoWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-                                                 list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -262,6 +268,7 @@ minFileMinIoReadQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -276,7 +283,7 @@ minFileMinIoReadQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -304,6 +311,7 @@ minFileMinIoMinMaxResourceReadQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
         AND resource_tier in ('TIER_1', 'TIER_5')
     )
     SELECT
@@ -319,7 +327,7 @@ minFileMinIoMinMaxResourceReadQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -347,6 +355,7 @@ maxFileMinIoReadQuery = function() {
         AND io_size_bytes = 512
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -361,7 +370,7 @@ maxFileMinIoReadQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -389,6 +398,7 @@ maxFileMaxIoReadQuery = function() {
         AND io_size_bytes = 128000
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -403,7 +413,7 @@ maxFileMaxIoReadQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -431,6 +441,7 @@ maxFileMinMaxIoReadQuery = function() {
         AND io_size_bytes in (512, 128000)
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -445,7 +456,7 @@ maxFileMinMaxIoReadQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -476,6 +487,7 @@ bigFileWriteAnovaQuery = function() {
         AND io_size_bytes in (512, 128000)
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -491,7 +503,7 @@ bigFileWriteAnovaQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, repetitions=repetitions, limitDate=limitDate, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -520,6 +532,7 @@ smallFileWriteAnovaQuery = function() {
         and resource_tier in ('TIER_1', 'TIER_5')
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -535,7 +548,7 @@ smallFileWriteAnovaQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, repetitions=repetitions, limitDate=limitDate, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -564,6 +577,7 @@ bigFileReadAnovaQuery = function() {
         AND io_size_bytes in (512, 128000)
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -578,7 +592,7 @@ bigFileReadAnovaQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -607,6 +621,7 @@ smallFileReadAnovaQuery = function() {
         and resource_tier in ('TIER_1', 'TIER_5')
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -621,7 +636,7 @@ smallFileReadAnovaQuery = function() {
     FROM
         ranked_data
     WHERE
-        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, repetitions=repetitions)))
+        row_num <= ${repetitions}", list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions)))
   
   return(res);
 }
@@ -649,6 +664,7 @@ cvWriteQuery = function() {
         AND status = 'SUCCESS'
         AND experiment_name = ${writeExperiment}
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -664,7 +680,7 @@ cvWriteQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-    list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
@@ -690,6 +706,7 @@ cvReadQuery = function() {
         AND status = 'SUCCESS'
         AND experiment_name = 'DIRECT_READ'
         AND occurred_at >= ${cutoffDate}
+        AND occurred_at <= ${limitDate}
     )
     SELECT
         latency_seconds,
@@ -705,7 +722,7 @@ cvReadQuery = function() {
         ranked_data
     WHERE
         row_num <= ${repetitions}", 
-                                                 list(cutoffDate=cutoffDate, repetitions=repetitions, writeExperiment=writeExperiment)))
+    list(cutoffDate=cutoffDate, limitDate=limitDate, repetitions=repetitions, writeExperiment=writeExperiment)))
   
   return(res);
 }
