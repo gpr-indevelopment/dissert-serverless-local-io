@@ -75,3 +75,51 @@ generateReadCvBar = function() {
     scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
 }
 
+generateReadCvVariatingWithIo = function() {
+  print("CV variating with I/O for reads on big files")
+  reads = calculateGroupCvs(cvReadQuery())
+  reads = reads[as.integer(reads$file_size_bytes) == 1024000000, ]
+  ggplot(data=reads, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name)) +
+    geom_bar(stat="identity", position="dodge") +
+    facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_5" = "Tier 5"))) +
+    labs(x = "I/O size", y = "CV (%)", fill = "Platform") + theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal") +
+    scale_x_discrete(labels=c(
+      "512"="512 B", 
+      "1000"="1 KB",
+      "2000"="2 KB",
+      "4000"="4 KB",
+      "8000"="8 KB",
+      "16000"="16 KB",
+      "32000"="32 KB",
+      "64000"="64 KB",
+      "128000"="128 KB"
+    )) + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+}
+
+generateWriteCvVariatingWithIo = function() {
+  print("CV variating with I/O for reads on big files")
+  writes = calculateGroupCvs(cvWriteQuery())
+  writes = writes[as.integer(writes$file_size_bytes) == 1024000000, ]
+  ggplot(data=writes, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name)) +
+    geom_bar(stat="identity", position="dodge") +
+    facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_5" = "Tier 5"))) +
+    labs(x = "I/O size", y = "CV (%)", fill = "Platform") + theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal") +
+    scale_x_discrete(labels=c(
+      "512"="512 B", 
+      "1000"="1 KB",
+      "2000"="2 KB",
+      "4000"="4 KB",
+      "8000"="8 KB",
+      "16000"="16 KB",
+      "32000"="32 KB",
+      "64000"="64 KB",
+      "128000"="128 KB"
+    )) + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+}
+
+
+
