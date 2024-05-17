@@ -52,9 +52,11 @@ boxplotMaxFileAndMaxIoRead()
 
 ```{r ecdfs, echo=FALSE}
 ecdfMinFileAndMinIoWrite()
+ecdfMinFileMinIoMinMaxResourceWrite()
 ecdfMaxFileAndMinMaxIoWrite()
 
 ecdfMinFileAndMinIoRead()
+ecdfMinFileMinIoMinMaxResourceRead()
 ecdfMaxFileAndMinMaxIoRead()
 ```
 

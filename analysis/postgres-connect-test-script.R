@@ -147,7 +147,7 @@ boxplotMaxFileAndMaxIoRead()
 
 ecdfMinFileAndMinIoWrite = function() {
   res = minFileMinIoWriteQuery();
-  
+
   ggplot(data=res, aes(x=latency_seconds*1000, colour = resource_tier)) +
     stat_ecdf() + 
     facet_wrap(~system_name) + 
@@ -157,6 +157,8 @@ ecdfMinFileAndMinIoWrite = function() {
 ecdfMinFileMinIoMinMaxResourceWrite = function() {
   res = minFileMinIoMinMaxResourceWriteQuery();
   print("ECDF of write latency for a 10 KB file and 512 B I/O size")
+  medians <- res %>% group_by(system_name, resource_tier) %>% summarize(median_latency = quantile(latency_seconds, 0.5) *1000)
+  print(medians)
   ggplot(data=res, aes(x=latency_seconds*1000, colour = system_name)) +
     stat_ecdf() + 
     facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
@@ -188,6 +190,9 @@ ecdfMaxFileAndMinMaxIoWrite = function() {
   res = maxFileMinMaxIoWriteQuery();
   print("ECDF of write latency for a 1 GB file")
   
+  medians <- res %>% group_by(system_name, io_size_bytes) %>% summarize(median_latency = quantile(latency_seconds, 0.5))
+  print(medians)
+  
   ggplot(data=res, aes(x=latency_seconds, colour = system_name)) +
     stat_ecdf() + 
     facet_grid(~io_size_bytes, labeller = labeller(io_size_bytes = c("512" = "512 B", "128000" = "128 KB"))) + 
@@ -216,6 +221,8 @@ ecdfMinFileAndMinIoRead = function() {
 ecdfMinFileMinIoMinMaxResourceRead = function() {
   res = minFileMinIoMinMaxResourceReadQuery();
   print("ECDF of read latency for a 10 KB file and 512 B I/O size")
+  medians <- res %>% group_by(system_name, resource_tier) %>% summarize(median_latency = quantile(latency_seconds, 0.5)*1000)
+  print(medians)
   ggplot(data=res, aes(x=latency_seconds*1000, colour = system_name)) +
     stat_ecdf() + 
     facet_grid(~resource_tier, labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) + 
@@ -246,6 +253,8 @@ ecdfMaxFileAndMaxIoRead = function() {
 ecdfMaxFileAndMinMaxIoRead = function() {
   res = maxFileMinMaxIoReadQuery();
   print("ECDF of read latency for a 1 GB file")
+  medians <- res %>% group_by(system_name, io_size_bytes) %>% summarize(median_latency = quantile(latency_seconds, 0.5))
+  print(medians)
   ggplot(data=res, aes(x=latency_seconds, colour = system_name)) +
     stat_ecdf() + 
     facet_grid(~io_size_bytes, labeller = labeller(io_size_bytes = c("512" = "512 B", "128000" = "128 KB"))) + 

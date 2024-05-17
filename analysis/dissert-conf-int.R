@@ -25,7 +25,8 @@ maxFileConfInt = function(data) {
     provider = c("LAMBDA_DD", "LAMBDA_DD", "GCF_DD", "GCF_DD"),
     io_size = c(512, 128000, 512, 128000),
     lower = c(result_lambda_min_io[1], result_lambda_max_io[1], result_gcf_min_io[1], result_gcf_max_io[1]),
-    upper = c(result_lambda_min_io[2], result_lambda_max_io[2], result_gcf_min_io[2], result_gcf_max_io[2])
+    upper = c(result_lambda_min_io[2], result_lambda_max_io[2], result_gcf_min_io[2], result_gcf_max_io[2]),
+    mean = c(mean(result_lambda_min_io[1:2]), mean(result_lambda_max_io[1:2]), mean(result_gcf_min_io[1:2]), mean(result_gcf_max_io[1:2]))
   )
   
   print(results)
@@ -63,7 +64,8 @@ minFileConfInt = function(data) {
     provider = c("LAMBDA_DD", "LAMBDA_DD", "GCF_DD", "GCF_DD"),
     resource_tier = c("TIER_1", "TIER_5", "TIER_1", "TIER_5"),
     lower = c(result_lambda_min_res[1], result_lambda_max_res[1], result_gcf_min_res[1], result_gcf_max_res[1]),
-    upper = c(result_lambda_min_res[2], result_lambda_max_res[2], result_gcf_min_res[2], result_gcf_max_res[2])
+    upper = c(result_lambda_min_res[2], result_lambda_max_res[2], result_gcf_min_res[2], result_gcf_max_res[2]),
+    mean = c(mean(result_lambda_min_res[1:2]), mean(result_lambda_max_res[1:2]), mean(result_gcf_min_res[1:2]), mean(result_gcf_max_res[1:2]))
   )
   
   print(results)
