@@ -11,6 +11,7 @@ source("postgres-connect-test-script.R")
 source("dissert-anova.R")
 source("dissert-conf-int.R")
 source("dissert-cv.R")
+source("dissert-mean-median-diff.R")
 
 options(warn=-1)
 ```
@@ -85,4 +86,11 @@ minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
 ```{r cvs, echo=FALSE}
 generateWriteCvBar()
 generateReadCvBar()
+```
+
+## Mean-median diff
+
+```{r mean-median-diff, echo=FALSE}
+largeFilesMeanMedianDiff()
+smallFilesMeanMedianDiff()
 ```
