@@ -84,8 +84,10 @@ minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
 ## CVs
 
 ```{r cvs, echo=FALSE}
-generateWriteCvBar()
-generateReadCvBar()
+largeFilesWriteCvBar()
+smallFilesWriteCvBar()
+largeFilesReadCvBar()
+smallFilesReadCvBar()
 ```
 
 ## Mean-median diff
