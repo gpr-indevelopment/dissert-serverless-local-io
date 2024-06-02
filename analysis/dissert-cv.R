@@ -1,4 +1,7 @@
 library(rstudioapi)
+#install.packages("ggpattern")
+library("ggpattern")
+
 
 curDir = rstudioapi::getActiveDocumentContext()$path 
 source(file.path(dirname(curDir), "dissert-queries.R"))
@@ -130,13 +133,15 @@ largeFilesWriteCvBar = function() {
       as.integer(writes$io_size_bytes) %in% c(512, 128000) &
       as.integer(writes$file_size_bytes) == 1024000000,]
   
-  ggplot(data=filtered_write, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name)) +
-    geom_bar(stat="identity", position="dodge") +
+  ggplot(data=filtered_write, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name, pattern=system_name)) +
+    geom_bar_pattern(stat="identity", position="dodge") +
     geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
-    labs(x = "I/O size", y = "CV (%)", fill = "Platform") + theme_bw() +
+    labs(x = "I/O size", y = "CV (%)", fill = "Platform", pattern = "Platform") + theme_bw() +
     theme(legend.position = "bottom", legend.box = "horizontal") +
     scale_x_discrete(labels=c("512"="512 B", "128000"="128 KB")) + 
-    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    scale_pattern_manual(values=c("GCF_DD"="none", "LAMBDA_DD"="stripe"),
+                         labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
 }
 ##### Small files write #####
 
@@ -148,13 +153,15 @@ smallFilesWriteCvBar = function() {
       as.integer(writes$io_size_bytes) == 512 &
       as.integer(writes$file_size_bytes) == 10000,]
   
-  ggplot(data=filtered_write, aes(x=resource_tier, y=cv*100, fill=system_name)) +
-    geom_bar(stat="identity", position="dodge") +
+  ggplot(data=filtered_write, aes(x=resource_tier, y=cv*100, fill=system_name, pattern=system_name)) +
+    geom_bar_pattern(stat="identity", position="dodge") +
     geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
-    labs(x = "Resource tier", y = "CV (%)", fill = "Platform") + theme_bw() +
+    labs(x = "Resource tier", y = "CV (%)", fill = "Platform", pattern = "Platform") + theme_bw() +
     theme(legend.position = "bottom", legend.box = "horizontal") +
     scale_x_discrete(labels=c("TIER_1"="Tier 1", "TIER_5"="Tier 5")) + 
-    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    scale_pattern_manual(values=c("GCF_DD"="none", "LAMBDA_DD"="stripe"),
+                         labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
 }
 
 ##### Large files read #####
@@ -166,13 +173,15 @@ largeFilesReadCvBar = function() {
       as.integer(reads$io_size_bytes) %in% c(512, 128000) &
       as.integer(reads$file_size_bytes) == 1024000000,]
   
-  ggplot(data=filtered_read, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name)) +
-    geom_bar(stat="identity", position="dodge") +
+  ggplot(data=filtered_read, aes(x=as.factor(io_size_bytes), y=cv*100, fill=system_name, pattern=system_name)) +
+    geom_bar_pattern(stat="identity", position="dodge") +
     geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
-    labs(x = "I/O size", y = "CV (%)", fill = "Platform") + theme_bw() +
+    labs(x = "I/O size", y = "CV (%)", fill = "Platform", pattern = "Platform") + theme_bw() +
     theme(legend.position = "bottom", legend.box = "horizontal") +
     scale_x_discrete(labels=c("512"="512 B", "128000"="128 KB")) + 
-    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    scale_pattern_manual(values=c("GCF_DD"="none", "LAMBDA_DD"="stripe"),
+                         labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
 }
 
 ##### Small files read #####
@@ -185,12 +194,14 @@ smallFilesReadCvBar = function() {
       as.integer(reads$io_size_bytes) == 512 &
       as.integer(reads$file_size_bytes) == 10000,]
   
-  ggplot(data=filtered_read, aes(x=resource_tier, y=cv*100, fill=system_name)) +
-    geom_bar(stat="identity", position="dodge") +
+  ggplot(data=filtered_read, aes(x=resource_tier, y=cv*100, fill=system_name, pattern=system_name)) +
+    geom_bar_pattern(stat="identity", position="dodge") +
     geom_text(aes(label=sprintf("%.2f", cv*100)), vjust=-0.5, position=position_dodge(width=0.9), size=3.5) +
-    labs(x = "Resource tier", y = "CV (%)", fill = "Platform") + theme_bw() +
+    labs(x = "Resource tier", y = "CV (%)", fill = "Platform", pattern = "Platform") + theme_bw() +
     theme(legend.position = "bottom", legend.box = "horizontal") +
     scale_x_discrete(labels=c("TIER_1"="Tier 1", "TIER_5"="Tier 5")) + 
-    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    scale_pattern_manual(values=c("GCF_DD"="none", "LAMBDA_DD"="stripe"),
+                         labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda"))
 }
 
