@@ -3,6 +3,58 @@ library(scales)
 curDir = rstudioapi::getActiveDocumentContext()$path 
 source(file.path(dirname(curDir), "dissert-queries.R"))
 
+######################## HISTOGRAM WRITE #############################################
+
+histogramMaxFileMinMaxIoWrite = function() {
+  res = maxFileMinMaxIoWriteQuery();
+  ggplot(data=res, aes(x=latency_seconds, group=system_name, fill=system_name)) +
+    facet_wrap(~io_size_bytes, scales="free_x", labeller = labeller(io_size_bytes = c("512" = "512 B", "128000" = "128 KB"))) +
+    geom_histogram(alpha=.7, position="identity") +
+    #ggtitle("Latency histogram for write operations on large files") + 
+    labs(x="Latency (s)", y="Frequency", fill="Provider") + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal")
+}
+
+histogramMinFileMinMaxResourceTierWrite = function() {
+  res = minFileMinIoMinMaxResourceWriteQuery();
+  ggplot(data=res, aes(x=latency_seconds*1000, group=system_name, fill=system_name)) +
+    facet_wrap(~resource_tier, scales="free_x", labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) +
+    geom_histogram(alpha=.7, position="identity") +
+    #ggtitle("Latency histogram for write operations on large files") + 
+    labs(x="Latency (ms)", y="Frequency", fill="Provider") + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal")
+}
+
+######################## HISTOGRAM READ #############################################
+
+histogramMaxFileMinMaxIoRead = function() {
+  res = maxFileMinMaxIoReadQuery();
+  ggplot(data=res, aes(x=latency_seconds, group=system_name, fill=system_name)) +
+    facet_wrap(~io_size_bytes, scales="free_x", labeller = labeller(io_size_bytes = c("512" = "512 B", "128000" = "128 KB"))) +
+    geom_histogram(alpha=.7, position="identity") +
+    #ggtitle("Latency histogram for write operations on large files") + 
+    labs(x="Latency (s)", y="Frequency", fill="Provider") + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal")
+}
+
+histogramMinFileMinMaxResourceTierRead = function() {
+  res = minFileMinIoMinMaxResourceReadQuery();
+  ggplot(data=res, aes(x=latency_seconds*1000, group=system_name, fill=system_name)) +
+    facet_wrap(~resource_tier, scales="free_x", labeller = labeller(resource_tier = c("TIER_1" = "Tier 1", "TIER_5" = "Tier 5"))) +
+    geom_histogram(alpha=.7, position="identity") +
+    #ggtitle("Latency histogram for write operations on large files") + 
+    labs(x="Latency (ms)", y="Frequency", fill="Provider") + 
+    scale_fill_discrete(labels=c("GCF_DD"="GCF", "LAMBDA_DD"="AWS Lambda")) +
+    theme_bw() +
+    theme(legend.position = "bottom", legend.box = "horizontal")
+}
+
 ######################## DENSITY WRITE #############################################
 
 densityMinFileAndMinIoWrite = function() {
