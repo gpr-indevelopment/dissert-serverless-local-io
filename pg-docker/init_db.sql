@@ -1,0 +1,21 @@
+CREATE TABLE final_experiment_data (
+    id bigint NOT NULL,
+    command character varying(255),
+    day_of_week character varying(255),
+    file_size_bytes bigint,
+    io_size_bytes bigint,
+    occurred_at timestamp(6) without time zone,
+    operation_type character varying(255), 
+    resource_tier character varying(255),
+    status character varying(255),
+    system_name character varying(255), 
+    time_of_day character varying(255), 
+    week_period character varying(255), 
+    experiment_name character varying(255), 
+    experiment_id bigint NOT NULL,
+    latency_seconds double precision,
+    raw_latency character varying(255),
+    raw_response character varying(255),
+    raw_throughput character varying(255),
+    throughput_kb_per_second double precision
+);

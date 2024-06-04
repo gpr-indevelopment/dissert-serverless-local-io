@@ -1,0 +1,5 @@
+docker run --rm -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 testpg # Db and username is postgres
+
+docker build -t testpg .  
+
+pg_dump -h db_hostname -d db_database --table=public.final_experiment_data --data-only --column-inserts -U db_user -p 5432 -v -f ~/Downloads/insrt_stmts_file_name.sql
