@@ -32,6 +32,22 @@ docker run --rm -e POSTGRES_PASSWORD=local-db-pw -p 5432:5432 pimentgabriel/serv
 
 2. Then, open the [R Markdown](/analysis/main-exp/Dissert-final-exp.Rmd) from the main experiment and knit using RStudio. This will connect to the database on local and generate the data visualization to a PDF file.
 
+To correctly render the data visualization you might need to install the following packages to your RStudio environment:
+
+- gridpattern
+- ggpattern
+- rstudioapi
+- scales
+- RPostgres
+- ggplot2
+- gridExtra
+- hrbrthemes
+- dplyr
+- tidyr
+- viridis
+- readxl
+- stringr
+
 ## Functions
 
 - [docker-fio-lambda](./docker-fio-lambda): Lambda function based a custom image that comes with fio benchmark installed.
