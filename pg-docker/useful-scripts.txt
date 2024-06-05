@@ -1,4 +1,4 @@
-docker run --rm -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 testpg # Db and username is postgres
+docker run --rm -e POSTGRES_PASSWORD=local-db-pw -p 5432:5432 testpg # Db and username is postgres
 
 docker build -t testpg .  
 
