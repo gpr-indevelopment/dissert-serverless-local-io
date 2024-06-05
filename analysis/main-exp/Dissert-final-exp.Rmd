@@ -7,7 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("postgres-connect-test-script.R")
+source("main-charts.R")
 source("dissert-anova.R")
 source("dissert-conf-int.R")
 source("dissert-cv.R")
@@ -23,7 +23,7 @@ options(warn=-1)
 ```{r write-ops-large-files, echo=FALSE}
 ecdfMaxFileAndMinMaxIoWrite()
 maxFileConfInt(maxFileMinMaxIoWriteQuery())
-#largeFilesWriteCvBar()
+largeFilesWriteCvBar()
 histogramMaxFileMinMaxIoWrite()
 bigFileWriteAnova()
 ```
@@ -33,7 +33,7 @@ bigFileWriteAnova()
 ```{r write-ops-small-files, echo=FALSE}
 ecdfMinFileMinIoMinMaxResourceWrite()
 minFileConfInt(minFileMinIoMinMaxResourceWriteQuery())
-#smallFilesWriteCvBar()
+smallFilesWriteCvBar()
 histogramMinFileMinMaxResourceTierWrite()
 smallFileWriteAnova()
 ```
@@ -43,7 +43,7 @@ smallFileWriteAnova()
 ```{r read-ops-large-files, echo=FALSE}
 ecdfMaxFileAndMinMaxIoRead()
 maxFileConfInt(maxFileMinMaxIoReadQuery())
-#largeFilesReadCvBar()
+largeFilesReadCvBar()
 histogramMaxFileMinMaxIoRead()
 bigFileReadAnova()
 ```
@@ -53,7 +53,7 @@ bigFileReadAnova()
 ```{r read-ops-small-files, echo=FALSE}
 ecdfMinFileMinIoMinMaxResourceRead()
 minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
-#smallFilesReadCvBar()
+smallFilesReadCvBar()
 histogramMinFileMinMaxResourceTierRead()
 smallFileReadAnova()
 ```
