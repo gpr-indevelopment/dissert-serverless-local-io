@@ -17,10 +17,10 @@ library(viridis)
 
 # Database properties
 dsn_database = "postgres"   
-dsn_hostname = "*"  
+dsn_hostname = "localhost"  
 dsn_port = 5432                
 dsn_uid = "postgres"         
-dsn_pwd = "*"
+dsn_pwd = "local-db-pw"
 
 getCon = function() {
   return(dbConnect(Postgres(), 

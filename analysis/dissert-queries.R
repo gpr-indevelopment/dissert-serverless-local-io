@@ -34,8 +34,7 @@ minFileMinIoWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -78,8 +77,7 @@ minFileMinIoMinMaxResourceWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -124,8 +122,7 @@ maxFileMinIoWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -168,8 +165,7 @@ maxFileMaxIoWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -212,8 +208,7 @@ maxFileMinMaxIoWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -259,8 +254,7 @@ minFileMinIoReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -302,8 +296,7 @@ minFileMinIoMinMaxResourceReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -346,8 +339,7 @@ maxFileMinIoReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -389,8 +381,7 @@ maxFileMaxIoReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -432,8 +423,7 @@ maxFileMinMaxIoReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -478,8 +468,7 @@ bigFileWriteAnovaQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -522,8 +511,7 @@ smallFileWriteAnovaQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -568,8 +556,7 @@ bigFileReadAnovaQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -611,8 +598,7 @@ smallFileReadAnovaQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, io_size_bytes, system_name) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, io_size_bytes, system_name ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'
@@ -657,8 +643,7 @@ cvWriteQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name, file_size_bytes, io_size_bytes) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name, file_size_bytes, io_size_bytes ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'WRITE'
         AND status = 'SUCCESS'
@@ -699,8 +684,7 @@ cvReadQuery = function() {
     		DENSE_RANK() OVER (ORDER BY resource_tier, system_name, file_size_bytes, io_size_bytes) AS group_id,
         ROW_NUMBER() OVER (PARTITION BY resource_tier, system_name, file_size_bytes, io_size_bytes ORDER BY occurred_at DESC) AS row_num
     FROM
-        public.dd_experiment_entity en
-        JOIN dd_experiment_result_entity res ON en.id = res.experiment_id
+        public.final_experiment_data
     WHERE
         operation_type = 'READ'
         AND status = 'SUCCESS'

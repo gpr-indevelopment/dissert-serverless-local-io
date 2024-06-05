@@ -18,14 +18,53 @@ options(warn=-1)
 
 # Dissert experiments
 
-These are the experiments!
+## Write operations on large files
 
-## Density plots
+```{r write-ops-large-files, echo=FALSE}
+ecdfMaxFileAndMinMaxIoWrite()
+maxFileConfInt(maxFileMinMaxIoWriteQuery())
+#largeFilesWriteCvBar()
+histogramMaxFileMinMaxIoWrite()
+bigFileWriteAnova()
+```
+
+## Write operations on small files
+
+```{r write-ops-small-files, echo=FALSE}
+ecdfMinFileMinIoMinMaxResourceWrite()
+minFileConfInt(minFileMinIoMinMaxResourceWriteQuery())
+#smallFilesWriteCvBar()
+histogramMinFileMinMaxResourceTierWrite()
+smallFileWriteAnova()
+```
+
+## Read operations on large files
+
+```{r read-ops-large-files, echo=FALSE}
+ecdfMaxFileAndMinMaxIoRead()
+maxFileConfInt(maxFileMinMaxIoReadQuery())
+#largeFilesReadCvBar()
+histogramMaxFileMinMaxIoRead()
+bigFileReadAnova()
+```
+
+## Read operations on small files
+
+```{r read-ops-small-files, echo=FALSE}
+ecdfMinFileMinIoMinMaxResourceRead()
+minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
+#smallFilesReadCvBar()
+histogramMinFileMinMaxResourceTierRead()
+smallFileReadAnova()
+```
+
+## Other plots
 
 The following are [density plots](https://r-graph-gallery.com/density-plot) for experiments ran between 02/25/2024 and 03/20/2024.
 
 On the first density plot, it is limited between 0 and 1. Its hiding a mode for Lambda_DD on Tier 1 that happens after 25 and 50 ms.
 
+### Density plots
 ```{r densities, echo=FALSE}
 densityMinFileAndMinIoWrite()
 densityMaxFileAndMinIoWrite()
@@ -36,7 +75,7 @@ densityMaxFileAndMinIoRead()
 densityMaxFileAndMaxIoRead()
 ```
 
-## Box plots
+### Box plots
 
 ```{r boxplots, echo=FALSE}
 boxplotMinFileAndMinIoWrite()
@@ -46,53 +85,4 @@ boxplotMaxFileAndMaxIoWrite()
 boxplotMinFileAndMinIoRead()
 boxplotMaxFileAndMinIoRead()
 boxplotMaxFileAndMaxIoRead()
-```
-
-## ECDFs
-
-
-```{r ecdfs, echo=FALSE}
-ecdfMinFileAndMinIoWrite()
-ecdfMinFileMinIoMinMaxResourceWrite()
-ecdfMaxFileAndMinMaxIoWrite()
-
-ecdfMinFileAndMinIoRead()
-ecdfMinFileMinIoMinMaxResourceRead()
-ecdfMaxFileAndMinMaxIoRead()
-```
-
-## Anovas
-
-```{r anovas, echo=FALSE}
-bigFileWriteAnova()
-smallFileWriteAnova()
-
-bigFileReadAnova()
-smallFileReadAnova()
-```
-
-## Confidence intervals
-
-```{r ics, echo=FALSE}
-maxFileConfInt(maxFileMinMaxIoWriteQuery())
-maxFileConfInt(maxFileMinMaxIoReadQuery())
-
-minFileConfInt(minFileMinIoMinMaxResourceWriteQuery())
-minFileConfInt(minFileMinIoMinMaxResourceReadQuery())
-```
-
-## CVs
-
-```{r cvs, echo=FALSE}
-largeFilesWriteCvBar()
-smallFilesWriteCvBar()
-largeFilesReadCvBar()
-smallFilesReadCvBar()
-```
-
-## Mean-median diff
-
-```{r mean-median-diff, echo=FALSE}
-largeFilesMeanMedianDiff()
-smallFilesMeanMedianDiff()
 ```
